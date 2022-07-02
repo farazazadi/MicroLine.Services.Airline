@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MicroLine.Services.Airline.Application\MicroLine.Services.Airline.Application.csproj" />
+    <ProjectReference Include="..\MicroLine.Services.Airline.Infrastructure\MicroLine.Services.Airline.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

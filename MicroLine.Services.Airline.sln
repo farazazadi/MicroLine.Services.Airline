@@ -1,0 +1,92 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30114.105
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Source", "Source", "{3B5F4EAA-6751-4C0F-8BAC-B17F38B3BB87}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MicroLine.Services.Airline.Application", "Source\MicroLine.Services.Airline.Application\MicroLine.Services.Airline.Application.csproj", "{54BC3AB3-29E0-4BFD-BCE2-3E50F30F575F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MicroLine.Services.Airline.Domain", "Source\MicroLine.Services.Airline.Domain\MicroLine.Services.Airline.Domain.csproj", "{3663C60B-88EA-40BC-9C19-3E2EDB1B3871}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MicroLine.Services.Airline.Infrastructure", "Source\MicroLine.Services.Airline.Infrastructure\MicroLine.Services.Airline.Infrastructure.csproj", "{CE02BD33-A73E-44DF-8DE7-EF05FCE809C0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MicroLine.Services.Airline.WebApi", "Source\MicroLine.Services.Airline.WebApi\MicroLine.Services.Airline.WebApi.csproj", "{63DCC523-C504-434F-9B87-721416B1FF39}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{392EDC19-90C8-4558-B5A3-EE48AA471B94}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MicroLine.Services.Airline.Tests.Architecture", "Tests\MicroLine.Services.Airline.Tests.Architecture\MicroLine.Services.Airline.Tests.Architecture.csproj", "{EA06EDA4-29FF-4864-BCE4-70792CEECE26}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MicroLine.Services.Airline.Tests.Common", "Tests\MicroLine.Services.Airline.Tests.Common\MicroLine.Services.Airline.Tests.Common.csproj", "{B640F041-CFDC-47A9-B534-F90160154E11}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MicroLine.Services.Airline.Tests.EndToEnd", "Tests\MicroLine.Services.Airline.Tests.EndToEnd\MicroLine.Services.Airline.Tests.EndToEnd.csproj", "{AF8BCF73-B54C-4910-A71A-39B980BC431B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MicroLine.Services.Airline.Tests.Integration", "Tests\MicroLine.Services.Airline.Tests.Integration\MicroLine.Services.Airline.Tests.Integration.csproj", "{C648243A-25C8-4A99-B3FC-9B8DF7A30692}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MicroLine.Services.Airline.Tests.Performance", "Tests\MicroLine.Services.Airline.Tests.Performance\MicroLine.Services.Airline.Tests.Performance.csproj", "{BB4515B5-4ECF-406E-8ECA-72E44999B316}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MicroLine.Services.Airline.Tests.Unit", "Tests\MicroLine.Services.Airline.Tests.Unit\MicroLine.Services.Airline.Tests.Unit.csproj", "{CE87B356-6860-42C0-9514-7EC15B5F30D5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{54BC3AB3-29E0-4BFD-BCE2-3E50F30F575F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54BC3AB3-29E0-4BFD-BCE2-3E50F30F575F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54BC3AB3-29E0-4BFD-BCE2-3E50F30F575F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54BC3AB3-29E0-4BFD-BCE2-3E50F30F575F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3663C60B-88EA-40BC-9C19-3E2EDB1B3871}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3663C60B-88EA-40BC-9C19-3E2EDB1B3871}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3663C60B-88EA-40BC-9C19-3E2EDB1B3871}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3663C60B-88EA-40BC-9C19-3E2EDB1B3871}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE02BD33-A73E-44DF-8DE7-EF05FCE809C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE02BD33-A73E-44DF-8DE7-EF05FCE809C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE02BD33-A73E-44DF-8DE7-EF05FCE809C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE02BD33-A73E-44DF-8DE7-EF05FCE809C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{63DCC523-C504-434F-9B87-721416B1FF39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63DCC523-C504-434F-9B87-721416B1FF39}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63DCC523-C504-434F-9B87-721416B1FF39}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63DCC523-C504-434F-9B87-721416B1FF39}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA06EDA4-29FF-4864-BCE4-70792CEECE26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA06EDA4-29FF-4864-BCE4-70792CEECE26}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA06EDA4-29FF-4864-BCE4-70792CEECE26}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA06EDA4-29FF-4864-BCE4-70792CEECE26}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B640F041-CFDC-47A9-B534-F90160154E11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B640F041-CFDC-47A9-B534-F90160154E11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B640F041-CFDC-47A9-B534-F90160154E11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B640F041-CFDC-47A9-B534-F90160154E11}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF8BCF73-B54C-4910-A71A-39B980BC431B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF8BCF73-B54C-4910-A71A-39B980BC431B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF8BCF73-B54C-4910-A71A-39B980BC431B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF8BCF73-B54C-4910-A71A-39B980BC431B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C648243A-25C8-4A99-B3FC-9B8DF7A30692}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C648243A-25C8-4A99-B3FC-9B8DF7A30692}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C648243A-25C8-4A99-B3FC-9B8DF7A30692}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C648243A-25C8-4A99-B3FC-9B8DF7A30692}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB4515B5-4ECF-406E-8ECA-72E44999B316}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB4515B5-4ECF-406E-8ECA-72E44999B316}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB4515B5-4ECF-406E-8ECA-72E44999B316}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB4515B5-4ECF-406E-8ECA-72E44999B316}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE87B356-6860-42C0-9514-7EC15B5F30D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE87B356-6860-42C0-9514-7EC15B5F30D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE87B356-6860-42C0-9514-7EC15B5F30D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE87B356-6860-42C0-9514-7EC15B5F30D5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{54BC3AB3-29E0-4BFD-BCE2-3E50F30F575F} = {3B5F4EAA-6751-4C0F-8BAC-B17F38B3BB87}
+		{3663C60B-88EA-40BC-9C19-3E2EDB1B3871} = {3B5F4EAA-6751-4C0F-8BAC-B17F38B3BB87}
+		{CE02BD33-A73E-44DF-8DE7-EF05FCE809C0} = {3B5F4EAA-6751-4C0F-8BAC-B17F38B3BB87}
+		{63DCC523-C504-434F-9B87-721416B1FF39} = {3B5F4EAA-6751-4C0F-8BAC-B17F38B3BB87}
+		{EA06EDA4-29FF-4864-BCE4-70792CEECE26} = {392EDC19-90C8-4558-B5A3-EE48AA471B94}
+		{B640F041-CFDC-47A9-B534-F90160154E11} = {392EDC19-90C8-4558-B5A3-EE48AA471B94}
+		{AF8BCF73-B54C-4910-A71A-39B980BC431B} = {392EDC19-90C8-4558-B5A3-EE48AA471B94}
+		{C648243A-25C8-4A99-B3FC-9B8DF7A30692} = {392EDC19-90C8-4558-B5A3-EE48AA471B94}
+		{BB4515B5-4ECF-406E-8ECA-72E44999B316} = {392EDC19-90C8-4558-B5A3-EE48AA471B94}
+		{CE87B356-6860-42C0-9514-7EC15B5F30D5} = {392EDC19-90C8-4558-B5A3-EE48AA471B94}
+	EndGlobalSection
+EndGlobal

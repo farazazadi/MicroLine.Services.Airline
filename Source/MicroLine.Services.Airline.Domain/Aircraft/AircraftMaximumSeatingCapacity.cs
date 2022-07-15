@@ -3,7 +3,7 @@ using MicroLine.Services.Airline.Domain.Common;
 
 namespace MicroLine.Services.Airline.Domain.Aircraft;
 
-public class AircraftMaximumSeatingCapacity : ValueObject
+public sealed class AircraftMaximumSeatingCapacity : ValueObject
 {
     private readonly int _capacity;
 

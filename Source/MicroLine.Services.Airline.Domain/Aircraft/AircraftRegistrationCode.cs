@@ -4,7 +4,7 @@ using MicroLine.Services.Airline.Domain.Common.Extensions;
 
 namespace MicroLine.Services.Airline.Domain.Aircraft;
 
-public class AircraftRegistrationCode : ValueObject
+public sealed class AircraftRegistrationCode : ValueObject
 {
     private readonly string _registerCode;
 

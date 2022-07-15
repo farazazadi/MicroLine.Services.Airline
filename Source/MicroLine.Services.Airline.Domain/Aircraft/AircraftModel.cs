@@ -4,7 +4,7 @@ using MicroLine.Services.Airline.Domain.Common.Extensions;
 
 namespace MicroLine.Services.Airline.Domain.Aircraft;
 
-public class AircraftModel : ValueObject
+public sealed class AircraftModel : ValueObject
 {
     private readonly string _model;
 

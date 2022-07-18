@@ -13,7 +13,6 @@ public sealed class Address : ValueObject
     public string Country { get; }
     public string PostalCode { get; }
 
-    public Address() { }
 
     private Address(string street, string city, string state, string country, string postalCode)
     {

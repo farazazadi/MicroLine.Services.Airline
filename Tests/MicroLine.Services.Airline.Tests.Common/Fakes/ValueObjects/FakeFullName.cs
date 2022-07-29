@@ -1,11 +1,12 @@
 ﻿
 using Bogus;
+using MicroLine.Services.Airline.Domain.Common.ValueObjects;
 
 namespace MicroLine.Services.Airline.Tests.Common.Fakes.ValueObjects;
 
-public static class FullName
+public static class FakeFullName
 {
-    public static Domain.Common.ValueObjects.FullName NewFake(Domain.Common.Enums.Gender gender)
+    public static FullName NewFake(Domain.Common.Enums.Gender gender)
     {
         var faker = new Faker();
 
@@ -14,6 +15,6 @@ public static class FullName
         var firstName = faker.Name.FirstName(bogusGender);
         var lastName = faker.Name.LastName(bogusGender);
 
-        return Domain.Common.ValueObjects.FullName.Create(firstName, lastName);
+        return FullName.Create(firstName, lastName);
     }
 }

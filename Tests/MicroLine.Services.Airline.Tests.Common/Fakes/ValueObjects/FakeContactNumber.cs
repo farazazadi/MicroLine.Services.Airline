@@ -1,16 +1,17 @@
 ﻿
 using Bogus;
+using MicroLine.Services.Airline.Domain.Common.ValueObjects;
 
 namespace MicroLine.Services.Airline.Tests.Common.Fakes.ValueObjects;
 
-public static class ContactNumber
+public static class FakeContactNumber
 {
-    public static Domain.Common.ValueObjects.ContactNumber NewFake()
+    public static ContactNumber NewFake()
     {
         var faker = new Faker();
 
         var number = faker.Phone.PhoneNumber("+1###########");
 
-        return Domain.Common.ValueObjects.ContactNumber.Create(number);
+        return ContactNumber.Create(number);
     }
 }

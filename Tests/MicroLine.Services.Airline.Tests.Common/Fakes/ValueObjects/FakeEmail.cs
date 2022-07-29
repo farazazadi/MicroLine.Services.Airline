@@ -1,16 +1,17 @@
 ﻿
 using Bogus;
+using MicroLine.Services.Airline.Domain.Common.ValueObjects;
 
 namespace MicroLine.Services.Airline.Tests.Common.Fakes.ValueObjects;
 
-public static class Email
+public static class FakeEmail
 {
-    public static Domain.Common.ValueObjects.Email NewFake(string firstName, string lastName)
+    public static Email NewFake(string firstName, string lastName)
     {
         var faker = new Faker();
 
         var email = faker.Internet.Email(firstName, lastName);
 
-        return Domain.Common.ValueObjects.Email.Create(email);
+        return Email.Create(email);
     }
 }

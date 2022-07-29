@@ -1,11 +1,12 @@
 ﻿
 using Bogus;
+using MicroLine.Services.Airline.Domain.Common.ValueObjects;
 
 namespace MicroLine.Services.Airline.Tests.Common.Fakes.ValueObjects;
 
-public static class BirthDate
+public static class FakeDate
 {
-    public static Domain.Common.ValueObjects.Date NewFake()
+    public static Date NewFake()
     {
         var faker = new Faker();
 

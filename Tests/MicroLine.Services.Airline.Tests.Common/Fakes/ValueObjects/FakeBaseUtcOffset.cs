@@ -1,10 +1,11 @@
 ﻿using Bogus;
+using MicroLine.Services.Airline.Domain.Common.ValueObjects;
 
 namespace MicroLine.Services.Airline.Tests.Common.Fakes.ValueObjects;
 
 public static class FakeBaseUtcOffset
 {
-    public static Domain.Common.ValueObjects.BaseUtcOffset NewFake()
+    public static BaseUtcOffset NewFake()
     {
         var faker = new Faker();
 
@@ -15,6 +16,6 @@ public static class FakeBaseUtcOffset
         var hours = timeZoneInfo.BaseUtcOffset.Hours;
         var minutes = timeZoneInfo.BaseUtcOffset.Minutes;
 
-        return Domain.Common.ValueObjects.BaseUtcOffset.Create(hours, minutes);
+        return BaseUtcOffset.Create(hours, minutes);
     }
 }

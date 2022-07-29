@@ -11,7 +11,7 @@ public static class FakeAircraft
         var faker = new Faker();
 
         var model = NewFakeAircraftModel(manufacturer, faker);
-        var manufactureDate = ValueObjects.BirthDate.NewFake();
+        var manufactureDate = ValueObjects.FakeDate.NewFake();
         var maximumSeatingCapacity = NewFakeAircraftMaximumSeatingCapacity(capacity);
         var cruisingSpeed = NewFakeAircraftCruisingSpeed();
         var maximumOperatingSpeed = NewFakeAircraftMaximumOperatingSpeed();

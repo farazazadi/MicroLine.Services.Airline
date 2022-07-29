@@ -1,0 +1,83 @@
+﻿using Bogus;
+using MicroLine.Services.Airline.Domain.Aircraft;
+using MicroLine.Services.Airline.Domain.Common.ValueObjects;
+
+namespace MicroLine.Services.Airline.Tests.Common.Fakes;
+
+public static class FakeAircraft
+{
+    public static Aircraft NewFake(AircraftManufacturer manufacturer, int? capacity = null)
+    {
+        var faker = new Faker();
+
+        var model = NewFakeAircraftModel(manufacturer, faker);
+        var manufactureDate = ValueObjects.BirthDate.NewFake();
+        var maximumSeatingCapacity = NewFakeAircraftMaximumSeatingCapacity(capacity);
+        var cruisingSpeed = NewFakeAircraftCruisingSpeed();
+        var maximumOperatingSpeed = NewFakeAircraftMaximumOperatingSpeed();
+        var registrationCode = NewFakeAircraftRegistrationCode(faker);
+
+        return Aircraft.Create(manufacturer
+            , model
+            , manufactureDate
+            , maximumSeatingCapacity
+            , cruisingSpeed
+            , maximumOperatingSpeed
+            , registrationCode
+            );
+    }
+
+
+    private static AircraftModel NewFakeAircraftModel(AircraftManufacturer manufacturer, Faker faker)
+    {
+        var airbusModels = new[] { "A350", "A380", "A330", "A321", "A320", "A300" };
+        var boeingModels = new[] { "787", "777", "757", "747", "737 MAX", "707" };
+        var lockheedMartinModels = new[] { "LM-100J" };
+        var bombardierModels = new[] { "CHALLENGER 300", "CHALLENGER 605", "GLOBAL 5000", "GLOBAL 6000" };
+        var embraerModels = new[] { " E175-E2", "E195", "ERJ135" };
+        var tupoloevModels = new[] { "Tu-154", "Tu-334" };
+
+
+        var model = manufacturer switch
+        {
+            AircraftManufacturer.Airbus => faker.PickRandom(airbusModels),
+            AircraftManufacturer.Boeing => faker.PickRandom(boeingModels),
+            AircraftManufacturer.LockheedMartin => faker.PickRandom(lockheedMartinModels),
+            AircraftManufacturer.Bombardier => faker.PickRandom(bombardierModels),
+            AircraftManufacturer.Embraer => faker.PickRandom(embraerModels),
+            AircraftManufacturer.Tupoloev => faker.PickRandom(tupoloevModels),
+            _ => throw new NotImplementedException()
+        };
+
+        return AircraftModel.Create(model);
+    }
+
+    private static AircraftMaximumSeatingCapacity NewFakeAircraftMaximumSeatingCapacity(int? capacity = null)
+    {
+        capacity ??= Random.Shared.Next(100, 250);
+
+        return AircraftMaximumSeatingCapacity.Create(capacity.Value);
+    }
+
+    private static Speed NewFakeAircraftCruisingSpeed()
+    {
+        var speed = Random.Shared.Next(800, 830);
+
+        return Speed.Create(speed, Speed.UnitOfSpeed.KilometresPerHour);
+    }
+
+    private static Speed NewFakeAircraftMaximumOperatingSpeed()
+    {
+        var speed = Random.Shared.Next(850, 880);
+
+        return Speed.Create(speed, Speed.UnitOfSpeed.KilometresPerHour);
+    }
+
+    private static AircraftRegistrationCode NewFakeAircraftRegistrationCode(Faker faker)
+    {
+        var code = faker.Random.String2(4, 7, RandomSelectionAllowedCharacters.DigitsAndUpperCaseLetters);
+
+        return AircraftRegistrationCode.Create(code);
+    }
+
+}

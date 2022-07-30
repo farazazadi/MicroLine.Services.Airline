@@ -1,9 +1,8 @@
-﻿using FluentAssertions;
-using MicroLine.Services.Airline.Domain.Common.Enums;
+﻿using MicroLine.Services.Airline.Domain.Common.Enums;
 using MicroLine.Services.Airline.Domain.Common.ValueObjects;
-using MicroLine.Services.Airline.Domain.FlightCrew;
+using MicroLine.Services.Airline.Domain.FlightCrews;
 
-namespace MicroLine.Services.Airline.Tests.Unit.Domain.FlightCrew;
+namespace MicroLine.Services.Airline.Tests.Unit.Domain.FlightCrews;
 
 public class FlightCrewTests
 {
@@ -12,11 +11,11 @@ public class FlightCrewTests
     {
         // Given
         // When
-        var flightCrew = Airline.Domain.FlightCrew.FlightCrew.Create(
+        var flightCrew = FlightCrew.Create(
                             flightCrewType: FlightCrewType.Pilot,
                             gender: Gender.Male,
                             fullName: FullName.Create("Gabriel", "Smith"),
-                            birtDate: Date.Create(1991, 2, 10),
+                            birthDate: Date.Create(1991, 2, 10),
                             nationalId: NationalId.Create("6522255963"),
                             passportNumber: PassportNumber.Create("A43678998"),
                             email: Email.Create("test@gmail.com"),

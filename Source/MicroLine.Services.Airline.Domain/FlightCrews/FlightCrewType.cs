@@ -1,4 +1,4 @@
-﻿namespace MicroLine.Services.Airline.Domain.FlightCrew;
+﻿namespace MicroLine.Services.Airline.Domain.FlightCrews;
 
 public enum FlightCrewType
 {

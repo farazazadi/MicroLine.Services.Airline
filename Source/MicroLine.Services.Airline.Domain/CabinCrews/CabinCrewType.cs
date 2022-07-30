@@ -1,4 +1,4 @@
-﻿namespace MicroLine.Services.Airline.Domain.CabinCrew;
+﻿namespace MicroLine.Services.Airline.Domain.CabinCrews;
 
 public enum CabinCrewType
 {

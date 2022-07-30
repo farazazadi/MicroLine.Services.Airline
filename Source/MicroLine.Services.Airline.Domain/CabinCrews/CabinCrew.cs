@@ -2,7 +2,7 @@
 using MicroLine.Services.Airline.Domain.Common.Enums;
 using MicroLine.Services.Airline.Domain.Common.ValueObjects;
 
-namespace MicroLine.Services.Airline.Domain.CabinCrew;
+namespace MicroLine.Services.Airline.Domain.CabinCrews;
 
 public class CabinCrew : AggregateRoot
 {

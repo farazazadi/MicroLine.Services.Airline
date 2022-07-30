@@ -1,7 +1,7 @@
-﻿using MicroLine.Services.Airline.Domain.Aircraft.Exceptions;
+﻿using MicroLine.Services.Airline.Domain.Aircrafts.Exceptions;
 using MicroLine.Services.Airline.Domain.Common;
 
-namespace MicroLine.Services.Airline.Domain.Aircraft;
+namespace MicroLine.Services.Airline.Domain.Aircrafts;
 
 public sealed class PassengerSeatingCapacity : ValueObject
 {

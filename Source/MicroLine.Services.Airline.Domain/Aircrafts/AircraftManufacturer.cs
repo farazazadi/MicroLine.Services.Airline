@@ -1,4 +1,4 @@
-﻿namespace MicroLine.Services.Airline.Domain.Aircraft;
+﻿namespace MicroLine.Services.Airline.Domain.Aircrafts;
 
 public enum AircraftManufacturer
 {

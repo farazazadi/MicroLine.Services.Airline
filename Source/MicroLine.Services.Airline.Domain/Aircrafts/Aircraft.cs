@@ -1,7 +1,7 @@
 ﻿using MicroLine.Services.Airline.Domain.Common;
 using MicroLine.Services.Airline.Domain.Common.ValueObjects;
 
-namespace MicroLine.Services.Airline.Domain.Aircraft;
+namespace MicroLine.Services.Airline.Domain.Aircrafts;
 
 public class Aircraft : AggregateRoot
 {

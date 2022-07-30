@@ -1,8 +1,7 @@
-﻿using FluentAssertions;
-using MicroLine.Services.Airline.Domain.Aircraft.Exceptions;
-using MicroLine.Services.Airline.Domain.Aircraft;
+﻿using MicroLine.Services.Airline.Domain.Aircrafts;
+using MicroLine.Services.Airline.Domain.Aircrafts.Exceptions;
 
-namespace MicroLine.Services.Airline.Tests.Unit.Domain.Aircraft;
+namespace MicroLine.Services.Airline.Tests.Unit.Domain.Aircrafts;
 public class AircraftRegistrationCodeTests
 {
 

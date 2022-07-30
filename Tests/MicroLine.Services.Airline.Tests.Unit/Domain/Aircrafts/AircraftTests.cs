@@ -1,7 +1,7 @@
-﻿using MicroLine.Services.Airline.Domain.Aircraft;
+﻿using MicroLine.Services.Airline.Domain.Aircrafts;
 using MicroLine.Services.Airline.Domain.Common.ValueObjects;
 
-namespace MicroLine.Services.Airline.Tests.Unit.Domain.Aircraft;
+namespace MicroLine.Services.Airline.Tests.Unit.Domain.Aircrafts;
 
 public class AircraftTests
 {
@@ -18,7 +18,7 @@ public class AircraftTests
 
 
         // When
-        var aircraft = Airline.Domain.Aircraft.Aircraft.Create(
+        var aircraft = Aircraft.Create(
             AircraftManufacturer.Airbus,
             model,
             manufactureDate,

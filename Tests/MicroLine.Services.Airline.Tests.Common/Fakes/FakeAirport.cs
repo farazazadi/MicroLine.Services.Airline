@@ -1,5 +1,5 @@
 ﻿using Bogus;
-using MicroLine.Services.Airline.Domain.Airport;
+using MicroLine.Services.Airline.Domain.Airports;
 
 namespace MicroLine.Services.Airline.Tests.Common.Fakes;
 

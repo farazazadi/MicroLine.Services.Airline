@@ -1,8 +1,7 @@
-﻿using FluentAssertions;
-using MicroLine.Services.Airline.Domain.Airport.Exceptions;
-using MicroLine.Services.Airline.Domain.Airport;
+﻿using MicroLine.Services.Airline.Domain.Airports;
+using MicroLine.Services.Airline.Domain.Airports.Exceptions;
 
-namespace MicroLine.Services.Airline.Tests.Unit.Domain.Airport;
+namespace MicroLine.Services.Airline.Tests.Unit.Domain.Airports;
 public class AirportNameTests
 {
     public static TheoryData<string> NullOrEmptyStrings = new()

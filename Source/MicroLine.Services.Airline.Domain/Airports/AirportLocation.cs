@@ -1,8 +1,8 @@
-﻿using MicroLine.Services.Airline.Domain.Airport.Exceptions;
+﻿using MicroLine.Services.Airline.Domain.Airports.Exceptions;
 using MicroLine.Services.Airline.Domain.Common;
 using MicroLine.Services.Airline.Domain.Common.Extensions;
 
-namespace MicroLine.Services.Airline.Domain.Airport;
+namespace MicroLine.Services.Airline.Domain.Airports;
 
 public class AirportLocation : ValueObject
 {

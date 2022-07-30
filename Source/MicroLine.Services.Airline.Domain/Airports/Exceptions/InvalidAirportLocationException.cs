@@ -1,6 +1,6 @@
 ﻿using MicroLine.Services.Airline.Domain.Common.Exceptions;
 
-namespace MicroLine.Services.Airline.Domain.Airport.Exceptions;
+namespace MicroLine.Services.Airline.Domain.Airports.Exceptions;
 
 public class InvalidAirportLocationException : DomainException
 {

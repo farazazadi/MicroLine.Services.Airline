@@ -1,4 +1,4 @@
-﻿namespace MicroLine.Services.Airline.Domain.Airport;
+﻿namespace MicroLine.Services.Airline.Domain.Airports;
 public enum Continent
 {
     Africa = 0,

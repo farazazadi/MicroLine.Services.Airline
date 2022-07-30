@@ -1,7 +1,7 @@
 ﻿using MicroLine.Services.Airline.Domain.Common;
 using MicroLine.Services.Airline.Domain.Common.ValueObjects;
 
-namespace MicroLine.Services.Airline.Domain.Airport;
+namespace MicroLine.Services.Airline.Domain.Airports;
 
 public class Airport : AggregateRoot
 {

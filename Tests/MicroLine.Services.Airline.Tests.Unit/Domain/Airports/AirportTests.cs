@@ -1,7 +1,7 @@
-﻿using MicroLine.Services.Airline.Domain.Airport;
+﻿using MicroLine.Services.Airline.Domain.Airports;
 using MicroLine.Services.Airline.Domain.Common.ValueObjects;
 
-namespace MicroLine.Services.Airline.Tests.Unit.Domain.Airport;
+namespace MicroLine.Services.Airline.Tests.Unit.Domain.Airports;
 
 public class AirportTests
 {
@@ -17,7 +17,7 @@ public class AirportTests
                                                                 48.646900177m, -123.426002502m);
 
         // When
-        var airport = Airline.Domain.Airport.Airport.Create(
+        var airport = Airport.Create(
                         icaoCode, iataCode, name, baseUtcOffset, airportLocation);
 
         // Then

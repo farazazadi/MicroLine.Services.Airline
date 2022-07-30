@@ -1,4 +1,4 @@
-﻿using MicroLine.Services.Airline.Domain.FlightCrew;
+﻿using MicroLine.Services.Airline.Domain.FlightCrews;
 using MicroLine.Services.Airline.Tests.Common.Fakes.ValueObjects;
 
 namespace MicroLine.Services.Airline.Tests.Common.Fakes;

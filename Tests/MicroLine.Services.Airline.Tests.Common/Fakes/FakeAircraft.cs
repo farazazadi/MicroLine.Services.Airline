@@ -6,13 +6,16 @@ namespace MicroLine.Services.Airline.Tests.Common.Fakes;
 
 public static class FakeAircraft
 {
-    public static Aircraft NewFake(AircraftManufacturer manufacturer, int? capacity = null)
+    public static Aircraft NewFake(AircraftManufacturer manufacturer,
+        int? economyClassCapacity = null,
+        int? businessClassCapacity = null,
+        int? firstClassCapacity = null)
     {
         var faker = new Faker();
 
         var model = NewFakeAircraftModel(manufacturer, faker);
         var manufactureDate = ValueObjects.FakeDate.NewFake();
-        var maximumSeatingCapacity = NewFakeAircraftMaximumSeatingCapacity(capacity);
+        var maximumSeatingCapacity = NewFakePassengerSeatingCapacity(economyClassCapacity, businessClassCapacity, firstClassCapacity);
         var cruisingSpeed = NewFakeAircraftCruisingSpeed();
         var maximumOperatingSpeed = NewFakeAircraftMaximumOperatingSpeed();
         var registrationCode = NewFakeAircraftRegistrationCode(faker);
@@ -52,11 +55,14 @@ public static class FakeAircraft
         return AircraftModel.Create(model);
     }
 
-    private static AircraftMaximumSeatingCapacity NewFakeAircraftMaximumSeatingCapacity(int? capacity = null)
+    private static PassengerSeatingCapacity NewFakePassengerSeatingCapacity(
+        int? economyClassCapacity = null, int? businessClassCapacity = null, int? firstClassCapacity = null)
     {
-        capacity ??= Random.Shared.Next(100, 250);
+        economyClassCapacity ??= Random.Shared.Next(100, 150);
+        businessClassCapacity ??= Random.Shared.Next(30, 50);
+        firstClassCapacity ??= Random.Shared.Next(10, 20);
 
-        return AircraftMaximumSeatingCapacity.Create(capacity.Value);
+        return PassengerSeatingCapacity.Create(economyClassCapacity.Value, businessClassCapacity.Value, firstClassCapacity.Value);
     }
 
     private static Speed NewFakeAircraftCruisingSpeed()

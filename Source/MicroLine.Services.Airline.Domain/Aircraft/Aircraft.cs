@@ -8,31 +8,31 @@ public class Aircraft : AggregateRoot
     public AircraftManufacturer Manufacturer { get; }
     public AircraftModel Model { get; }
     public Date ManufactureDate { get; }
-    public AircraftMaximumSeatingCapacity MaximumSeatingCapacity { get; }
+    public PassengerSeatingCapacity PassengerSeatingCapacity { get; }
     public Speed CruisingSpeed { get; }
     public Speed MaximumOperatingSpeed { get; }
     public AircraftRegistrationCode RegistrationCode { get; }
 
     private Aircraft(AircraftManufacturer manufacturer, AircraftModel model, Date manufactureDate,
-        int maximumSeatingCapacity, Speed cruisingSpeed, Speed maximumOperatingSpeed,
+        PassengerSeatingCapacity passengerSeatingCapacity, Speed cruisingSpeed, Speed maximumOperatingSpeed,
         AircraftRegistrationCode registrationCode)
     {
         Manufacturer = manufacturer;
         Model = model;
         ManufactureDate = manufactureDate;
-        MaximumSeatingCapacity = maximumSeatingCapacity;
+        PassengerSeatingCapacity = passengerSeatingCapacity;
         CruisingSpeed = cruisingSpeed;
         MaximumOperatingSpeed = maximumOperatingSpeed;
         RegistrationCode = registrationCode;
     }
 
     public static Aircraft Create(AircraftManufacturer manufacturer, AircraftModel model, Date manufactureDate,
-                                    AircraftMaximumSeatingCapacity maximumSeatingCapacity, Speed cruisingSpeed, Speed maximumOperatingSpeed,
+                                    PassengerSeatingCapacity passengerSeatingCapacity, Speed cruisingSpeed, Speed maximumOperatingSpeed,
                                     AircraftRegistrationCode registrationCode)
     {
 
         return new Aircraft(manufacturer, model, manufactureDate,
-            maximumSeatingCapacity, cruisingSpeed, maximumOperatingSpeed,
+            passengerSeatingCapacity, cruisingSpeed, maximumOperatingSpeed,
             registrationCode);
     }
 

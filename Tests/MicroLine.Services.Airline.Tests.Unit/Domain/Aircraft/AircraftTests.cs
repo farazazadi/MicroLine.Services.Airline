@@ -1,7 +1,5 @@
-﻿using FluentAssertions;
-using MicroLine.Services.Airline.Domain.Aircraft;
+﻿using MicroLine.Services.Airline.Domain.Aircraft;
 using MicroLine.Services.Airline.Domain.Common.ValueObjects;
-using Xunit;
 
 namespace MicroLine.Services.Airline.Tests.Unit.Domain.Aircraft;
 
@@ -11,17 +9,23 @@ public class AircraftTests
     public void Aircraft_ShouldNotHaveAnyEvents_WhenCreated()
     {
         // Given
-        // When
+        var model = AircraftModel.Create(aircraftModel: "A320");
+        var manufactureDate = Date.Create(year: 2006, month: 05, day: 1);
+        var passengerSeatingCapacity = PassengerSeatingCapacity.Create(180, 30, 15);
+        var cruisingSpeed = Speed.Create(828, unitOfSpeed: Speed.UnitOfSpeed.KilometresPerHour);
+        var maximumOperatingSpeed = Speed.Create(871, unitOfSpeed: Speed.UnitOfSpeed.KilometresPerHour);
+        var aircraftRegistrationCode = AircraftRegistrationCode.Create(registerCode: "EP-FSA");
 
+
+        // When
         var aircraft = Airline.Domain.Aircraft.Aircraft.Create(
-            manufacturer: AircraftManufacturer.Airbus,
-            model: AircraftModel.Create(aircraftModel: "A320"),
-            manufactureDate: Date.Create(year: 2006, month: 05, day: 1),
-            maximumSeatingCapacity: AircraftMaximumSeatingCapacity.Create(180),
-            cruisingSpeed: Speed.Create(828, unitOfSpeed: Speed.UnitOfSpeed.KilometresPerHour),
-            maximumOperatingSpeed: Speed.Create(871, unitOfSpeed: Speed.UnitOfSpeed.KilometresPerHour),
-            registrationCode: AircraftRegistrationCode.Create(registerCode: "EP-FSA")
-        );
+            AircraftManufacturer.Airbus,
+            model,
+            manufactureDate,
+            passengerSeatingCapacity,
+            cruisingSpeed,
+            maximumOperatingSpeed,
+            aircraftRegistrationCode);
 
         // Then
         aircraft.DomainEvents.Count.Should().Be(0);

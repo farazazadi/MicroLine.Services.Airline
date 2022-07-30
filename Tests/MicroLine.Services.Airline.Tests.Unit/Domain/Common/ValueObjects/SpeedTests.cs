@@ -1,5 +1,4 @@
-﻿using FluentAssertions;
-using MicroLine.Services.Airline.Domain.Common.Exceptions;
+﻿using MicroLine.Services.Airline.Domain.Common.Exceptions;
 using MicroLine.Services.Airline.Domain.Common.ValueObjects;
 using static MicroLine.Services.Airline.Domain.Common.ValueObjects.Speed;
 

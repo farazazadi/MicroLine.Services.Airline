@@ -1,5 +1,4 @@
-﻿using FluentAssertions;
-using MicroLine.Services.Airline.Domain.Common.Exceptions;
+﻿using MicroLine.Services.Airline.Domain.Common.Exceptions;
 using MicroLine.Services.Airline.Domain.Common.ValueObjects;
 
 namespace MicroLine.Services.Airline.Tests.Unit.Domain.Common.ValueObjects;

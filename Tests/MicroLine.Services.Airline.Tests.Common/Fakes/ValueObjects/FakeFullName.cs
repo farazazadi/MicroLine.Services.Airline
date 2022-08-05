@@ -15,6 +15,12 @@ public static class FakeFullName
         var firstName = faker.Name.FirstName(bogusGender);
         var lastName = faker.Name.LastName(bogusGender);
 
+        while (firstName.Length < 3)
+            firstName += "a";
+
+        while (lastName.Length < 3)
+            lastName += "a";
+
         return FullName.Create(firstName, lastName);
     }
 }

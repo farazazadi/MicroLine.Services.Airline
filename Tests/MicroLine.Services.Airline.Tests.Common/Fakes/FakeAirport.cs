@@ -20,6 +20,22 @@ public static class FakeAirport
         return Airport.Create(icaoCode, iataCode, airportName, baseUtcOffset, airportLocation);
     }
 
+    public static Airport NewFake(double latitude, double longitude)
+    {
+        var faker = new Faker();
+
+        var icaoCode = NewFakeIcaoCode(faker);
+        var iataCode = NewFakeIataCode(faker);
+
+        var airportLocation = NewFakeAirportLocation(faker, latitude, longitude);
+        var airportName = NewFakeAirportName(faker, airportLocation.City);
+
+        var baseUtcOffset = ValueObjects.FakeBaseUtcOffset.NewFake();
+
+        return Airport.Create(icaoCode, iataCode, airportName, baseUtcOffset, airportLocation);
+    }
+
+
 
     private static IcaoCode NewFakeIcaoCode(Faker faker)
     {
@@ -41,17 +57,17 @@ public static class FakeAirport
         return AirportName.Create($"{city} International Airport");
     }
 
-    private static AirportLocation NewFakeAirportLocation(Faker faker)
+    private static AirportLocation NewFakeAirportLocation(Faker faker, double? latitude  = null, double? longitude = null)
     {
         var continent = faker.PickRandom<Continent>();
         var country = faker.Address.Country();
         var region = faker.Address.State();
         var city = faker.Address.City();
-        var latitude = faker.Random.Decimal(-90, 90);
-        var longitude = faker.Random.Decimal(-180, 180);
+        latitude ??= faker.Random.Double(-90, 90);
+        longitude ??= faker.Random.Double(-180, 180);
 
 
-        return AirportLocation.Create(continent ,country ,region ,city ,latitude ,longitude);
+        return AirportLocation.Create(continent ,country ,region ,city ,latitude.Value ,longitude.Value);
     }
 
 }

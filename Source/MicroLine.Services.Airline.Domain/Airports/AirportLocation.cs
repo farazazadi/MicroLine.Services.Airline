@@ -10,11 +10,11 @@ public class AirportLocation : ValueObject
     public string Country { get; }
     public string Region { get; }
     public string City { get; }
-    public decimal Latitude { get; }
-    public decimal Longitude { get; }
+    public double Latitude { get; }
+    public double Longitude { get; }
 
     private AirportLocation(Continent continent, string country, string region, string city,
-                            decimal latitude, decimal longitude)
+                            double latitude, double longitude)
     {
         Continent = continent;
         Country = country;
@@ -27,7 +27,7 @@ public class AirportLocation : ValueObject
 
 
     public static AirportLocation Create(Continent continent, string country, string region, string city,
-                                            decimal latitude, decimal longitude)
+                                            double latitude, double longitude)
     {
         Validate(country, region, city, latitude, longitude);
 
@@ -35,7 +35,7 @@ public class AirportLocation : ValueObject
                                 latitude, longitude);
     }
 
-    private static void Validate(string country, string region, string city, decimal latitude, decimal longitude)
+    private static void Validate(string country, string region, string city, double latitude, double longitude)
     {
         if (country.IsNullOrEmpty() || region.IsNullOrEmpty() || city.IsNullOrEmpty())
             throw new InvalidAirportLocationException("Country, Region and City can not be null or empty in AirportLocation!");
@@ -44,12 +44,12 @@ public class AirportLocation : ValueObject
             throw new InvalidAirportLocationException($"Latitude ({latitude}) is not valid in AirportLocation!");
 
 
-        if (!IsValidLongitudee(longitude))
+        if (!IsValidLongitude(longitude))
             throw new InvalidAirportLocationException($"Longitude ({longitude}) is not valid in AirportLocation!");
     }
 
-    private static bool IsValidLatitude(decimal latitude) => Math.Truncate(latitude) is >= (-90) and <= 90;
-    private static bool IsValidLongitudee(decimal longitude) => Math.Truncate(longitude) is >= (-180) and <= 180;
+    private static bool IsValidLatitude(double latitude) => Math.Truncate(latitude) is >= (-90) and <= 90;
+    private static bool IsValidLongitude(double longitude) => Math.Truncate(longitude) is >= (-180) and <= 180;
 
 
     public static implicit operator string(AirportLocation address) => address.ToString();

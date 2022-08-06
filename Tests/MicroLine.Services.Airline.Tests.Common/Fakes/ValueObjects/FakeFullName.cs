@@ -1,5 +1,6 @@
 ﻿
 using Bogus;
+using MicroLine.Services.Airline.Domain.Common.Extensions;
 using MicroLine.Services.Airline.Domain.Common.ValueObjects;
 
 namespace MicroLine.Services.Airline.Tests.Common.Fakes.ValueObjects;
@@ -14,6 +15,14 @@ public static class FakeFullName
 
         var firstName = faker.Name.FirstName(bogusGender);
         var lastName = faker.Name.LastName(bogusGender);
+
+
+        while (!firstName.AreAllCharactersLetter())
+            firstName = faker.Name.FirstName(bogusGender);
+
+        while (!lastName.AreAllCharactersLetter())
+            lastName = faker.Name.LastName(bogusGender);
+
 
         while (firstName.Length < 3)
             firstName += "a";

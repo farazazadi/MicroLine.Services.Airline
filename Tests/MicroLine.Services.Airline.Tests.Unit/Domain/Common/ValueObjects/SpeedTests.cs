@@ -117,4 +117,47 @@ public class SpeedTests
         speedObj.Value.Should().Be(int.Parse(speedParts[0]));
         speedObj.Unit.Should().Be(unitOfSpeedSymbols[speedParts[1]]);
     }
+
+
+    [Fact]
+    public void ConvertToMethod_ShouldReturnExpectedValue_WhenItCalled()
+    {
+        // Given
+        var speedInKilometers = Speed.Create(850, UnitOfSpeed.KilometresPerHour);
+        var speedInMiles = Speed.Create(528, UnitOfSpeed.MilesPerHour);
+        var speedInKnot = Speed.Create(459, UnitOfSpeed.Knot);
+
+        // When
+        // Then
+        speedInKilometers.ConvertTo(UnitOfSpeed.KilometresPerHour)
+            .Should().Be(speedInKilometers.Value);
+
+        speedInKilometers.ConvertTo(UnitOfSpeed.MilesPerHour)
+            .Should().Be(speedInMiles.Value);
+
+        speedInKilometers.ConvertTo(UnitOfSpeed.Knot)
+            .Should().Be(speedInKnot.Value);
+
+
+        speedInMiles.ConvertTo(UnitOfSpeed.KilometresPerHour)
+            .Should().Be(speedInKilometers.Value);
+
+        speedInMiles.ConvertTo(UnitOfSpeed.MilesPerHour)
+            .Should().Be(speedInMiles.Value);
+
+        speedInMiles.ConvertTo(UnitOfSpeed.Knot)
+            .Should().Be(speedInKnot.Value);
+
+
+
+        speedInKnot.ConvertTo(UnitOfSpeed.KilometresPerHour)
+            .Should().Be(speedInKilometers.Value);
+
+        speedInKnot.ConvertTo(UnitOfSpeed.MilesPerHour)
+            .Should().Be(speedInMiles.Value);
+
+        speedInKnot.ConvertTo(UnitOfSpeed.Knot)
+            .Should().Be(speedInKnot.Value);
+
+    }
 }

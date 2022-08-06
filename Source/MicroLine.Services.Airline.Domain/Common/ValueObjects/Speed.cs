@@ -29,6 +29,40 @@ public sealed class Speed : ValueObject
         Value = value;
     }
 
+
+    public int ConvertTo(UnitOfSpeed unitOfSpeed)
+    {
+        var result = this.Unit switch
+        {
+            UnitOfSpeed.KilometresPerHour => unitOfSpeed switch
+            {
+                UnitOfSpeed.KilometresPerHour => Value,
+                UnitOfSpeed.MilesPerHour => Value / 1.609,
+                UnitOfSpeed.Knot => Value / 1.852,
+                _ => throw new ArgumentOutOfRangeException()
+            },
+            UnitOfSpeed.MilesPerHour => unitOfSpeed switch
+            {
+                UnitOfSpeed.KilometresPerHour => Value * 1.609,
+                UnitOfSpeed.MilesPerHour => Value,
+                UnitOfSpeed.Knot => Value / 1.150,
+                _ => throw new ArgumentOutOfRangeException()
+            },
+            UnitOfSpeed.Knot => unitOfSpeed switch
+            {
+                UnitOfSpeed.KilometresPerHour => Value * 1.852,
+                UnitOfSpeed.MilesPerHour => Value * 1.150,
+                UnitOfSpeed.Knot => Value,
+                _ => throw new ArgumentOutOfRangeException()
+            },
+
+            _ => throw new ArgumentOutOfRangeException()
+        };
+
+
+        return Convert.ToInt32(Math.Round(result));
+    }
+
     public static Speed Create(int speed, UnitOfSpeed unitOfSpeed)
     {
         Validate(speed);

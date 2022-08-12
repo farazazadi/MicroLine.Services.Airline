@@ -27,6 +27,8 @@ public partial class Flight
 
             flight.CheckInvariants(aircraftLastFlight, flightCrewMembersLastFlight, cabinCrewMembersLastFlight);
 
+            flight.ApplyPricingPolicies(flightPricingPolicies);
+
             flight.Schedule();
 
             return flight;

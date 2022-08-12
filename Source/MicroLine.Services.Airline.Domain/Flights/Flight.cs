@@ -6,6 +6,7 @@ using MicroLine.Services.Airline.Domain.Common.Enums;
 using MicroLine.Services.Airline.Domain.Common.Extensions;
 using MicroLine.Services.Airline.Domain.Common.ValueObjects;
 using MicroLine.Services.Airline.Domain.FlightCrews;
+using MicroLine.Services.Airline.Domain.FlightPricingPolicies;
 using MicroLine.Services.Airline.Domain.Flights.Events;
 using MicroLine.Services.Airline.Domain.Flights.Exceptions;
 
@@ -103,6 +104,16 @@ public partial class Flight : AggregateRoot
     }
 
 
+    private void ApplyPricingPolicies(IEnumerable<IFlightPricingPolicy> flightPricingPolicies)
+    {
+        var pricingPolicies = flightPricingPolicies
+            .OrderBy(p=> p.Priority)
+            .ToList();
+
+        foreach (var policy in pricingPolicies)
+            Prices = policy.Calculate(this);
+    }
+
     private void Schedule()
     {
         SetEstimatedFlightDuration();
@@ -127,4 +138,5 @@ public partial class Flight : AggregateRoot
             .Add(EstimatedFlightDuration)
             .RemoveSeconds();
     }
+
 }

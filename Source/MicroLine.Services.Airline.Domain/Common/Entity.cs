@@ -6,7 +6,7 @@ namespace MicroLine.Services.Airline.Domain.Common;
 [Serializable]
 public abstract class Entity
 {
-    public Id Id { get; protected set; } = Id.Transient;
+    public Id Id { get; protected set; } = Id.Create();
 
     public override bool Equals(object obj)
     {
@@ -38,10 +38,7 @@ public abstract class Entity
 
     private bool IsTransient()
     {
-        if (Id is null)
-            return true;
-        
-        return Id.IsTransient;
+        return Id is null || Id.IsTransient;
     }
 
     public static bool operator !=(Entity a, Entity b) => !(a == b);

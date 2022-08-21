@@ -3,4 +3,5 @@
 public interface IDateTime
 {
     DateTimeOffset Now { get; }
+    DateTime UtcNow { get; }
 }

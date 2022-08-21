@@ -15,6 +15,9 @@ namespace MicroLine.Services.Airline.Domain.Flights;
 
 public partial class Flight : AggregateRoot
 {
+    private readonly List<FlightCrew> _flightCrewMembers;
+    private readonly List<CabinCrew> _cabinCrewMembers;
+
     public FlightNumber FlightNumber { get; private set; }
     public Airport OriginAirport { get; private set; }
     public Airport DestinationAirport { get; private set; }
@@ -23,8 +26,10 @@ public partial class Flight : AggregateRoot
     public DateTime ScheduledUtcDateTimeOfArrival { get; private set; }
     public TimeSpan EstimatedFlightDuration { get; private set; }
     public FlightPrice Prices { get; private set; }
-    public List<FlightCrew> FlightCrewMembers { get; private set; }
-    public List<CabinCrew> CabinCrewMembers { get; private set; }
+
+    public IReadOnlyList<FlightCrew> FlightCrewMembers => _flightCrewMembers;
+    public IReadOnlyList<CabinCrew> CabinCrewMembers => _cabinCrewMembers;
+
     public FlightStatus Status { get; private set; }
 
     private Flight() { }
@@ -40,8 +45,8 @@ public partial class Flight : AggregateRoot
         Aircraft = aircraft;
         ScheduledUtcDateTimeOfDeparture = scheduledUtcDateTimeOfDeparture.RemoveSeconds();
         Prices = prices;
-        FlightCrewMembers = flightCrewMembers;
-        CabinCrewMembers = cabinCrewMembers;
+        _flightCrewMembers = flightCrewMembers;
+        _cabinCrewMembers = cabinCrewMembers;
     }
 
 

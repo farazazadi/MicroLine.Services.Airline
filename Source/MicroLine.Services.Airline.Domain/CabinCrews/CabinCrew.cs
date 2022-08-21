@@ -9,7 +9,7 @@ public class CabinCrew : AggregateRoot
     public CabinCrewType CabinCrewType { get; private set; }
     public Gender Gender { get; private set; }
     public FullName FullName { get; private set; }
-    public Date BirtDate { get; private set; }
+    public Date BirthDate { get; private set; }
     public NationalId NationalId { get; private set; }
     public PassportNumber PassportNumber { get; private set; }
     public Email Email { get; private set; }
@@ -18,14 +18,14 @@ public class CabinCrew : AggregateRoot
 
     private CabinCrew() { }
 
-    private CabinCrew(CabinCrewType cabinCrewType, Gender gender, FullName fullName, Date birtDate,
+    private CabinCrew(CabinCrewType cabinCrewType, Gender gender, FullName fullName, Date birthDate,
         NationalId nationalId, PassportNumber passportNumber,
         Email email, ContactNumber contactNumber, Address address)
     {
         CabinCrewType = cabinCrewType;
         Gender = gender;
         FullName = fullName;
-        BirtDate = birtDate;
+        BirthDate = birthDate;
         NationalId = nationalId;
         PassportNumber = passportNumber;
         Email = email;

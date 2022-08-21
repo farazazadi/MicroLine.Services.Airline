@@ -6,19 +6,21 @@ namespace MicroLine.Services.Airline.Domain.CabinCrews;
 
 public class CabinCrew : AggregateRoot
 {
-    public CabinCrewType CabinCrewType { get; }
-    public Gender Gender { get; }
-    public FullName FullName { get; }
-    public Date BirtDate { get; }
-    public NationalId NationalId { get; }
-    public PassportNumber PassportNumber { get; }
-    public Email Email { get; }
-    public ContactNumber ContactNumber { get; }
-    public Address Address { get; }
+    public CabinCrewType CabinCrewType { get; private set; }
+    public Gender Gender { get; private set; }
+    public FullName FullName { get; private set; }
+    public Date BirtDate { get; private set; }
+    public NationalId NationalId { get; private set; }
+    public PassportNumber PassportNumber { get; private set; }
+    public Email Email { get; private set; }
+    public ContactNumber ContactNumber { get; private set; }
+    public Address Address { get; private set; }
+
+    private CabinCrew() { }
 
     private CabinCrew(CabinCrewType cabinCrewType, Gender gender, FullName fullName, Date birtDate,
-                      NationalId nationalId, PassportNumber passportNumber,
-                      Email email, ContactNumber contactNumber, Address address)
+        NationalId nationalId, PassportNumber passportNumber,
+        Email email, ContactNumber contactNumber, Address address)
     {
         CabinCrewType = cabinCrewType;
         Gender = gender;
@@ -34,11 +36,11 @@ public class CabinCrew : AggregateRoot
 
 
     public static CabinCrew Create(CabinCrewType cabinCrewType, Gender gender, FullName fullName, Date birtDate,
-                        NationalId nationalId, PassportNumber passportNumber,
-                        Email email, ContactNumber contactNumber, Address address)
+        NationalId nationalId, PassportNumber passportNumber,
+        Email email, ContactNumber contactNumber, Address address)
     {
         return new CabinCrew(cabinCrewType, gender, fullName, birtDate, nationalId,
-                             passportNumber, email, contactNumber, address);
+            passportNumber, email, contactNumber, address);
     }
 
 }

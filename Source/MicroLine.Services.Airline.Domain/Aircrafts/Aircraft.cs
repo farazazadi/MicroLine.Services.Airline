@@ -5,13 +5,15 @@ namespace MicroLine.Services.Airline.Domain.Aircrafts;
 
 public class Aircraft : AggregateRoot
 {
-    public AircraftManufacturer Manufacturer { get; }
-    public AircraftModel Model { get; }
-    public Date ManufactureDate { get; }
-    public PassengerSeatingCapacity PassengerSeatingCapacity { get; }
-    public Speed CruisingSpeed { get; }
-    public Speed MaximumOperatingSpeed { get; }
-    public AircraftRegistrationCode RegistrationCode { get; }
+    public AircraftManufacturer Manufacturer { get; private set; }
+    public AircraftModel Model { get; private set; }
+    public Date ManufactureDate { get; private set; }
+    public PassengerSeatingCapacity PassengerSeatingCapacity { get; private set; }
+    public Speed CruisingSpeed { get; private set; }
+    public Speed MaximumOperatingSpeed { get; private set; }
+    public AircraftRegistrationCode RegistrationCode { get; private set; }
+
+    private Aircraft() { }
 
     private Aircraft(AircraftManufacturer manufacturer, AircraftModel model, Date manufactureDate,
         PassengerSeatingCapacity passengerSeatingCapacity, Speed cruisingSpeed, Speed maximumOperatingSpeed,
@@ -27,8 +29,8 @@ public class Aircraft : AggregateRoot
     }
 
     public static Aircraft Create(AircraftManufacturer manufacturer, AircraftModel model, Date manufactureDate,
-                                    PassengerSeatingCapacity passengerSeatingCapacity, Speed cruisingSpeed, Speed maximumOperatingSpeed,
-                                    AircraftRegistrationCode registrationCode)
+        PassengerSeatingCapacity passengerSeatingCapacity, Speed cruisingSpeed, Speed maximumOperatingSpeed,
+        AircraftRegistrationCode registrationCode)
     {
 
         return new Aircraft(manufacturer, model, manufactureDate,

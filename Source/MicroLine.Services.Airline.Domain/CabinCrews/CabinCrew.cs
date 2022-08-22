@@ -1,6 +1,7 @@
 ﻿using MicroLine.Services.Airline.Domain.Common;
 using MicroLine.Services.Airline.Domain.Common.Enums;
 using MicroLine.Services.Airline.Domain.Common.ValueObjects;
+using MicroLine.Services.Airline.Domain.Flights;
 
 namespace MicroLine.Services.Airline.Domain.CabinCrews;
 
@@ -15,6 +16,8 @@ public class CabinCrew : AggregateRoot
     public Email Email { get; private set; }
     public ContactNumber ContactNumber { get; private set; }
     public Address Address { get; private set; }
+
+    public IReadOnlyList<Flight> Flights { get; private set; } = new List<Flight>();
 
     private CabinCrew() { }
 

@@ -3,11 +3,11 @@ using MicroLine.Services.Airline.Domain.Common;
 
 namespace MicroLine.Services.Airline.Application.Common.Models;
 
-public class DomainEventNotification<TDomainEvent> : INotification where TDomainEvent : DomainEvent
+public class Notification<TDomainEvent> : INotification where TDomainEvent : DomainEvent
 {
     public TDomainEvent DomainEvent { get; }
 
-    public DomainEventNotification(TDomainEvent domainEvent)
+    public Notification(TDomainEvent domainEvent)
     {
         DomainEvent = domainEvent;
     }

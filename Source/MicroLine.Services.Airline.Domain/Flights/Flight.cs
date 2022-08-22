@@ -15,18 +15,24 @@ namespace MicroLine.Services.Airline.Domain.Flights;
 
 public partial class Flight : AggregateRoot
 {
-    public FlightNumber FlightNumber { get; }
-    public Airport OriginAirport { get; }
-    public Airport DestinationAirport { get; }
-    public Aircraft Aircraft { get; }
-    public DateTime ScheduledUtcDateTimeOfDeparture { get; }
+    private readonly List<FlightCrew> _flightCrewMembers;
+    private readonly List<CabinCrew> _cabinCrewMembers;
+
+    public FlightNumber FlightNumber { get; private set; }
+    public Airport OriginAirport { get; private set; }
+    public Airport DestinationAirport { get; private set; }
+    public Aircraft Aircraft { get; private set; }
+    public DateTime ScheduledUtcDateTimeOfDeparture { get; private set; }
     public DateTime ScheduledUtcDateTimeOfArrival { get; private set; }
     public TimeSpan EstimatedFlightDuration { get; private set; }
     public FlightPrice Prices { get; private set; }
-    public List<FlightCrew> FlightCrewMembers { get; }
-    public List<CabinCrew> CabinCrewMembers { get; }
-    public FlightStatus Status { get; private set;}
 
+    public IReadOnlyList<FlightCrew> FlightCrewMembers => _flightCrewMembers;
+    public IReadOnlyList<CabinCrew> CabinCrewMembers => _cabinCrewMembers;
+
+    public FlightStatus Status { get; private set; }
+
+    private Flight() { }
 
     private Flight(FlightNumber flightNumber,
         Airport originAirport, Airport destinationAirport, Aircraft aircraft,
@@ -39,8 +45,8 @@ public partial class Flight : AggregateRoot
         Aircraft = aircraft;
         ScheduledUtcDateTimeOfDeparture = scheduledUtcDateTimeOfDeparture.RemoveSeconds();
         Prices = prices;
-        FlightCrewMembers = flightCrewMembers;
-        CabinCrewMembers = cabinCrewMembers;
+        _flightCrewMembers = flightCrewMembers;
+        _cabinCrewMembers = cabinCrewMembers;
     }
 
 
@@ -107,7 +113,7 @@ public partial class Flight : AggregateRoot
     private void ApplyPricingPolicies(IEnumerable<IFlightPricingPolicy> flightPricingPolicies)
     {
         var pricingPolicies = flightPricingPolicies
-            .OrderBy(p=> p.Priority)
+            .OrderBy(p => p.Priority)
             .ToList();
 
         foreach (var policy in pricingPolicies)

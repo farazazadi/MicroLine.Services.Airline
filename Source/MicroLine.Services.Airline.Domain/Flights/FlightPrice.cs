@@ -13,6 +13,8 @@ public class FlightPrice : ValueObject
 
     public Money FirstClass { get; }
 
+    private FlightPrice() { }
+
     private FlightPrice(Money economyClass, Money businessClass, Money firstClass)
     {
         EconomyClass = economyClass;

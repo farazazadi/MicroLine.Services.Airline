@@ -6,11 +6,13 @@ namespace MicroLine.Services.Airline.Domain.Airports;
 
 public class Airport : AggregateRoot
 {
-    public IcaoCode IcaoCode { get; }
-    public IataCode IataCode { get; }
-    public AirportName Name { get; }
-    public BaseUtcOffset BaseUtcOffset { get; }
-    public AirportLocation AirportLocation { get; }
+    public IcaoCode IcaoCode { get; private set; }
+    public IataCode IataCode { get; private set; }
+    public AirportName Name { get; private set; }
+    public BaseUtcOffset BaseUtcOffset { get; private set; }
+    public AirportLocation AirportLocation { get; private set; }
+
+    private Airport() { }
 
     private Airport(IcaoCode icaoCode, IataCode iataCode, AirportName name, BaseUtcOffset baseUtcOffset, AirportLocation airportLocation)
     {
@@ -64,6 +66,6 @@ public class Airport : AggregateRoot
 
     public static Airport Create(IcaoCode icaoCode, IataCode iataCode, AirportName name, BaseUtcOffset baseUtcOffset, AirportLocation airportLocation)
     {
-        return new (icaoCode, iataCode, name, baseUtcOffset, airportLocation);
+        return new(icaoCode, iataCode, name, baseUtcOffset, airportLocation);
     }
 }

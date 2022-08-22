@@ -21,9 +21,9 @@ public partial class Flight
 
 
 
-            var flightCrewMembersLastFlight = flightRepository.GetLastFlightOf(flightCrewMembers);
-            var cabinCrewMembersLastFlight = flightRepository.GetLastFlightOf(cabinCrewMembers);
-            var aircraftLastFlight = flightRepository.GetLastFlightOf(aircraft);
+            var flightCrewMembersLastFlight = flightRepository?.GetLastFlightOf(flightCrewMembers);
+            var cabinCrewMembersLastFlight = flightRepository?.GetLastFlightOf(cabinCrewMembers);
+            var aircraftLastFlight = flightRepository?.GetLastFlightOf(aircraft);
 
             flight.CheckInvariants(aircraftLastFlight, flightCrewMembersLastFlight, cabinCrewMembersLastFlight);
 

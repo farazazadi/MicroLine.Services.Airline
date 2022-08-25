@@ -28,4 +28,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.MapGet("/", () => "MicroLine.Services.Airline");
+
 app.Run();

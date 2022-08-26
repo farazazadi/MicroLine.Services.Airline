@@ -33,7 +33,7 @@ internal class AuditingInterceptor : SaveChangesInterceptor
             if (entry.State == EntityState.Added) { }
             entry.Entity.SetCreationDetails(_currentUser.UserId, _dateTime.UtcNow);
 
-            if (entry.State == EntityState.Added || entry.State == EntityState.Modified || HasChangedOwnedEntities(entry))
+            if (entry.State is EntityState.Added or EntityState.Modified || HasChangedOwnedEntities(entry))
                 entry.Entity.SetModificationDetails(_currentUser.UserId, _dateTime.UtcNow);
         }
     }

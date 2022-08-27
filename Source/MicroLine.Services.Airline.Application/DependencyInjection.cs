@@ -1,4 +1,6 @@
 using System.Reflection;
+using Mapster;
+using MapsterMapper;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -10,8 +12,23 @@ public static class DependencyInjection
     {
         services.AddMediatR(Assembly.GetExecutingAssembly());
 
+        AddMappers(services);
+
         return services;
     }
 
+    private static IServiceCollection AddMappers(IServiceCollection services)
+    {
+        var config = TypeAdapterConfig.GlobalSettings;
+
+        config.Default.Settings.MapToConstructor = true;
+
+        config.Scan(Assembly.GetExecutingAssembly());
+
+        services.AddSingleton(config);
+        services.AddScoped<IMapper, ServiceMapper>();
+
+        return services;
+    }
 
 }

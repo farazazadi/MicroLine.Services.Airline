@@ -2,6 +2,7 @@ using MicroLine.Services.Airline.Application;
 using MicroLine.Services.Airline.Infrastructure;
 using MicroLine.Services.Airline.WebApi;
 using MicroLine.Services.Airline.Infrastructure.Persistence.DbContextInitializer;
+using MicroLine.Services.Airline.WebApi.Common.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,7 +27,9 @@ if (app.Environment.IsDevelopment())
     }
 }
 
-app.UseHttpsRedirection();
+app
+    .UseMiddleware<ExceptionHandlingMiddleware>()
+    .UseHttpsRedirection();
 
 app.MapGet("/", () => "MicroLine.Services.Airline");
 

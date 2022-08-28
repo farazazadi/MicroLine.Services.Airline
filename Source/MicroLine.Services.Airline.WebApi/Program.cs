@@ -33,4 +33,7 @@ app
 
 app.MapGet("/", () => "MicroLine.Services.Airline");
 
+
 app.Run();
+
+public partial class Program{}

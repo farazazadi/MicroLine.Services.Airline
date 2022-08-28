@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using MicroLine.Services.Airline.Domain.Common;
 using MicroLine.Services.Airline.Domain.Common.Attributes;
 
@@ -7,6 +8,7 @@ namespace MicroLine.Services.Airline.Tests.Architecture;
 public static class Namespaces
 {
     private static readonly string CompilerServices = typeof(CustomConstantAttribute).Namespace;
+    private static readonly string DebuggerStepThroughAttribute = typeof(DebuggerStepThroughAttribute).Namespace;
 
 
     public const string Domain = "MicroLine.Services.Airline.Domain";
@@ -19,7 +21,7 @@ public static class Namespaces
 
     public static readonly string DomainExcludingCommonNamespaceRegexPattern = $@"^(?!.*{DomainCommonNamespace.NormalizeForRegex()}).*$";
 
-    public static readonly string DomainAllowedAttributesNamespacesRegexPattern = $"{DomainAttributesNamespace.NormalizeForRegex()}|{CompilerServices.NormalizeForRegex()}";
+    public static readonly string DomainAllowedAttributesNamespacesRegexPattern = $"{DomainAttributesNamespace.NormalizeForRegex()}|{CompilerServices.NormalizeForRegex()}|{DebuggerStepThroughAttribute.NormalizeForRegex()}";
 
 
     public const string Application = "MicroLine.Services.Airline.Application";

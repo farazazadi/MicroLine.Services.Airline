@@ -1,4 +1,5 @@
-﻿using MicroLine.Services.Airline.Domain.Common;
+﻿using MicroLine.Services.Airline.Domain.Airports.Exceptions;
+using MicroLine.Services.Airline.Domain.Common;
 using MicroLine.Services.Airline.Domain.Common.Enums;
 using MicroLine.Services.Airline.Domain.Common.ValueObjects;
 
@@ -21,6 +22,18 @@ public class Airport : AggregateRoot
         Name = name;
         BaseUtcOffset = baseUtcOffset;
         AirportLocation = airportLocation;
+    }
+
+    public static async Task<Airport> CreateAsync(IcaoCode icaoCode, IataCode iataCode, AirportName name,
+        BaseUtcOffset baseUtcOffset, AirportLocation airportLocation,
+        IAirportReadonlyRepository repository, CancellationToken token = default)
+    {
+        var icaoCodeExist = await repository.ExistAsync(icaoCode, token);
+
+        if (icaoCodeExist)
+            throw new DuplicateIcaoCodeException(icaoCode);
+
+        return new Airport(icaoCode, iataCode, name, baseUtcOffset, airportLocation);
     }
 
 
@@ -64,8 +77,4 @@ public class Airport : AggregateRoot
 
     }
 
-    public static Airport Create(IcaoCode icaoCode, IataCode iataCode, AirportName name, BaseUtcOffset baseUtcOffset, AirportLocation airportLocation)
-    {
-        return new(icaoCode, iataCode, name, baseUtcOffset, airportLocation);
-    }
 }

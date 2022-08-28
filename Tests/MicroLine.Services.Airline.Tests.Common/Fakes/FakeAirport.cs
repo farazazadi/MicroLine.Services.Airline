@@ -1,12 +1,15 @@
 ﻿using Bogus;
 using MicroLine.Services.Airline.Domain.Airports;
+using Moq;
 
 namespace MicroLine.Services.Airline.Tests.Common.Fakes;
 
 public static class FakeAirport
 {
-    public static Airport NewFake()
+    public static async Task<Airport> NewFakeAsync()
     {
+        var repository = Mock.Of<IAirportReadonlyRepository>();
+
         var faker = new Faker();
 
         var icaoCode = NewFakeIcaoCode(faker);
@@ -17,11 +20,14 @@ public static class FakeAirport
 
         var baseUtcOffset = ValueObjects.FakeBaseUtcOffset.NewFake();
 
-        return Airport.Create(icaoCode, iataCode, airportName, baseUtcOffset, airportLocation);
+        return await Airport.CreateAsync(
+            icaoCode, iataCode, airportName, baseUtcOffset, airportLocation, repository);
     }
 
-    public static Airport NewFake(double latitude, double longitude)
+    public static async Task<Airport> NewFakeAsync(double latitude, double longitude)
     {
+        var repository = Mock.Of<IAirportReadonlyRepository>();
+
         var faker = new Faker();
 
         var icaoCode = NewFakeIcaoCode(faker);
@@ -32,7 +38,7 @@ public static class FakeAirport
 
         var baseUtcOffset = ValueObjects.FakeBaseUtcOffset.NewFake();
 
-        return Airport.Create(icaoCode, iataCode, airportName, baseUtcOffset, airportLocation);
+        return await Airport.CreateAsync(icaoCode, iataCode, airportName, baseUtcOffset, airportLocation, repository);
     }
 
 

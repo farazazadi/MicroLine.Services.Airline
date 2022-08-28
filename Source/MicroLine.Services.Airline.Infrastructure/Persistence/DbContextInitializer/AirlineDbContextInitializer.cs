@@ -17,16 +17,19 @@ namespace MicroLine.Services.Airline.Infrastructure.Persistence.DbContextInitial
 internal class AirlineDbContextInitializer : IAirlineDbContextInitializer
 {
     private readonly AirlineDbContext _dbContext;
+    private readonly IAirportReadonlyRepository _airportReadonlyRepository;
     private readonly IDateTime _dateTime;
     private readonly ILogger _logger;
 
     public AirlineDbContextInitializer(
         AirlineDbContext dbContext,
+        IAirportReadonlyRepository airportReadonlyRepository,
         IDateTime dateTime,
         ILogger<AirlineDbContextInitializer> logger
         )
     {
         _dbContext = dbContext;
+        _airportReadonlyRepository = airportReadonlyRepository;
         _dateTime = dateTime;
         _logger = logger;
     }
@@ -111,42 +114,54 @@ internal class AirlineDbContextInitializer : IAirlineDbContextInitializer
     {
         #region Airports
 
-        var mehrabadAirport = Airport.Create(
+        var mehrabadAirport = await Airport.CreateAsync(
             IcaoCode.Create("OIII"),
             IataCode.Create("THR"),
             AirportName.Create("Mehrabad International Airport"),
             BaseUtcOffset.Create(3, 30),
             AirportLocation.Create(Continent.Asia, "Iran", "Tehran", "Tehran",
-                35.68920135498047, 51.31340026855469)
+                35.68920135498047, 51.31340026855469),
+
+            _airportReadonlyRepository,
+            token
         );
 
-        var istanbulAirport = Airport.Create(
+        var istanbulAirport = await Airport.CreateAsync(
             IcaoCode.Create("LTFM"),
             IataCode.Create("IST"),
             AirportName.Create("Istanbul Airport"),
             BaseUtcOffset.Create(3, 0),
             AirportLocation.Create(Continent.Asia, "Turkey", "Istanbul", "Istanbul",
-                41.275278, 28.751944)
+                41.275278, 28.751944),
+
+            _airportReadonlyRepository,
+            token
         );
 
 
-        var torontoPearsonAirport = Airport.Create(
+        var torontoPearsonAirport = await Airport.CreateAsync(
             IcaoCode.Create("CYYZ"),
             IataCode.Create("YYZ"),
             AirportName.Create("Toronto Pearson International Airport"),
             BaseUtcOffset.Create(-5, 0),
             AirportLocation.Create(Continent.NorthAmerica, "Canada", "Ontario", "Toronto",
-                43.6772003174, -79.63059997559999)
+                43.6772003174, -79.63059997559999),
+
+            _airportReadonlyRepository,
+            token
         );
 
 
-        var dublinAirport = Airport.Create(
+        var dublinAirport = await Airport.CreateAsync(
             IcaoCode.Create("EIDW"),
             IataCode.Create("DUB"),
             AirportName.Create("Dublin Airport"),
             BaseUtcOffset.Create(0, 0),
             AirportLocation.Create(Continent.Europe, "Ireland", "Dublin", "Collinstown",
-                53.421299, -6.27007)
+                53.421299, -6.27007),
+
+            _airportReadonlyRepository,
+            token
         );
 
         var airports = new List<Airport>

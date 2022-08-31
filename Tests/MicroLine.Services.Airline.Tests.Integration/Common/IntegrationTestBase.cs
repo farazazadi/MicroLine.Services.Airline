@@ -1,5 +1,4 @@
-﻿using Bogus;
-using MapsterMapper;
+﻿using MapsterMapper;
 using MicroLine.Services.Airline.Tests.Integration.Common.Fixtures;
 using Microsoft.Extensions.DependencyInjection;
 

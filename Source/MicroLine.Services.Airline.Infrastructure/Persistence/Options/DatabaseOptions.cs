@@ -2,7 +2,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace MicroLine.Services.Airline.Infrastructure.Persistence.Options;
 
-internal class DatabaseOptions
+public class DatabaseOptions
 {
     public readonly string SectionName = "DatabaseOptions";
 

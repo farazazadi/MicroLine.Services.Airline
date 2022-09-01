@@ -46,5 +46,30 @@ public class AirportTests : IntegrationTestBase
         });
     }
 
-}
 
+    [Fact]
+    public async Task Airport_ShouldBeReturnedAsExpected_WhenIdIsValid()
+    {
+        // Given
+        var airport = await FakeAirport.NewFakeAsync();
+
+        var createAirportCommand = Mapper.Map<CreateAirportCommand>(airport);
+
+        var createAirportResponse = await Client.PostAsJsonAsync("api/airports", createAirportCommand);
+
+        var expected = await createAirportResponse.Content.ReadFromJsonAsync<AirportDto>();
+
+
+        // When
+        var response = await Client.GetAsync($"{createAirportResponse.Headers.Location}");
+
+
+        // Then
+        var airportDto = await response.Content.ReadFromJsonAsync<AirportDto>();
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        airportDto.Should().BeEquivalentTo(expected);
+    }
+
+}

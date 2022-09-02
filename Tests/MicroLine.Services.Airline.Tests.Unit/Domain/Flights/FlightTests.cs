@@ -16,7 +16,7 @@ public class FlightTests
 {
 
     [Fact]
-    public void Flight_ShouldHaveFlightScheduledEventAndScheduledStatus_WhenScheduled()
+    public async Task Flight_ShouldHaveFlightScheduledEventAndScheduledStatus_WhenScheduled()
     {
         // Given
         var flightRepository = new Mock<IFlightRepository>().Object;
@@ -27,8 +27,8 @@ public class FlightTests
 
         var flightNumber = FlightNumber.Create("UAL870");
 
-        var originAirport = FakeAirport.NewFake();
-        var destinationAirport = FakeAirport.NewFake();
+        var originAirport = await FakeAirport.NewFakeAsync();
+        var destinationAirport = await FakeAirport.NewFakeAsync();
 
         var aircraft = FakeAircraft.NewFake(AircraftManufacturer.Boeing);
 
@@ -73,7 +73,7 @@ public class FlightTests
     }
 
     [Fact]
-    public void Flight_ShouldThrowInvalidScheduledDateTimeOfDeparture_WhenScheduledUtcDateTimeOfDepartureIsInPastTime()
+    public async Task Flight_ShouldThrowInvalidScheduledDateTimeOfDeparture_WhenScheduledUtcDateTimeOfDepartureIsInPastTime()
     {
         // Given
         var flightRepository = new Mock<IFlightRepository>().Object;
@@ -83,8 +83,8 @@ public class FlightTests
 
         var flightNumber = FlightNumber.Create("UAL870");
 
-        var originAirport = FakeAirport.NewFake();
-        var destinationAirport = FakeAirport.NewFake();
+        var originAirport = await FakeAirport.NewFakeAsync();
+        var destinationAirport = await FakeAirport.NewFakeAsync();
 
         var aircraft = FakeAircraft.NewFake(AircraftManufacturer.Boeing);
 
@@ -139,7 +139,7 @@ public class FlightTests
     };
 
     [Theory, MemberData(nameof(IncompleteFlightCrewMembers))]
-    public void Flight_ShouldIncompleteFlightCrewMembersException_WhenFlightCrewDoesNotContainAtLeast1PilotAnd1CoPilotOr2Pilot(
+    public async Task Flight_ShouldIncompleteFlightCrewMembersException_WhenFlightCrewDoesNotContainAtLeast1PilotAnd1CoPilotOr2Pilot(
         List<FlightCrew> flightCrewMembers)
     {
         // Given
@@ -150,8 +150,8 @@ public class FlightTests
 
         var flightNumber = FlightNumber.Create("UAL870");
 
-        var originAirport = FakeAirport.NewFake();
-        var destinationAirport = FakeAirport.NewFake();
+        var originAirport = await FakeAirport.NewFakeAsync();
+        var destinationAirport = await FakeAirport.NewFakeAsync();
 
         var aircraft = FakeAircraft.NewFake(AircraftManufacturer.Boeing);
 
@@ -200,7 +200,7 @@ public class FlightTests
     };
 
     [Theory, MemberData(nameof(WeekDaysPricingData))]
-    public void Flight_ShouldHaveExpectedPrices_WhenWeekDayFlightPricingPolicyApplied(
+    public async Task Flight_ShouldHaveExpectedPrices_WhenWeekDayFlightPricingPolicyApplied(
         DateTime scheduledUtcDateTimeOfDeparture,
         decimal baseEconomyClassPrice, decimal baseBusinessClassPrice, decimal baseFirstClassPrice,
         decimal expectedEconomyClassPrice, decimal expectedBusinessClassPrice, decimal expectedFirstClassPrice
@@ -214,8 +214,8 @@ public class FlightTests
 
         var flightNumber = FlightNumber.Create("UAL870");
 
-        var originAirport = FakeAirport.NewFake();
-        var destinationAirport = FakeAirport.NewFake();
+        var originAirport = await FakeAirport.NewFakeAsync();
+        var destinationAirport = await FakeAirport.NewFakeAsync();
 
         var aircraft = FakeAircraft.NewFake(AircraftManufacturer.Boeing);
 

@@ -22,4 +22,11 @@ internal class AirportReadonlyRepository : IAirportReadonlyRepository
     {
         return await _dbContext.Airports.FindAsync(new object[] {id}, token);
     }
+
+    public async Task<IReadOnlyList<Airport>> GetAllAsync(CancellationToken token = default)
+    {
+        return await _dbContext.Airports
+            .AsNoTrackingWithIdentityResolution()
+            .ToListAsync(token);
+    }
 }

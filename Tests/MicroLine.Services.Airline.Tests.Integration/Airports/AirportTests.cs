@@ -72,4 +72,38 @@ public class AirportTests : IntegrationTestBase
         airportDto.Should().BeEquivalentTo(expected);
     }
 
+
+    [Fact]
+    public async Task AllAirports_ShouldBeReturnedAsExpected()
+    {
+        // Given
+        await AirlineWebApplicationFactory.ResetDatabaseAsync();
+
+        var expected = new List<AirportDto>();
+
+        for (var i = 0; i < 10; i++)
+        {
+            var airport = await FakeAirport.NewFakeAsync();
+
+            var createAirportCommand = Mapper.Map<CreateAirportCommand>(airport);
+
+            var createAirportResponse = await Client.PostAsJsonAsync("api/airports", createAirportCommand);
+
+            var dto = await createAirportResponse.Content.ReadFromJsonAsync<AirportDto>();
+
+            expected.Add(dto);
+        }
+
+
+        // When
+        var response = await Client.GetAsync("api/airports");
+
+
+        // Then
+        var airportDto = await response.Content.ReadFromJsonAsync<List<AirportDto>>();
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        airportDto.Should().BeEquivalentTo(expected);
+    }
 }

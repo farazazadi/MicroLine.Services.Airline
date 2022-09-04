@@ -2,7 +2,7 @@
 
 namespace MicroLine.Services.Airline.WebApi.Common.Middleware;
 
-public class ExceptionHandlingMiddleware
+internal class ExceptionHandlingMiddleware
 {
     private readonly RequestDelegate _next;
 
@@ -11,7 +11,7 @@ public class ExceptionHandlingMiddleware
         _next = next;
     }
 
-    public async Task Invoke(HttpContext context)
+    public async Task Invoke(HttpContext context, ILogger<ExceptionHandlingMiddleware> logger)
     {
         try
         {
@@ -23,7 +23,7 @@ public class ExceptionHandlingMiddleware
         }
         catch (Exception exception)
         {
-            await HandleUnexpectedExceptionsAsync(context, exception);
+            await HandleUnexpectedExceptionsAsync(context, exception, logger);
         }
     }
 
@@ -45,7 +45,8 @@ public class ExceptionHandlingMiddleware
     }
 
 
-    private static async Task HandleUnexpectedExceptionsAsync(HttpContext context, Exception exception)
+    private static async Task HandleUnexpectedExceptionsAsync(HttpContext context, Exception exception,
+        ILogger<ExceptionHandlingMiddleware> logger)
     {
         await Results.Problem(
                 detail: exception.Message,
@@ -53,5 +54,7 @@ public class ExceptionHandlingMiddleware
                 instance: context.Request.Path
             )
             .ExecuteAsync(context);
+
+        logger.LogError(exception, exception.Message);
     }
 }

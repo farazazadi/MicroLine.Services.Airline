@@ -4,38 +4,68 @@ using MicroLine.Services.Airline.WebApi;
 using MicroLine.Services.Airline.Infrastructure.Persistence.DbContextInitializer;
 using MicroLine.Services.Airline.WebApi.Airports;
 using MicroLine.Services.Airline.WebApi.Common.Middleware;
+using Serilog;
 
-var builder = WebApplication.CreateBuilder(args);
+const string serviceName = "Airline";
 
-builder.Services
-    .AddApplication()
-    .AddInfrastructure(builder.Configuration)
-    .AddWebApi();
+Log.Logger = new LoggerConfiguration()
+    .Enrich.WithProperty("Service", serviceName)
+    .WriteTo.Console()
+    .CreateBootstrapLogger();
 
-var app = builder.Build();
+Log.Information("Starting {Service} service up...", serviceName);
 
-if (app.Environment.IsDevelopment())
+try
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    var builder = WebApplication.CreateBuilder(args);
 
-    using (var scope = app.Services.CreateScope())
+    builder.Host.UseSerilog((hostBuilderContext, loggerConfiguration) => loggerConfiguration
+        .Enrich.WithProperty("Service", serviceName)
+        .ReadFrom.Configuration(hostBuilderContext.Configuration)
+    );
+
+    builder.Services
+        .AddApplication()
+        .AddInfrastructure(builder.Configuration)
+        .AddWebApi();
+
+    var app = builder.Build();
+
+
+    if (app.Environment.IsDevelopment())
     {
-        var dbContextInitializer = scope.ServiceProvider.GetRequiredService<IAirlineDbContextInitializer>();
+        app.UseSerilogRequestLogging();
 
-        await dbContextInitializer.MigrateAsync();
-        await dbContextInitializer.SeedAsync();
+        app.UseSwagger();
+        app.UseSwaggerUI();
+
+        using (var scope = app.Services.CreateScope())
+        {
+            var dbContextInitializer = scope.ServiceProvider.GetRequiredService<IAirlineDbContextInitializer>();
+
+            await dbContextInitializer.MigrateAsync();
+            await dbContextInitializer.SeedAsync();
+        }
     }
+
+    app
+        .UseMiddleware<ExceptionHandlingMiddleware>()
+        .UseHttpsRedirection();
+
+    app.MapGet("/", () => "MicroLine.Services.Airline");
+
+    app.MapAirportEndpoints();
+
+    app.Run();
+
 }
-
-app
-    .UseMiddleware<ExceptionHandlingMiddleware>()
-    .UseHttpsRedirection();
-
-app.MapGet("/", () => "MicroLine.Services.Airline");
-
-app.MapAirportEndpoints();
-
-app.Run();
+catch (Exception ex)
+{
+    Log.Fatal(ex, "The {Service} service could not be started!", serviceName);
+}
+finally
+{
+    Log.CloseAndFlush();
+}
 
 public partial class Program{}

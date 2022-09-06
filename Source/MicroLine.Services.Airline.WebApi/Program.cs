@@ -2,6 +2,7 @@ using MicroLine.Services.Airline.Application;
 using MicroLine.Services.Airline.Infrastructure;
 using MicroLine.Services.Airline.WebApi;
 using MicroLine.Services.Airline.Infrastructure.Persistence.DbContextInitializer;
+using MicroLine.Services.Airline.WebApi.Aircrafts;
 using MicroLine.Services.Airline.WebApi.Airports;
 using MicroLine.Services.Airline.WebApi.Common.Middleware;
 using Serilog;
@@ -53,7 +54,9 @@ try
 
     app.MapGet("/", () => "MicroLine.Services.Airline");
 
-    app.MapAirportEndpoints();
+    app
+        .MapAirportEndpoints()
+        .MapAircraftEndpoints();
 
     app.Run();
 

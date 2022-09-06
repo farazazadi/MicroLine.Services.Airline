@@ -8,7 +8,6 @@ using MicroLine.Services.Airline.Domain.Flights.Events;
 using MicroLine.Services.Airline.Domain.Flights.Exceptions;
 using MicroLine.Services.Airline.Tests.Common.Extensions;
 using MicroLine.Services.Airline.Tests.Common.Fakes;
-using Moq;
 
 namespace MicroLine.Services.Airline.Tests.Unit.Domain.Flights;
 
@@ -30,7 +29,7 @@ public class FlightTests
         var originAirport = await FakeAirport.NewFakeAsync();
         var destinationAirport = await FakeAirport.NewFakeAsync();
 
-        var aircraft = FakeAircraft.NewFake(AircraftManufacturer.Boeing);
+        var aircraft = await FakeAircraft.NewFakeAsync(AircraftManufacturer.Boeing);
 
 
 
@@ -86,7 +85,7 @@ public class FlightTests
         var originAirport = await FakeAirport.NewFakeAsync();
         var destinationAirport = await FakeAirport.NewFakeAsync();
 
-        var aircraft = FakeAircraft.NewFake(AircraftManufacturer.Boeing);
+        var aircraft = await FakeAircraft.NewFakeAsync(AircraftManufacturer.Boeing);
 
         var scheduledUtcDateTimeOfDeparture = DateTime.UtcNow.AddHours(-1);
 
@@ -153,7 +152,7 @@ public class FlightTests
         var originAirport = await FakeAirport.NewFakeAsync();
         var destinationAirport = await FakeAirport.NewFakeAsync();
 
-        var aircraft = FakeAircraft.NewFake(AircraftManufacturer.Boeing);
+        var aircraft = await FakeAircraft.NewFakeAsync(AircraftManufacturer.Boeing);
 
         var scheduledUtcDateTimeOfDeparture = DateTime.UtcNow.AddHours(5);
 
@@ -217,7 +216,7 @@ public class FlightTests
         var originAirport = await FakeAirport.NewFakeAsync();
         var destinationAirport = await FakeAirport.NewFakeAsync();
 
-        var aircraft = FakeAircraft.NewFake(AircraftManufacturer.Boeing);
+        var aircraft = await FakeAircraft.NewFakeAsync(AircraftManufacturer.Boeing);
 
 
         var economyClassPrice = Money.Of(baseEconomyClassPrice, Money.CurrencyType.UnitedStatesDollar);

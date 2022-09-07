@@ -47,4 +47,27 @@ public class AircraftTests : IntegrationTestBase
         });
     }
 
+
+    [Fact]
+    public async Task Aircraft_ShouldBeReturnedAsExpected_WhenIdIsValid()
+    {
+        // Given
+        var aircraft = await FakeAircraft.NewFakeAsync(AircraftManufacturer.Airbus);
+        await SaveAsync(aircraft);
+
+        var expected = Mapper.Map<AircraftDto>(aircraft);
+
+        // When
+        var response = await Client.GetAsync($"api/aircrafts/{expected.Id}");
+
+
+        // Then
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var aircraftDto = await response.Content.ReadFromJsonAsync<AircraftDto>();
+
+        aircraftDto.Should().BeEquivalentTo(expected);
+
+    }
+
 }

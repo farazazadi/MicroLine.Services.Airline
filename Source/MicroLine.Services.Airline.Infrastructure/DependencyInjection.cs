@@ -57,6 +57,7 @@ public static class DependencyInjection
 
         services
             .AddScoped<IAirlineDbContext>(provider => provider.GetRequiredService<AirlineDbContext>())
+            .AddScoped<DbContext>(provider => provider.GetRequiredService<AirlineDbContext>())
             .AddScoped<IAirlineDbContextInitializer, AirlineDbContextInitializer>()
             .AddScoped<ISaveChangesInterceptor, AuditingInterceptor>()
             .AddScoped<ISaveChangesInterceptor, EventDispatchingInterceptor>();

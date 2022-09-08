@@ -30,8 +30,8 @@ internal class AuditingInterceptor : SaveChangesInterceptor
 
         foreach (var entry in context.ChangeTracker.Entries<AuditableEntity>())
         {
-            if (entry.State == EntityState.Added) { }
-            entry.Entity.SetCreationDetails(_currentUser.UserId, _dateTime.UtcNow);
+            if (entry.State == EntityState.Added)
+                entry.Entity.SetCreationDetails(_currentUser.UserId, _dateTime.UtcNow);
 
             if (entry.State is EntityState.Added or EntityState.Modified || HasChangedOwnedEntities(entry))
                 entry.Entity.SetModificationDetails(_currentUser.UserId, _dateTime.UtcNow);

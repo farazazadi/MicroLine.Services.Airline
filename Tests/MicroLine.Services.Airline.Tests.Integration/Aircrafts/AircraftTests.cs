@@ -70,4 +70,33 @@ public class AircraftTests : IntegrationTestBase
 
     }
 
+
+    [Fact]
+    public async Task AllAircrafts_ShouldBeReturnedAsExpected()
+    {
+        // Given
+        var aircrafts = await FakeAircraft.NewFakeListAsync(
+            AircraftManufacturer.Airbus,
+            AircraftManufacturer.Boeing,
+            AircraftManufacturer.Bombardier,
+            AircraftManufacturer.LockheedMartin,
+            AircraftManufacturer.Embraer,
+            AircraftManufacturer.Airbus);
+
+        await SaveAsync(aircrafts);
+
+        var expected = Mapper.Map<IList<AircraftDto>>(aircrafts);
+
+
+        // When
+        var response = await Client.GetAsync("api/aircrafts");
+
+
+        // Then
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var aircraftDtoList = await response.Content.ReadFromJsonAsync<IList<AircraftDto>>();
+
+        aircraftDtoList.Should().BeEquivalentTo(expected);
+    }
 }

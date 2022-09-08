@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using MicroLine.Services.Airline.Application.Aircrafts.Commands.CreateAircraft;
 using MicroLine.Services.Airline.Application.Aircrafts.Queries.GetAircraftById;
+using MicroLine.Services.Airline.Application.Aircrafts.Queries.GetAllAircrafts;
 
 namespace MicroLine.Services.Airline.WebApi.Aircrafts;
 
@@ -12,6 +13,7 @@ internal static class AircraftEndpoints
     {
         app.MapPost(BaseUrl, CreateAircraftAsync);
         app.MapGet(BaseUrl + "/{id}", GetAircraftByIdAsync);
+        app.MapGet(BaseUrl, GetAllAircraftsAsync);
 
         return app;
     }
@@ -31,4 +33,12 @@ internal static class AircraftEndpoints
 
         return aircraftDto is not null ? Results.Ok(aircraftDto) : Results.NotFound();
     }
+
+    private static async Task<IResult> GetAllAircraftsAsync(ISender sender, CancellationToken token)
+    {
+        var aircrafts = await sender.Send(new GetAllAircraftsQuery(), token);
+
+        return Results.Ok(aircrafts);
+    }
+
 }

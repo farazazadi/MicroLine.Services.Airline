@@ -36,6 +36,19 @@ public static class FakeAircraft
         return aircraft;
     }
 
+    public static async Task<List<Aircraft>> NewFakeListAsync(params AircraftManufacturer[] aircraftManufacturers)
+    {
+        var aircrafts = new List<Aircraft>();
+
+        foreach (var manufacturer in aircraftManufacturers)
+        {
+            var aircraft = await NewFakeAsync(manufacturer);
+            aircrafts.Add(aircraft);
+        }
+
+        return aircrafts;
+    }
+
 
     private static AircraftModel NewFakeAircraftModel(AircraftManufacturer manufacturer, Faker faker)
     {

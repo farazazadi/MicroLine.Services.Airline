@@ -4,6 +4,7 @@ using MicroLine.Services.Airline.Domain.Common.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 
 namespace MicroLine.Services.Airline.Infrastructure.Persistence.Repositories;
+
 internal class AircraftReadonlyRepository : IAircraftReadonlyRepository
 {
     private readonly IAirlineDbContext _dbContext;
@@ -22,5 +23,13 @@ internal class AircraftReadonlyRepository : IAircraftReadonlyRepository
     public async Task<Aircraft> GetAsync(Id id, CancellationToken token = default)
     {
         return await _dbContext.Aircrafts.FindAsync(new object[] {id}, token);
+    }
+
+    public async Task<IReadOnlyList<Aircraft>> GetAllAsync(CancellationToken token = default)
+    {
+        return await _dbContext.Aircrafts
+            .AsNoTrackingWithIdentityResolution()
+            .OrderByDescending(aircraft => aircraft.CreatedAtUtc)
+            .ToListAsync(token);
     }
 }

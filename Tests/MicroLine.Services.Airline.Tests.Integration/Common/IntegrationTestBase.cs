@@ -31,4 +31,10 @@ public abstract class IntegrationTestBase
         await _dbContext.AddAsync(entity);
         await _dbContext.SaveChangesAsync();
     }
+
+    protected async Task SaveAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : AggregateRoot
+    {
+        await _dbContext.AddRangeAsync(entities);
+        await _dbContext.SaveChangesAsync();
+    }
 }

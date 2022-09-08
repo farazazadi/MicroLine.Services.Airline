@@ -41,7 +41,18 @@ public static class FakeAirport
         return await Airport.CreateAsync(icaoCode, iataCode, airportName, baseUtcOffset, airportLocation, repository);
     }
 
+    public static async Task<List<Airport>> NewFakeListAsync(int count)
+    {
+        var airports = new List<Airport>();
 
+        for (var i = 0; i < count; i++)
+        {
+            var airport = await NewFakeAsync();
+            airports.Add(airport);
+        }
+
+        return airports;
+    }
 
     private static IcaoCode NewFakeIcaoCode(Faker faker)
     {

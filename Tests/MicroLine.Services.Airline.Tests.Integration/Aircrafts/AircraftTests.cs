@@ -74,6 +74,8 @@ public class AircraftTests : IntegrationTestBase
     [Fact]
     public async Task AllAircrafts_ShouldBeReturnedAsExpected()
     {
+        await AirlineWebApplicationFactory.ResetDatabaseAsync();
+
         // Given
         var aircrafts = await FakeAircraft.NewFakeListAsync(
             AircraftManufacturer.Airbus,

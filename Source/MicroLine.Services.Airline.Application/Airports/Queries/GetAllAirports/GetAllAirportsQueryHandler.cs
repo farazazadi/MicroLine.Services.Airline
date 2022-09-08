@@ -7,7 +7,7 @@ namespace MicroLine.Services.Airline.Application.Airports.Queries.GetAllAirports
 
 public class GetAllAirportsQueryHandler : IRequestHandler<GetAllAirportsQuery, IReadOnlyList<AirportDto>>
 {
-    private readonly IAirportReadonlyRepository _repository;
+    private readonly IAirportReadonlyRepository _airportReadonlyRepository;
     private readonly IMapper _mapper;
 
     public GetAllAirportsQueryHandler(
@@ -15,12 +15,12 @@ public class GetAllAirportsQueryHandler : IRequestHandler<GetAllAirportsQuery, I
         IMapper mapper
         )
     {
-        _repository = repository;
+        _airportReadonlyRepository = repository;
         _mapper = mapper;
     }
     public async Task<IReadOnlyList<AirportDto>> Handle(GetAllAirportsQuery query, CancellationToken token)
     {
-        var airports = await _repository.GetAllAsync(token);
+        var airports = await _airportReadonlyRepository.GetAllAsync(token);
 
         var airportDtoList = _mapper.Map<List<AirportDto>>(airports);
 

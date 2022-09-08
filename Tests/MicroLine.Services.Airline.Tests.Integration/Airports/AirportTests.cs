@@ -53,21 +53,19 @@ public class AirportTests : IntegrationTestBase
         // Given
         var airport = await FakeAirport.NewFakeAsync();
 
-        var createAirportCommand = Mapper.Map<CreateAirportCommand>(airport);
+        await SaveAsync(airport);
 
-        var createAirportResponse = await Client.PostAsJsonAsync("api/airports", createAirportCommand);
-
-        var expected = await createAirportResponse.Content.ReadFromJsonAsync<AirportDto>();
+        var expected = Mapper.Map<AirportDto>(airport);
 
 
         // When
-        var response = await Client.GetAsync($"{createAirportResponse.Headers.Location}");
+        var response = await Client.GetAsync($"api/airports/{expected.Id}");
 
 
         // Then
-        var airportDto = await response.Content.ReadFromJsonAsync<AirportDto>();
-
         response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var airportDto = await response.Content.ReadFromJsonAsync<AirportDto>();
 
         airportDto.Should().BeEquivalentTo(expected);
     }
@@ -79,20 +77,11 @@ public class AirportTests : IntegrationTestBase
         // Given
         await AirlineWebApplicationFactory.ResetDatabaseAsync();
 
-        var expected = new List<AirportDto>();
+        var airports = await FakeAirport.NewFakeListAsync(5);
 
-        for (var i = 0; i < 10; i++)
-        {
-            var airport = await FakeAirport.NewFakeAsync();
+        await SaveAsync(airports);
 
-            var createAirportCommand = Mapper.Map<CreateAirportCommand>(airport);
-
-            var createAirportResponse = await Client.PostAsJsonAsync("api/airports", createAirportCommand);
-
-            var dto = await createAirportResponse.Content.ReadFromJsonAsync<AirportDto>();
-
-            expected.Add(dto);
-        }
+        var expected = Mapper.Map<IList<AirportDto>>(airports);
 
 
         // When
@@ -100,9 +89,9 @@ public class AirportTests : IntegrationTestBase
 
 
         // Then
-        var airportDto = await response.Content.ReadFromJsonAsync<List<AirportDto>>();
-
         response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var airportDto = await response.Content.ReadFromJsonAsync<List<AirportDto>>();
 
         airportDto.Should().BeEquivalentTo(expected);
     }

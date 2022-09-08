@@ -1,4 +1,5 @@
 using MicroLine.Services.Airline.Application.Common.Contracts;
+using MicroLine.Services.Airline.Domain.Aircrafts;
 using MicroLine.Services.Airline.Domain.Airports;
 using MicroLine.Services.Airline.Infrastructure.Persistence;
 using MicroLine.Services.Airline.Infrastructure.Persistence.DbContextInitializer;
@@ -22,7 +23,8 @@ public static class DependencyInjection
         AddDbContext(services, configuration);
 
         services
-            .AddScoped<IAirportReadonlyRepository, AirportReadonlyRepository>();
+            .AddScoped<IAirportReadonlyRepository, AirportReadonlyRepository>()
+            .AddScoped<IAircraftReadonlyRepository, AircraftReadonlyRepository>();
 
         services
             .AddScoped<IEventDispatcher, EventDispatcherService>()
@@ -55,6 +57,7 @@ public static class DependencyInjection
 
         services
             .AddScoped<IAirlineDbContext>(provider => provider.GetRequiredService<AirlineDbContext>())
+            .AddScoped<DbContext>(provider => provider.GetRequiredService<AirlineDbContext>())
             .AddScoped<IAirlineDbContextInitializer, AirlineDbContextInitializer>()
             .AddScoped<ISaveChangesInterceptor, AuditingInterceptor>()
             .AddScoped<ISaveChangesInterceptor, EventDispatchingInterceptor>();

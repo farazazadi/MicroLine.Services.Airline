@@ -18,18 +18,21 @@ internal class AirlineDbContextInitializer : IAirlineDbContextInitializer
 {
     private readonly AirlineDbContext _dbContext;
     private readonly IAirportReadonlyRepository _airportReadonlyRepository;
+    private readonly IAircraftReadonlyRepository _aircraftReadonlyRepository;
     private readonly IDateTime _dateTime;
     private readonly ILogger _logger;
 
     public AirlineDbContextInitializer(
         AirlineDbContext dbContext,
         IAirportReadonlyRepository airportReadonlyRepository,
+        IAircraftReadonlyRepository aircraftReadonlyRepository,
         IDateTime dateTime,
         ILogger<AirlineDbContextInitializer> logger
         )
     {
         _dbContext = dbContext;
         _airportReadonlyRepository = airportReadonlyRepository;
+        _aircraftReadonlyRepository = aircraftReadonlyRepository;
         _dateTime = dateTime;
         _logger = logger;
     }
@@ -177,25 +180,30 @@ internal class AirlineDbContextInitializer : IAirlineDbContextInitializer
 
         #region Aircrafts
 
-        var airbusA320 = Aircraft.Create(
+        var airbusA320 = await Aircraft.CreateAsync(
             AircraftManufacturer.Airbus,
             AircraftModel.Create("A320"),
             Date.Create(2015, 05, 01),
             PassengerSeatingCapacity.Create(180, 45, 0),
             Speed.Create(828, unitOfSpeed: Speed.UnitOfSpeed.KilometresPerHour),
             Speed.Create(871, unitOfSpeed: Speed.UnitOfSpeed.KilometresPerHour),
-            AircraftRegistrationCode.Create("EP-FSA")
-        );
+            AircraftRegistrationCode.Create("EP-FSA"),
 
-        var boeing777 = Aircraft.Create(
+            _aircraftReadonlyRepository,
+            token
+            );
+
+        var boeing777 = await Aircraft.CreateAsync(
             AircraftManufacturer.Boeing,
             AircraftModel.Create("777-300ER"),
             Date.Create(2010, 03, 30),
             PassengerSeatingCapacity.Create(300, 96, 0),
             Speed.Create(892, unitOfSpeed: Speed.UnitOfSpeed.KilometresPerHour),
             Speed.Create(924, unitOfSpeed: Speed.UnitOfSpeed.KilometresPerHour),
-            AircraftRegistrationCode.Create("EP-FSB")
-        );
+            AircraftRegistrationCode.Create("EP-FSB"),
+            _aircraftReadonlyRepository,
+            token
+            );
 
         var aircrafts = new List<Aircraft> { airbusA320, boeing777 };
 

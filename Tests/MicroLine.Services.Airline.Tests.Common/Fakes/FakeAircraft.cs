@@ -1,16 +1,19 @@
 ﻿using Bogus;
 using MicroLine.Services.Airline.Domain.Aircrafts;
 using MicroLine.Services.Airline.Domain.Common.ValueObjects;
+using Moq;
 
 namespace MicroLine.Services.Airline.Tests.Common.Fakes;
 
 public static class FakeAircraft
 {
-    public static Aircraft NewFake(AircraftManufacturer manufacturer,
+    public static async Task<Aircraft> NewFakeAsync(AircraftManufacturer manufacturer,
         int? economyClassCapacity = null,
         int? businessClassCapacity = null,
         int? firstClassCapacity = null)
     {
+        var repository = Mock.Of<IAircraftReadonlyRepository>();
+
         var faker = new Faker();
 
         var model = NewFakeAircraftModel(manufacturer, faker);
@@ -20,14 +23,30 @@ public static class FakeAircraft
         var maximumOperatingSpeed = NewFakeAircraftMaximumOperatingSpeed();
         var registrationCode = NewFakeAircraftRegistrationCode(faker);
 
-        return Aircraft.Create(manufacturer
+        var aircraft = await Aircraft.CreateAsync(manufacturer
             , model
             , manufactureDate
             , maximumSeatingCapacity
             , cruisingSpeed
             , maximumOperatingSpeed
             , registrationCode
-            );
+            , repository
+        );
+
+        return aircraft;
+    }
+
+    public static async Task<List<Aircraft>> NewFakeListAsync(params AircraftManufacturer[] aircraftManufacturers)
+    {
+        var aircrafts = new List<Aircraft>();
+
+        foreach (var manufacturer in aircraftManufacturers)
+        {
+            var aircraft = await NewFakeAsync(manufacturer);
+            aircrafts.Add(aircraft);
+        }
+
+        return aircrafts;
     }
 
 

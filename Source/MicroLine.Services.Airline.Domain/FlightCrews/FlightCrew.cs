@@ -51,6 +51,14 @@ public class FlightCrew : AggregateRoot
             throw new DuplicatePassportNumberException(
                 $"A flight crew member with same PassportNumber ({passportNumber}) already exist!");
 
+
+        var nationalIdExist = await flightCrewReadonlyRepository.ExistAsync(nationalId, token);
+
+        if (nationalIdExist)
+            throw new DuplicateNationalIdException(
+                $"A flight crew member with same NationalId ({nationalId}) already exist!");
+
+
         return new FlightCrew(flightCrewType, gender, fullName, birthDate,
             nationalId, passportNumber, email, contactNumber, address);
     }

@@ -1,5 +1,6 @@
 ﻿using MicroLine.Services.Airline.Domain.Common;
 using MicroLine.Services.Airline.Domain.Common.Enums;
+using MicroLine.Services.Airline.Domain.Common.Exceptions;
 using MicroLine.Services.Airline.Domain.Common.ValueObjects;
 using MicroLine.Services.Airline.Domain.Flights;
 
@@ -38,10 +39,17 @@ public class FlightCrew : AggregateRoot
     }
 
 
-    public static FlightCrew Create(FlightCrewType flightCrewType, Gender gender, FullName fullName,
+    public static async Task<FlightCrew> CreateAsync(FlightCrewType flightCrewType, Gender gender, FullName fullName,
         Date birthDate, NationalId nationalId, PassportNumber passportNumber,
-        Email email, ContactNumber contactNumber, Address address)
+        Email email, ContactNumber contactNumber, Address address,
+        IFlightCrewReadonlyRepository flightCrewReadonlyRepository,
+        CancellationToken token = default)
     {
+        var passportNumberExist = await flightCrewReadonlyRepository.ExistAsync(passportNumber, token);
+
+        if (passportNumberExist)
+            throw new DuplicatePassportNumberException(
+                $"A flight crew member with same PassportNumber ({passportNumber}) already exist!");
 
         return new FlightCrew(flightCrewType, gender, fullName, birthDate,
             nationalId, passportNumber, email, contactNumber, address);

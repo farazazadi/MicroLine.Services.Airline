@@ -45,4 +45,39 @@ public class FlightCrewTests : IntegrationTestBase
             return options;
         });
     }
+
+    [Fact]
+    public async Task FlightCrew_ShouldBeReturnedAsExpected_WhenIdIsValid()
+    {
+        // Given
+        var flightCrew = await FakeFlightCrew.NewFakeAsync(FlightCrewType.FlightEngineer);
+        await SaveAsync(flightCrew);
+
+        var expected = Mapper.Map<FlightCrewDto>(flightCrew);
+
+        // When
+        var response = await Client.GetAsync($"api/flight-crew/{expected.Id}");
+
+        // Then
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var flightCrewDto = await response.Content.ReadFromJsonAsync<FlightCrewDto>();
+
+        flightCrewDto.Should().BeEquivalentTo(expected);
+    }
+
+    [Fact]
+    public async Task GetFlightCrewById_ShouldReturnNotFoundStatusCode_WhenIdIsNotValid()
+    {
+        // Given
+        var id = Guid.NewGuid();
+
+        // When
+        var response = await Client.GetAsync($"api/flight-crew/{id}");
+
+        // Then
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+
 }

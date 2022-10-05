@@ -80,4 +80,36 @@ public class FlightCrewTests : IntegrationTestBase
     }
 
 
+    [Fact]
+    public async Task AllFlightCrew_ShouldBeReturnedAsExpected()
+    {
+        await AirlineWebApplicationFactory.ResetDatabaseAsync();
+
+        // Given
+        var flightCrewList = await FakeFlightCrew.NewFakeListAsync(
+            FlightCrewType.Pilot,
+            FlightCrewType.Pilot,
+            FlightCrewType.CoPilot,
+            FlightCrewType.FlightEngineer,
+            FlightCrewType.Navigator
+        );
+
+        await SaveAsync(flightCrewList);
+
+        var expected = Mapper.Map<IList<FlightCrewDto>>(flightCrewList);
+
+
+        // When
+        var request = await Client.GetAsync("api/flight-crew");
+
+
+        // Then
+        request.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var flightCrewDtoList = await request.Content.ReadFromJsonAsync<IList<FlightCrewDto>>();
+
+        flightCrewDtoList.Should().BeEquivalentTo(expected);
+    }
+
+
 }

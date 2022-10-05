@@ -30,4 +30,12 @@ internal class FlightCrewReadonlyRepository : IFlightCrewReadonlyRepository
     {
         return await _dbContext.FlightCrews.FindAsync(new object[] {id}, token);
     }
+
+    public async Task<IReadOnlyList<FlightCrew>> GetAllAsync(CancellationToken token = default)
+    {
+        return await _dbContext.FlightCrews
+            .AsNoTrackingWithIdentityResolution()
+            .OrderByDescending(flightCrew => flightCrew.CreatedAtUtc)
+            .ToListAsync(token);
+    }
 }

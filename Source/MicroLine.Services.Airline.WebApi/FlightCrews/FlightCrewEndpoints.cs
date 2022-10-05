@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using MicroLine.Services.Airline.Application.FlightCrews.Commands.CreateFlightCrew;
+using MicroLine.Services.Airline.Application.FlightCrews.Queries.GetAllFlightCrew;
 using MicroLine.Services.Airline.Application.FlightCrews.Queries.GetFlightCrewById;
 
 namespace MicroLine.Services.Airline.WebApi.FlightCrews;
@@ -12,6 +13,8 @@ internal static class FlightCrewEndpoints
     {
         app.MapPost(BaseUrl, CreateFlightCrewAsync);
         app.MapGet(BaseUrl + "/{id}", GetFlightCrewByIdAsync);
+        app.MapGet(BaseUrl, GetAllFlightCrewAsync);
+
         return app;
     }
 
@@ -29,5 +32,13 @@ internal static class FlightCrewEndpoints
         var flightCrewDto = await sender.Send(new GetFlightCrewByIdQuery(id), token);
 
         return flightCrewDto is not null ? Results.Ok(flightCrewDto) : Results.NotFound();
+    }
+
+    private static async Task<IResult> GetAllFlightCrewAsync(ISender sender, CancellationToken token)
+    {
+        var flightCrewDtoList = await sender.Send(new GetAllFlightCrewQuery(), token);
+
+        return Results.Ok(flightCrewDtoList);
+
     }
 }

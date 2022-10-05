@@ -5,6 +5,7 @@ using MicroLine.Services.Airline.Infrastructure.Persistence.DbContextInitializer
 using MicroLine.Services.Airline.WebApi.Aircrafts;
 using MicroLine.Services.Airline.WebApi.Airports;
 using MicroLine.Services.Airline.WebApi.Common.Middleware;
+using MicroLine.Services.Airline.WebApi.FlightCrews;
 using Serilog;
 
 const string serviceName = "Airline";
@@ -56,7 +57,8 @@ try
 
     app
         .MapAirportEndpoints()
-        .MapAircraftEndpoints();
+        .MapAircraftEndpoints()
+        .MapFlightCrewEndpoints();
 
     app.Run();
 

@@ -41,7 +41,7 @@ public class FlightTests
 
         var basePrices = FlightPrice.Create(economyClassPrice, businessClassPrice, firstClassPrice);
 
-        var flightCrewMembers = FakeFlightCrew.NewFakeList(
+        var flightCrewMembers = await FakeFlightCrew.NewFakeListAsync(
             FlightCrewType.Pilot,
             FlightCrewType.CoPilot,
             FlightCrewType.FlightEngineer);
@@ -95,7 +95,7 @@ public class FlightTests
 
         var basePrices = FlightPrice.Create(economyClassPrice, businessClassPrice, firstClassPrice);
 
-        var flightCrewMembers = FakeFlightCrew.NewFakeList(
+        var flightCrewMembers = await FakeFlightCrew.NewFakeListAsync(
             FlightCrewType.Pilot,
             FlightCrewType.CoPilot,
             FlightCrewType.FlightEngineer);
@@ -128,13 +128,13 @@ public class FlightTests
 
     public static TheoryData<List<FlightCrew>> IncompleteFlightCrewMembers = new()
     {
-        FakeFlightCrew.NewFakeList(FlightCrewType.Pilot, FlightCrewType.FlightEngineer),
+        Task.Run(()=> FakeFlightCrew.NewFakeListAsync(FlightCrewType.Pilot, FlightCrewType.FlightEngineer)).GetAwaiter().GetResult(),
 
-        FakeFlightCrew.NewFakeList(FlightCrewType.CoPilot, FlightCrewType.FlightEngineer),
+        Task.Run(()=> FakeFlightCrew.NewFakeListAsync(FlightCrewType.CoPilot, FlightCrewType.FlightEngineer)).GetAwaiter().GetResult(),
 
-        FakeFlightCrew.NewFakeList(FlightCrewType.Navigator, FlightCrewType.FlightEngineer),
+        Task.Run(()=> FakeFlightCrew.NewFakeListAsync(FlightCrewType.Navigator, FlightCrewType.FlightEngineer)).GetAwaiter().GetResult(),
 
-        FakeFlightCrew.NewFakeList(FlightCrewType.Navigator)
+        Task.Run(()=> FakeFlightCrew.NewFakeListAsync(FlightCrewType.Navigator)).GetAwaiter().GetResult()
     };
 
     [Theory, MemberData(nameof(IncompleteFlightCrewMembers))]
@@ -225,7 +225,7 @@ public class FlightTests
 
         var basePrices = FlightPrice.Create(economyClassPrice, businessClassPrice, firstClassPrice);
 
-        var flightCrewMembers = FakeFlightCrew.NewFakeList(
+        var flightCrewMembers = await FakeFlightCrew.NewFakeListAsync(
             FlightCrewType.Pilot,
             FlightCrewType.CoPilot,
             FlightCrewType.FlightEngineer);

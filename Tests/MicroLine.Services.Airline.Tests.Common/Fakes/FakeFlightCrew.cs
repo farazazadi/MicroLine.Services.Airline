@@ -1,12 +1,15 @@
 ﻿using MicroLine.Services.Airline.Domain.FlightCrews;
 using MicroLine.Services.Airline.Tests.Common.Fakes.ValueObjects;
+using Moq;
 
 namespace MicroLine.Services.Airline.Tests.Common.Fakes;
 
 public static class FakeFlightCrew
 {
-    public static FlightCrew NewFake(FlightCrewType type)
+    public static async Task<FlightCrew> NewFakeAsync(FlightCrewType type)
     {
+        var repository = Mock.Of<IFlightCrewReadonlyRepository>();
+
         var gender = FakeGender.PickRandom();
         var fullName = FakeFullName.NewFake(gender);
         var birthDate = FakeDate.NewFake();
@@ -16,7 +19,7 @@ public static class FakeFlightCrew
         var contactNumber = FakeContactNumber.NewFake();
         var address = FakeAddress.NewFake();
 
-        return FlightCrew.Create(type
+        return await FlightCrew.CreateAsync(type
                         , gender
                         , fullName
                         , birthDate
@@ -24,11 +27,20 @@ public static class FakeFlightCrew
                         , passportNumber
                         , email
                         , contactNumber
-                        , address);
+                        , address
+                        , repository);
     }
 
-    public static List<FlightCrew> NewFakeList(params FlightCrewType[] flightCrewTypes)
+    public static async Task<List<FlightCrew>> NewFakeListAsync(params FlightCrewType[] flightCrewTypes)
     {
-        return flightCrewTypes.Select(NewFake).ToList();
+        var flightCrewList = new List<FlightCrew>();
+
+        foreach (var flightCrewType in flightCrewTypes)
+        {
+            var flightCrew = await NewFakeAsync(flightCrewType);
+            flightCrewList.Add(flightCrew);
+        }
+
+        return flightCrewList;
     }
 }

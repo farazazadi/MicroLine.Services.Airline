@@ -47,7 +47,7 @@ public class FlightTests
             FlightCrewType.FlightEngineer);
 
 
-        var cabinCrewMembers = FakeCabinCrew.NewFakeList(
+        var cabinCrewMembers = await FakeCabinCrew.NewFakeListAsync(
             CabinCrewType.Purser,
             CabinCrewType.FlightAttendant);
 
@@ -101,7 +101,7 @@ public class FlightTests
             FlightCrewType.FlightEngineer);
 
 
-        var cabinCrewMembers = FakeCabinCrew.NewFakeList(
+        var cabinCrewMembers = await FakeCabinCrew.NewFakeListAsync(
             CabinCrewType.Purser,
             CabinCrewType.FlightAttendant);
 
@@ -162,7 +162,7 @@ public class FlightTests
 
         var basePrices = FlightPrice.Create(economyClassPrice, businessClassPrice, firstClassPrice);
 
-        var cabinCrewMembers = FakeCabinCrew.NewFakeList(
+        var cabinCrewMembers = await FakeCabinCrew.NewFakeListAsync(
             CabinCrewType.Purser,
             CabinCrewType.FlightAttendant);
 
@@ -231,7 +231,7 @@ public class FlightTests
             FlightCrewType.FlightEngineer);
 
 
-        var cabinCrewMembers = FakeCabinCrew.NewFakeList(
+        var cabinCrewMembers = await FakeCabinCrew.NewFakeListAsync(
             CabinCrewType.Purser,
             CabinCrewType.FlightAttendant);
 

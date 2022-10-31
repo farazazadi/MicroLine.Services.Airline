@@ -63,4 +63,37 @@ public class CabinCrewTests
             .And.Code.Should().Be(nameof(DuplicatePassportNumberException));
 
     }
+
+    [Fact]
+    public async Task CabinCrew_ShouldThrowDuplicateNationalIdException_WhenNationalIdAlreadyExist()
+    {
+        // Given
+        var nationalId = NationalId.Create("9224150333");
+
+        var repository = new Mock<ICabinCrewReadonlyRepository>();
+
+        repository
+            .Setup(repo => repo.ExistAsync(nationalId, CancellationToken.None))
+            .ReturnsAsync(true);
+
+
+        // When
+        var func = () => CabinCrew.CreateAsync(
+            CabinCrewType.Purser,
+            Gender.Female,
+            FullName.Create("Hanna", "Tremblay"),
+            Date.Create(1985, 5, 17),
+            nationalId,
+            PassportNumber.Create("A43671942"),
+            Email.Create("test2@gmail.com"),
+            ContactNumber.Create("+11112223344"),
+            Address.Create("129 Novella Rd", "Toronto", "Ontario", "Canada", "589"),
+            repository.Object
+        );
+
+
+        // Then
+        (await func.Should().ThrowExactlyAsync<DuplicateNationalIdException>())
+            .And.Code.Should().Be(nameof(DuplicateNationalIdException));
+    }
 }

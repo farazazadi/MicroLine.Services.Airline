@@ -19,4 +19,11 @@ internal class CabinCrewReadonlyRepository : ICabinCrewReadonlyRepository
         return await _dbContext.CabinCrews
             .AnyAsync(cabinCrew => cabinCrew.PassportNumber == passportNumber, token);
     }
+
+    public async Task<bool> ExistAsync(NationalId nationalId, CancellationToken token = default)
+    {
+        return await _dbContext.CabinCrews
+            .AnyAsync(cabinCrew => cabinCrew.NationalId == nationalId, token);
+    }
+
 }

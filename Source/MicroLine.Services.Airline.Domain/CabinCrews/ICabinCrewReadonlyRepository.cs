@@ -4,4 +4,5 @@ namespace MicroLine.Services.Airline.Domain.CabinCrews;
 public interface ICabinCrewReadonlyRepository
 {
     Task<bool> ExistAsync(PassportNumber passportNumber, CancellationToken token = default);
+    Task<bool> ExistAsync(NationalId nationalId, CancellationToken token = default);
 }

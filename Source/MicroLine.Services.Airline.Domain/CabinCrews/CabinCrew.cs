@@ -53,6 +53,13 @@ public class CabinCrew : AggregateRoot
                 $"A cabin crew member with same PassportNumber ({passportNumber}) already exist!");
 
 
+        var nationalIdExist = await cabinCrewReadonlyRepository.ExistAsync(nationalId, token);
+
+        if (nationalIdExist)
+            throw new DuplicateNationalIdException(
+                $"A cabin crew member with same NationalId ({nationalId}) already exist!");
+
+
         return new CabinCrew(cabinCrewType, gender, fullName, birthDate, nationalId,
             passportNumber, email, contactNumber, address);
     }

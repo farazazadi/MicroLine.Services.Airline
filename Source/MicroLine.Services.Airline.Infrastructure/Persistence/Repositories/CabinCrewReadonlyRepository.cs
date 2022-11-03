@@ -26,4 +26,8 @@ internal class CabinCrewReadonlyRepository : ICabinCrewReadonlyRepository
             .AnyAsync(cabinCrew => cabinCrew.NationalId == nationalId, token);
     }
 
+    public async Task<CabinCrew> GetAsync(Id id, CancellationToken token = default)
+    {
+        return await _dbContext.CabinCrews.FindAsync(new object[] {id}, token);
+    }
 }

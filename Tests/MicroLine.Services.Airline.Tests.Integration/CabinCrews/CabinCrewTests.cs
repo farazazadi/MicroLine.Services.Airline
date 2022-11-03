@@ -44,4 +44,27 @@ public class CabinCrewTests : IntegrationTestBase
             return options;
         });
     }
+
+
+    [Fact]
+    public async Task CabinCrew_ShouldBeReturnedAsExpected_WhenIdIsValid()
+    {
+        // Given
+        var cabinCrew = await FakeCabinCrew.NewFakeAsync(CabinCrewType.FlightAttendant);
+        await SaveAsync(cabinCrew);
+
+        var expected = Mapper.Map<CabinCrewDto>(cabinCrew);
+
+
+        // When
+        var response = await Client.GetAsync($"api/cabin-crew/{cabinCrew.Id}");
+
+
+        // Then
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var cabinCrewDto = await response.Content.ReadFromJsonAsync<CabinCrewDto>();
+
+        cabinCrewDto.Should().BeEquivalentTo(expected);
+    }
 }

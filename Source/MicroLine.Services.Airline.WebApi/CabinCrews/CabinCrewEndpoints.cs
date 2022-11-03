@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using MicroLine.Services.Airline.Application.CabinCrews.Commands.CreateCabinCrew;
+using MicroLine.Services.Airline.Application.CabinCrews.Queries.GetAllCabinCrew;
 using MicroLine.Services.Airline.Application.CabinCrews.Queries.GetCabinCrewById;
 
 namespace MicroLine.Services.Airline.WebApi.CabinCrews;
@@ -12,6 +13,7 @@ internal static class CabinCrewEndpoints
     {
         app.Map(BaseUrl, CreateCabinCrewAsync);
         app.MapGet(BaseUrl + "/{id}", GetCabinCrewByIdAsync);
+        app.MapGet(BaseUrl, GetAllCabinCrewAsync);
 
         return app;
     }
@@ -30,6 +32,13 @@ internal static class CabinCrewEndpoints
         var cabinCrewDto = await sender.Send(new GetCabinCrewByIdQuery(id), token);
 
         return cabinCrewDto is not null ? Results.Ok(cabinCrewDto) : Results.NotFound();
+    }
+
+    private static async Task<IResult> GetAllCabinCrewAsync(ISender sender, CancellationToken token)
+    {
+        var cabinCrewDtoList = await sender.Send(new GetAllCabinCrewQuery(), token);
+
+        return Results.Ok(cabinCrewDtoList);
     }
 
 }

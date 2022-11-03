@@ -6,4 +6,5 @@ public interface ICabinCrewReadonlyRepository
     Task<bool> ExistAsync(PassportNumber passportNumber, CancellationToken token = default);
     Task<bool> ExistAsync(NationalId nationalId, CancellationToken token = default);
     Task<CabinCrew> GetAsync(Id id, CancellationToken token = default);
+    Task<IReadOnlyList<CabinCrew>> GetAllAsync(CancellationToken token = default);
 }

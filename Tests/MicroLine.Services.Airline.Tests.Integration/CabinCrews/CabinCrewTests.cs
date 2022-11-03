@@ -67,4 +67,38 @@ public class CabinCrewTests : IntegrationTestBase
 
         cabinCrewDto.Should().BeEquivalentTo(expected);
     }
+
+
+    [Fact]
+    public async Task AllCabinCrew_ShouldBeReturnedAsExpected()
+    {
+        await AirlineWebApplicationFactory.ResetDatabaseAsync();
+
+        // Given
+        var cabinCrewList = await FakeCabinCrew.NewFakeListAsync(
+            CabinCrewType.Purser,
+            CabinCrewType.FlightAttendant,
+            CabinCrewType.FlightAttendant,
+            CabinCrewType.FlightAttendant,
+            CabinCrewType.FlightAttendant,
+            CabinCrewType.FlightAttendant,
+            CabinCrewType.Chef
+        );
+
+        await SaveAsync(cabinCrewList);
+
+        var expected = Mapper.Map<IList<CabinCrewDto>>(cabinCrewList);
+
+
+        // When
+        var response = await Client.GetAsync("api/cabin-crew");
+
+
+        // Then
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var cabinCrewDtoList = await response.Content.ReadFromJsonAsync<IList<CabinCrewDto>>();
+
+        cabinCrewDtoList.Should().BeEquivalentTo(expected);
+    }
 }

@@ -30,4 +30,12 @@ internal class CabinCrewReadonlyRepository : ICabinCrewReadonlyRepository
     {
         return await _dbContext.CabinCrews.FindAsync(new object[] {id}, token);
     }
+
+    public async Task<IReadOnlyList<CabinCrew>> GetAllAsync(CancellationToken token = default)
+    {
+        return await _dbContext.CabinCrews
+            .AsNoTrackingWithIdentityResolution()
+            .OrderByDescending(cabinCrew => cabinCrew.CreatedAtUtc)
+            .ToListAsync(token);
+    }
 }

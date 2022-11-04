@@ -20,6 +20,7 @@ internal class AirlineDbContextInitializer : IAirlineDbContextInitializer
     private readonly IAirportReadonlyRepository _airportReadonlyRepository;
     private readonly IAircraftReadonlyRepository _aircraftReadonlyRepository;
     private readonly IFlightCrewReadonlyRepository _flightCrewReadonlyRepository;
+    private readonly ICabinCrewReadonlyRepository _cabinCrewReadonlyRepository;
     private readonly IDateTime _dateTime;
     private readonly ILogger _logger;
 
@@ -28,6 +29,7 @@ internal class AirlineDbContextInitializer : IAirlineDbContextInitializer
         IAirportReadonlyRepository airportReadonlyRepository,
         IAircraftReadonlyRepository aircraftReadonlyRepository,
         IFlightCrewReadonlyRepository flightCrewReadonlyRepository,
+        ICabinCrewReadonlyRepository cabinCrewReadonlyRepository,
         IDateTime dateTime,
         ILogger<AirlineDbContextInitializer> logger
         )
@@ -36,6 +38,7 @@ internal class AirlineDbContextInitializer : IAirlineDbContextInitializer
         _airportReadonlyRepository = airportReadonlyRepository;
         _aircraftReadonlyRepository = aircraftReadonlyRepository;
         _flightCrewReadonlyRepository = flightCrewReadonlyRepository;
+        _cabinCrewReadonlyRepository = cabinCrewReadonlyRepository;
         _dateTime = dateTime;
         _logger = logger;
     }
@@ -346,7 +349,7 @@ internal class AirlineDbContextInitializer : IAirlineDbContextInitializer
 
         #region CabinCrewMembers
 
-        var purser1 = CabinCrew.Create(
+        var purser1 = await CabinCrew.CreateAsync(
             CabinCrewType.Purser,
             Gender.Female,
             FullName.Create("Jana", "Maggio"),
@@ -355,11 +358,13 @@ internal class AirlineDbContextInitializer : IAirlineDbContextInitializer
             PassportNumber.Create("K1F88AC"),
             Email.Create("jana.maggio@test.com"),
             ContactNumber.Create("+111111111121"),
-            Address.Create("test", "test", "test", "test", "test")
+            Address.Create("test", "test", "test", "test", "test"),
+            _cabinCrewReadonlyRepository,
+            token
         );
 
 
-        var purser2 = CabinCrew.Create(
+        var purser2 = await CabinCrew.CreateAsync(
             CabinCrewType.Purser,
             Gender.Female,
             FullName.Create("Joan", "Lang"),
@@ -368,11 +373,13 @@ internal class AirlineDbContextInitializer : IAirlineDbContextInitializer
             PassportNumber.Create("AC9WPM03"),
             Email.Create("Joan.Lang@test.com"),
             ContactNumber.Create("+111111111122"),
-            Address.Create("test", "test", "test", "test", "test")
+            Address.Create("test", "test", "test", "test", "test"),
+            _cabinCrewReadonlyRepository,
+            token
         );
 
 
-        var purser3 = CabinCrew.Create(
+        var purser3 = await CabinCrew.CreateAsync(
             CabinCrewType.Purser,
             Gender.Male,
             FullName.Create("Johnathan", "Mayert"),
@@ -381,11 +388,13 @@ internal class AirlineDbContextInitializer : IAirlineDbContextInitializer
             PassportNumber.Create("WZPL7FVXM"),
             Email.Create("Johnathan.Mayert@test.com"),
             ContactNumber.Create("+111111111123"),
-            Address.Create("test", "test", "test", "test", "test")
+            Address.Create("test", "test", "test", "test", "test"),
+            _cabinCrewReadonlyRepository,
+            token
         );
 
 
-        var flightAttendant1 = CabinCrew.Create(
+        var flightAttendant1 = await CabinCrew.CreateAsync(
             CabinCrewType.FlightAttendant,
             Gender.Female,
             FullName.Create("Jackie", "Russel"),
@@ -394,11 +403,13 @@ internal class AirlineDbContextInitializer : IAirlineDbContextInitializer
             PassportNumber.Create("ZIR8XAM1"),
             Email.Create("Jackie.Russel@test.com"),
             ContactNumber.Create("+111111111124"),
-            Address.Create("test", "test", "test", "test", "test")
+            Address.Create("test", "test", "test", "test", "test"),
+            _cabinCrewReadonlyRepository,
+            token
         );
 
 
-        var flightAttendant2 = CabinCrew.Create(
+        var flightAttendant2 = await CabinCrew.CreateAsync(
             CabinCrewType.FlightAttendant,
             Gender.Female,
             FullName.Create("Roberta", "Dach"),
@@ -407,11 +418,13 @@ internal class AirlineDbContextInitializer : IAirlineDbContextInitializer
             PassportNumber.Create("LJ6NI4V"),
             Email.Create("Roberta.Dach@test.com"),
             ContactNumber.Create("+111111111125"),
-            Address.Create("test", "test", "test", "test", "test")
+            Address.Create("test", "test", "test", "test", "test"),
+            _cabinCrewReadonlyRepository,
+            token
         );
 
 
-        var flightAttendant3 = CabinCrew.Create(
+        var flightAttendant3 = await CabinCrew.CreateAsync(
             CabinCrewType.FlightAttendant,
             Gender.Male,
             FullName.Create("Kurt", "Feest"),
@@ -420,11 +433,13 @@ internal class AirlineDbContextInitializer : IAirlineDbContextInitializer
             PassportNumber.Create("8LI2P3JY9"),
             Email.Create("Kurt.Feest@test.com"),
             ContactNumber.Create("+111111111126"),
-            Address.Create("test", "test", "test", "test", "test")
+            Address.Create("test", "test", "test", "test", "test"),
+            _cabinCrewReadonlyRepository,
+            token
         );
 
 
-        var flightAttendant4 = CabinCrew.Create(
+        var flightAttendant4 = await CabinCrew.CreateAsync(
             CabinCrewType.FlightAttendant,
             Gender.Male,
             FullName.Create("Charlie", "Schulist"),
@@ -433,11 +448,13 @@ internal class AirlineDbContextInitializer : IAirlineDbContextInitializer
             PassportNumber.Create("CX9P4Z4"),
             Email.Create("Charlie.Schulist@test.com"),
             ContactNumber.Create("+111111111127"),
-            Address.Create("test", "test", "test", "test", "test")
+            Address.Create("test", "test", "test", "test", "test"),
+            _cabinCrewReadonlyRepository,
+            token
         );
 
 
-        var flightAttendant5 = CabinCrew.Create(
+        var flightAttendant5 = await CabinCrew.CreateAsync(
             CabinCrewType.FlightAttendant,
             Gender.Female,
             FullName.Create("Faith", "Mitchell"),
@@ -446,11 +463,13 @@ internal class AirlineDbContextInitializer : IAirlineDbContextInitializer
             PassportNumber.Create("QNYV4JZQ"),
             Email.Create("Faith.Mitchell@test.com"),
             ContactNumber.Create("+111111111128"),
-            Address.Create("test", "test", "test", "test", "test")
+            Address.Create("test", "test", "test", "test", "test"),
+            _cabinCrewReadonlyRepository,
+            token
         );
 
 
-        var flightAttendant6 = CabinCrew.Create(
+        var flightAttendant6 = await CabinCrew.CreateAsync(
             CabinCrewType.FlightAttendant,
             Gender.Female,
             FullName.Create("Blanca", "Schiller"),
@@ -459,11 +478,13 @@ internal class AirlineDbContextInitializer : IAirlineDbContextInitializer
             PassportNumber.Create("WXS4NPI2O"),
             Email.Create("Blanca.Schiller@test.com"),
             ContactNumber.Create("+111111111129"),
-            Address.Create("test", "test", "test", "test", "test")
+            Address.Create("test", "test", "test", "test", "test"),
+            _cabinCrewReadonlyRepository,
+            token
         );
 
 
-        var chef1 = CabinCrew.Create(
+        var chef1 = await CabinCrew.CreateAsync(
             CabinCrewType.Chef,
             Gender.Female,
             FullName.Create("Terri", "Thompson"),
@@ -472,11 +493,13 @@ internal class AirlineDbContextInitializer : IAirlineDbContextInitializer
             PassportNumber.Create("A79SN7"),
             Email.Create("Terri.Terri@test.com"),
             ContactNumber.Create("+111111111130"),
-            Address.Create("test", "test", "test", "test", "test")
+            Address.Create("test", "test", "test", "test", "test"),
+            _cabinCrewReadonlyRepository,
+            token
         );
 
 
-        var chef2 = CabinCrew.Create(
+        var chef2 = await CabinCrew.CreateAsync(
             CabinCrewType.Chef,
             Gender.Male,
             FullName.Create("Fredrick", "Okuneva"),
@@ -485,7 +508,9 @@ internal class AirlineDbContextInitializer : IAirlineDbContextInitializer
             PassportNumber.Create("FDZ5ET"),
             Email.Create("Fredrick.Okuneva@test.com"),
             ContactNumber.Create("+111111111131"),
-            Address.Create("test", "test", "test", "test", "test")
+            Address.Create("test", "test", "test", "test", "test"),
+            _cabinCrewReadonlyRepository,
+            token
         );
 
 

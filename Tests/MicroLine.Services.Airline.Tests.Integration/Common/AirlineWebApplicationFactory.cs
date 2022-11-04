@@ -13,10 +13,7 @@ public sealed class AirlineWebApplicationFactory : WebApplicationFactory<Program
 {
     private DatabaseOptions _databaseOptions;
 
-    private readonly Checkpoint _checkpoint = new()
-    {
-        TablesToIgnore = new Table[] { "__EFMigrationsHistory" }
-    };
+    private Respawner _respawner;
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
@@ -38,7 +35,12 @@ public sealed class AirlineWebApplicationFactory : WebApplicationFactory<Program
 
     public async Task ResetDatabaseAsync()
     {
-        await _checkpoint.Reset(_databaseOptions.ConnectionString);
+        _respawner ??= await Respawner.CreateAsync(_databaseOptions.ConnectionString, new RespawnerOptions
+        {
+            TablesToIgnore = new Table[] { "__EFMigrationsHistory" }
+        });
+
+        await _respawner.ResetAsync(_databaseOptions.ConnectionString);
     }
 
     public override async ValueTask DisposeAsync()

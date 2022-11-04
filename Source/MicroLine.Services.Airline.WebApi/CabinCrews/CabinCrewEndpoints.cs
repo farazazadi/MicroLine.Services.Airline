@@ -11,7 +11,7 @@ internal static class CabinCrewEndpoints
 
     public static WebApplication MapCabinCrewEndpoints(this WebApplication app)
     {
-        app.Map(BaseUrl, CreateCabinCrewAsync);
+        app.MapPost(BaseUrl, CreateCabinCrewAsync);
         app.MapGet(BaseUrl + "/{id}", GetCabinCrewByIdAsync);
         app.MapGet(BaseUrl, GetAllCabinCrewAsync);
 

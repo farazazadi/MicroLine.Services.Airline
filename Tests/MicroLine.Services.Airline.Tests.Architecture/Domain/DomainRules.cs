@@ -41,6 +41,8 @@ public class DomainRules
     {
         DomainTypes()
             .And()
+            .DoNotResideInNamespace(Namespaces.SystemAndItsInnerNamespacesRegexPattern, true)
+            .And()
             .DoNotResideInNamespace(Namespaces.DomainCommonAndItsInnerNamespacesRegexPattern, true)
             .Should()
             .NotHaveAnyAttributesThat()

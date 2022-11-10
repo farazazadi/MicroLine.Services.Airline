@@ -8,6 +8,7 @@ public class EncapsulationRules
         FieldMembers()
             .That().ArePublic().Or().AreInternal()
             .And().AreNotDeclaredIn(Types().That().AreEnums())
+            .And().AreNotDeclaredIn(Namespaces.SystemAndItsInnerNamespacesRegexPattern, true)
             .Should()
             .NotExist()
             .Because("of encapsulation violation")

@@ -18,6 +18,7 @@ public static class Namespaces
     public static readonly string DomainAttributesNamespace = $"{typeof(IgnoreMemberAttribute).Namespace}";
 
     public static readonly string DomainCommonAndItsInnerNamespacesRegexPattern = $@"^{DomainCommonNamespace.NormalizeForRegex()}\.*\b";
+    public static readonly string SystemAndItsInnerNamespacesRegexPattern = $@"^System\.*\b";
 
     public static readonly string DomainExcludingCommonNamespaceRegexPattern = $@"^(?!.*{DomainCommonNamespace.NormalizeForRegex()}).*$";
 

@@ -75,10 +75,10 @@ internal class FlightConfiguration : IEntityTypeConfiguration<Flight>
 
 
         builder.HasMany(flight => flight.FlightCrewMembers)
-            .WithMany(flightCrew => flightCrew.Flights);
+            .WithMany();
 
         builder.HasMany(flight => flight.CabinCrewMembers)
-            .WithMany(cabinCrew => cabinCrew.Flights);
+            .WithMany();
 
         builder.Property(f => f.Status)
             .IsRequired();

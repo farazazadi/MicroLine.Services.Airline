@@ -3,7 +3,7 @@ using MicroLine.Services.Airline.Domain.CabinCrews;
 using MicroLine.Services.Airline.Domain.FlightCrews;
 
 namespace MicroLine.Services.Airline.Domain.Flights;
-public interface IFlightRepository
+public interface IFlightReadonlyRepository
 {
     Flight GetLastFlightOf(FlightCrew flightCrew);
     IReadOnlyList<Flight> GetLastFlightOf(List<FlightCrew> flightCrewMembers);

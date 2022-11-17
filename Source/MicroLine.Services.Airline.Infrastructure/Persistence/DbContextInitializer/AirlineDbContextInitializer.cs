@@ -541,7 +541,7 @@ internal class AirlineDbContextInitializer : IAirlineDbContextInitializer
         var flight1CabinCrewMembers = new List<CabinCrew>
             {purser1, flightAttendant1, flightAttendant2, flightAttendant3, chef1};
 
-        var flight1 = Flight.Scheduler.ScheduleNewFlight(
+        var flight1 = await Flight.ScheduleNewFlightAsync(
             null,
             flightPricingPolicies,
             FlightNumber.Create("AJ50"),
@@ -570,7 +570,7 @@ internal class AirlineDbContextInitializer : IAirlineDbContextInitializer
             chef1
         };
 
-        var flight2 = Flight.Scheduler.ScheduleNewFlight(
+        var flight2 = await Flight.ScheduleNewFlightAsync(
             null,
             flightPricingPolicies,
             FlightNumber.Create("CA35"),

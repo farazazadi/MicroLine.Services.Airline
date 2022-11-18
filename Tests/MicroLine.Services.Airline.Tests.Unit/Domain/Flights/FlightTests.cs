@@ -1,4 +1,5 @@
-﻿using MicroLine.Services.Airline.Domain.Aircrafts;
+﻿using System.Linq.Expressions;
+using MicroLine.Services.Airline.Domain.Aircrafts;
 using MicroLine.Services.Airline.Domain.CabinCrews;
 using MicroLine.Services.Airline.Domain.Common.ValueObjects;
 using MicroLine.Services.Airline.Domain.FlightCrews;
@@ -255,4 +256,37 @@ public class FlightTests
 
     }
 
+
+    [Fact]
+    public async Task Flight_ShouldThrowOverlapFlightResourcesException_WhenFlightOverlapsWithAnotherFlightOfAircraft()
+    {
+        // Given
+        var aircraft = await FakeAircraft.NewFakeAsync(AircraftManufacturer.Airbus);
+
+        var overlappedFlight = await FakeFlight.ScheduleNewFakeFlightAsync(
+            aircraft: aircraft,
+            scheduledUtcDateTimeOfDeparture: DateTime.UtcNow.AddDays(1)
+            );
+
+
+
+        var repository = new Mock<IFlightReadonlyRepository>();
+
+        repository.Setup(repo =>
+                repo.GetAsync(It.IsAny<Expression<Func<Flight, bool>>>(), CancellationToken.None).Result)
+            .Returns(overlappedFlight);
+
+
+        // When
+        var func = () => FakeFlight.ScheduleNewFakeFlightAsync(
+            flightReadonlyRepository: repository.Object,
+            aircraft: aircraft,
+            scheduledUtcDateTimeOfDeparture: overlappedFlight.ScheduledUtcDateTimeOfArrival.AddHours(-1)
+        );
+
+
+        // Then
+        (await func.Should().ThrowExactlyAsync<OverlapFlightResourcesException>())
+            .And.Code.Should().Be(nameof(OverlapFlightResourcesException));
+    }
 }

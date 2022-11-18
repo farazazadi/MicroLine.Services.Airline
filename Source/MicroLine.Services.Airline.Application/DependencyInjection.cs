@@ -2,6 +2,7 @@ using System.Reflection;
 using Mapster;
 using MapsterMapper;
 using MediatR;
+using MicroLine.Services.Airline.Domain.FlightPricingPolicies;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace MicroLine.Services.Airline.Application;
@@ -13,6 +14,9 @@ public static class DependencyInjection
         services.AddMediatR(Assembly.GetExecutingAssembly());
 
         AddMappers(services);
+
+        services.AddSingleton<IFlightPricingPolicy, WeekDayFlightPricingPolicy>(
+            _ => WeekDayFlightPricingPolicy.Create());
 
         return services;
     }

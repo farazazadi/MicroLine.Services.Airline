@@ -58,12 +58,20 @@ public partial class Flight : AggregateRoot
             throw new InvalidScheduledDateTimeOfDeparture($"The scheduled DateTime (UTC) of departure ({ScheduledUtcDateTimeOfDeparture:f}) cannot be in the past!");
     }
 
-    private async Task CheckAircraftAsync(IFlightReadonlyRepository flightReadonlyRepository)
+    private async Task CheckAircraftAsync(IFlightReadonlyRepository flightReadonlyRepository, CancellationToken token = default)
     {
-        //todo: Availability of Aircraft should be checked
+        var overlappingFlight = await flightReadonlyRepository
+            .GetAsync(flight => flight.Aircraft == Aircraft
+                                && flight.ScheduledUtcDateTimeOfDeparture < ScheduledUtcDateTimeOfArrival
+                                && ScheduledUtcDateTimeOfDeparture < flight.ScheduledUtcDateTimeOfArrival
+                , token);
+
+        if (overlappingFlight is not null)
+            throw new OverlapFlightResourcesException(
+                $"The aircraft ({Aircraft.Id}) is unavailable due to an overlap with the flight ({overlappingFlight.Id})!");
     }
 
-    private async Task CheckFlightCrewMembersAsync(IFlightReadonlyRepository flightReadonlyRepository)
+    private async Task CheckFlightCrewMembersAsync(IFlightReadonlyRepository flightReadonlyRepository, CancellationToken token = default)
     {
         var pilotExist = FlightCrewMembers
             .Any(f => f.FlightCrewType is FlightCrewType.Pilot);
@@ -89,7 +97,7 @@ public partial class Flight : AggregateRoot
     }
 
 
-    private async Task CheckCabinCrewMembersAsync(IFlightReadonlyRepository flightReadonlyRepository)
+    private async Task CheckCabinCrewMembersAsync(IFlightReadonlyRepository flightReadonlyRepository, CancellationToken token = default)
     {
         //if (cabinCrewMembersLastFlight is null)
         //    return;
@@ -130,7 +138,8 @@ public partial class Flight : AggregateRoot
         IEnumerable<IFlightPricingPolicy> flightPricingPolicies,
         FlightNumber flightNumber, Airport originAirport, Airport destinationAirport, Aircraft aircraft,
         DateTime scheduledUtcDateTimeOfDeparture, FlightPrice basePrices,
-        List<FlightCrew> flightCrewMembers, List<CabinCrew> cabinCrewMembers)
+        List<FlightCrew> flightCrewMembers, List<CabinCrew> cabinCrewMembers,
+        CancellationToken token = default)
     {
         
         var flight = new Flight(flightNumber, originAirport, destinationAirport, aircraft,
@@ -142,9 +151,9 @@ public partial class Flight : AggregateRoot
         flight.SetEstimatedFlightDuration();
         flight.SetScheduledUtcDateTimeOfArrival();
 
-        await flight.CheckAircraftAsync(flightReadonlyRepository);
-        await flight.CheckFlightCrewMembersAsync(flightReadonlyRepository);
-        await flight.CheckCabinCrewMembersAsync(flightReadonlyRepository);
+        await flight.CheckAircraftAsync(flightReadonlyRepository, token);
+        await flight.CheckFlightCrewMembersAsync(flightReadonlyRepository, token);
+        await flight.CheckCabinCrewMembersAsync(flightReadonlyRepository, token);
 
         flight.ApplyPricingPolicies(flightPricingPolicies);
 

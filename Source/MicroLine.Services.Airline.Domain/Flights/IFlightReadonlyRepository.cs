@@ -1,13 +1,7 @@
-﻿using MicroLine.Services.Airline.Domain.Aircrafts;
-using MicroLine.Services.Airline.Domain.CabinCrews;
-using MicroLine.Services.Airline.Domain.FlightCrews;
+﻿using System.Linq.Expressions;
 
 namespace MicroLine.Services.Airline.Domain.Flights;
 public interface IFlightReadonlyRepository
 {
-    Flight GetLastFlightOf(FlightCrew flightCrew);
-    IReadOnlyList<Flight> GetLastFlightOf(List<FlightCrew> flightCrewMembers);
-    Flight GetLastFlightOf(CabinCrew cabinCrew);
-    IReadOnlyList<Flight> GetLastFlightOf(List<CabinCrew> cabinCrew);
-    Flight GetLastFlightOf(Aircraft aircraft);
+    Task<Flight> GetAsync(Expression<Func<Flight, bool>> predicate, CancellationToken token = default);
 }

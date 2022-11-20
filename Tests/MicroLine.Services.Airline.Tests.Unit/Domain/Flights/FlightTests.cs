@@ -289,4 +289,51 @@ public class FlightTests
         (await func.Should().ThrowExactlyAsync<OverlapFlightResourcesException>())
             .And.Code.Should().Be(nameof(OverlapFlightResourcesException));
     }
+
+
+    [Fact]
+    public async Task Flight_ShouldThrowOverlapFlightResourcesException_WhenFlightCrewMemberOverlapsWithAnotherFlight()
+    {
+
+        // Given
+        var flightCrewMembers = await FakeFlightCrew.NewFakeListAsync(
+            FlightCrewType.CoPilot,
+            FlightCrewType.FlightEngineer
+        );
+
+        var pilot = await FakeFlightCrew.NewFakeAsync(FlightCrewType.Pilot);
+        flightCrewMembers.Add(pilot);
+
+        var overlappedFlight = await FakeFlight.ScheduleNewFakeFlightAsync(
+            flightCrewMembers: flightCrewMembers,
+            scheduledUtcDateTimeOfDeparture: DateTime.UtcNow.AddDays(1)
+        );
+
+
+        var repository = new Mock<IFlightReadonlyRepository>();
+
+        repository.Setup(repo =>
+                repo.GetAllAsync(It.IsAny<Expression<Func<Flight, bool>>>(), CancellationToken.None).Result)
+            .Returns(new List<Flight> {overlappedFlight});
+
+
+        var newFlightCrewMembers = await FakeFlightCrew.NewFakeListAsync(
+            FlightCrewType.CoPilot,
+            FlightCrewType.FlightEngineer
+        );
+
+        newFlightCrewMembers.Add(pilot);
+
+        // When
+        var func = () => FakeFlight.ScheduleNewFakeFlightAsync(
+            flightReadonlyRepository: repository.Object,
+            flightCrewMembers: newFlightCrewMembers,
+            scheduledUtcDateTimeOfDeparture: overlappedFlight.ScheduledUtcDateTimeOfArrival.AddHours(-1)
+        );
+
+
+        // Then
+        (await func.Should().ThrowExactlyAsync<OverlapFlightResourcesException>())
+            .And.Code.Should().Be(nameof(OverlapFlightResourcesException));
+    }
 }

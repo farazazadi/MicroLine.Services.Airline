@@ -17,7 +17,6 @@ public partial class Flight : AggregateRoot
 {
     private readonly List<FlightCrew> _flightCrewMembers;
     private readonly List<CabinCrew> _cabinCrewMembers;
-
     public FlightNumber FlightNumber { get; private set; }
     public Airport OriginAirport { get; private set; }
     public Airport DestinationAirport { get; private set; }
@@ -93,7 +92,29 @@ public partial class Flight : AggregateRoot
         }
 
 
-        //todo: Availability of all FlightCrewMembers should be checked
+
+        var overlappingFlights = await flightReadonlyRepository
+            .GetAllAsync(flight => flight.FlightCrewMembers.Any(fc=> FlightCrewMembers.Contains(fc))
+                                     && flight.ScheduledUtcDateTimeOfDeparture < ScheduledUtcDateTimeOfArrival
+                                     && ScheduledUtcDateTimeOfDeparture < flight.ScheduledUtcDateTimeOfArrival
+                , token);
+
+
+        if (overlappingFlights?.Count > 0)
+        {
+            var messages = string.Empty;
+
+            foreach (var overlappingFlight in overlappingFlights)
+            {
+                messages = FlightCrewMembers
+                    .Intersect(overlappingFlight.FlightCrewMembers)
+                    .Aggregate(messages, (current, flightCrew) =>
+                        current + $"The FlightCrew ({flightCrew.Id}) is unavailable due to an overlap with the flight ({overlappingFlight.Id})!" + Environment.NewLine);
+            }
+
+            throw new OverlapFlightResourcesException(messages);
+        }
+
     }
 
 

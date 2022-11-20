@@ -120,10 +120,27 @@ public partial class Flight : AggregateRoot
 
     private async Task CheckCabinCrewMembersAsync(IFlightReadonlyRepository flightReadonlyRepository, CancellationToken token = default)
     {
-        //if (cabinCrewMembersLastFlight is null)
-        //    return;
+        var overlappingFlights = await flightReadonlyRepository
+            .GetAllAsync(flight => flight.CabinCrewMembers.Any(cc => CabinCrewMembers.Contains(cc))
+                                   && flight.ScheduledUtcDateTimeOfDeparture < ScheduledUtcDateTimeOfArrival
+                                   && ScheduledUtcDateTimeOfDeparture < flight.ScheduledUtcDateTimeOfArrival
+                , token);
 
-        //todo: Availability of all cabinCrewMembers should be checked
+
+        if (overlappingFlights?.Count > 0)
+        {
+            var messages = string.Empty;
+
+            foreach (var overlappingFlight in overlappingFlights)
+            {
+                messages = CabinCrewMembers
+                    .Intersect(overlappingFlight.CabinCrewMembers)
+                    .Aggregate(messages, (current, cabinCrew) =>
+                        current + $"The CabinCrew ({cabinCrew.Id}) is unavailable due to an overlap with the flight ({overlappingFlight.Id})!" + Environment.NewLine);
+            }
+
+            throw new OverlapFlightResourcesException(messages);
+        }
     }
 
 

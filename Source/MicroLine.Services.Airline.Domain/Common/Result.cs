@@ -6,9 +6,18 @@ public class Result
         Failure,
         Success
     }
+
     private readonly List<(ReasonType Type, string Reason)> _results = new ();
 
-    private Result()
+    public IReadOnlyList<string> FailureReasons =>
+        _results.Where(r => r.Type == ReasonType.Failure)
+            .Select(r => r.Reason)
+            .ToList();
+
+    public bool IsSuccess => _results.All(r => r.Type == ReasonType.Success);
+
+
+    public Result()
     {
     }
 
@@ -39,10 +48,15 @@ public class Result
         return this;
     }
 
-    public bool IsSuccess => _results.All(r => r.Type == ReasonType.Success);
 
-    public IReadOnlyList<string> FailureReasons =>
-        _results.Where(r => r.Type == ReasonType.Failure)
-            .Select(r => r.Reason)
-            .ToList();
+    public Result Concat(Result other)
+    {
+        if(other is null)
+            throw new ArgumentNullException (nameof(other));
+
+        foreach (var result in other._results)
+            _results.Add(result);
+
+        return this;
+    }
 }

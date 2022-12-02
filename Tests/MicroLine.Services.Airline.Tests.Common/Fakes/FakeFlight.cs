@@ -71,6 +71,20 @@ public static class FakeFlight
     }
 
 
+    public static async Task<List<Flight>> ScheduleNewFakeFlightsAsync(int count)
+    {
+        var flights = new List<Flight>();
+
+        for (var i = 0; i < count; i++)
+        {
+            var flight = await ScheduleNewFakeFlightAsync();
+            flights.Add(flight);
+        }
+
+        return flights;
+    }
+
+
     private static FlightNumber NewFakeFlightNumber(Faker faker)
     {
         var flightNumber = faker.Random.String2(3, RandomSelectionAllowedCharacters.UpperCaseLetters)

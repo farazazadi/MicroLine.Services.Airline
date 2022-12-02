@@ -38,4 +38,16 @@ internal class FlightReadonlyRepository : IFlightReadonlyRepository
             .Where(predicate)
             .ToListAsync(token);
     }
+
+    public async Task<IReadOnlyList<Flight>> GetAllAsync(CancellationToken token = default)
+    {
+        return await _dbContext.Flights
+            .AsNoTrackingWithIdentityResolution()
+            .Include(flight => flight.OriginAirport)
+            .Include(flight => flight.DestinationAirport)
+            .Include(flight => flight.Aircraft)
+            .Include(flight => flight.FlightCrewMembers)
+            .Include(flight => flight.CabinCrewMembers)
+            .ToListAsync(token);
+    }
 }

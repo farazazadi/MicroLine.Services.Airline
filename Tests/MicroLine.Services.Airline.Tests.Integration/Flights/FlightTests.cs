@@ -81,4 +81,30 @@ public class FlightTests : IntegrationTestBase
 
         flightDto.Should().BeEquivalentTo(expected);
     }
+
+
+    [Fact]
+    public async Task AllFlights_ShouldBeReturnedAsExpected()
+    {
+        await AirlineWebApplicationFactory.ResetDatabaseAsync();
+
+        // Given
+        var flights = await FakeFlight.ScheduleNewFakeFlightsAsync(5);
+
+        await SaveAsync(flights);
+
+        var expected = Mapper.Map<List<FlightDto>>(flights);
+
+
+        // When
+        var response = await Client.GetAsync("api/flights");
+
+
+        // Then
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var flightDtoList = await response.Content.ReadFromJsonAsync<List<FlightDto>>();
+
+        flightDtoList.Should().BeEquivalentTo(expected);
+    }
 }

@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using MicroLine.Services.Airline.Application.Flights.Commands.ScheduleFlight;
+using MicroLine.Services.Airline.Application.Flights.Queries.GetAllFlights;
 using MicroLine.Services.Airline.Application.Flights.Queries.GetFlightById;
 
 namespace MicroLine.Services.Airline.WebApi.Flights;
@@ -12,6 +13,7 @@ internal static class FlightEndpoints
     {
         app.MapPost(BaseUrl, ScheduleFlightAsync);
         app.MapGet(BaseUrl + "/{id}", GetFlightByIdAsync);
+        app.MapGet(BaseUrl, GetAllFlightsAsync);
         return app;
     }
 
@@ -28,5 +30,12 @@ internal static class FlightEndpoints
         var flightDto = await sender.Send(new GetFlightByIdQuery(id), token);
 
         return flightDto is not null ? Results.Ok(flightDto) : Results.NotFound();
+    }
+
+    private static async Task<IResult> GetAllFlightsAsync(ISender sender, CancellationToken token)
+    {
+        var flightDtoList = await sender.Send(new GetAllFlightsQuery(), token);
+
+        return Results.Ok(flightDtoList);
     }
 }

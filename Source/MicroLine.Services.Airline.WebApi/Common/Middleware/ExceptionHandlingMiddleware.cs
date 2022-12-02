@@ -1,4 +1,5 @@
-﻿using MicroLine.Services.Airline.Domain.Common.Exceptions;
+﻿using MicroLine.Services.Airline.Application.Common.Exceptions;
+using MicroLine.Services.Airline.Domain.Common.Exceptions;
 
 namespace MicroLine.Services.Airline.WebApi.Common.Middleware;
 
@@ -21,6 +22,10 @@ internal class ExceptionHandlingMiddleware
         {
             await HandleDomainExceptionAsync(context, exception);
         }
+        catch (ApplicationExceptionBase exception)
+        {
+            await HandleApplicationExceptionAsync(context, exception);
+        }
         catch (Exception exception)
         {
             await HandleUnexpectedExceptionsAsync(context, exception, logger);
@@ -29,21 +34,44 @@ internal class ExceptionHandlingMiddleware
 
     private static async Task HandleDomainExceptionAsync(HttpContext context, DomainException exception)
     {
+        await ReturnProblemResponseAsync(
+            exception.Code,
+            exception.Message,
+            StatusCodes.Status400BadRequest,
+            context);
+    }
 
+
+    private static async Task HandleApplicationExceptionAsync(HttpContext context, ApplicationExceptionBase exception)
+    {
+
+        await ReturnProblemResponseAsync(
+            exception.Code,
+            exception.Message,
+            StatusCodes.Status400BadRequest,
+            context);
+    }
+
+
+    private static async Task ReturnProblemResponseAsync(
+        string exceptionCode,
+        string exceptionMessage,
+        int statusCode,
+        HttpContext context)
+    {
         var extensions = new Dictionary<string, object>
         {
-            {"exceptionCode", exception.Code}
+            {"exceptionCode", exceptionCode}
         };
 
         await Results.Problem(
-                detail: exception.Message,
-                statusCode: StatusCodes.Status400BadRequest,
+                detail: exceptionMessage,
+                statusCode: statusCode,
                 instance: context.Request.Path,
                 extensions: extensions
-                )
+            )
             .ExecuteAsync(context);
     }
-
 
     private static async Task HandleUnexpectedExceptionsAsync(HttpContext context, Exception exception,
         ILogger<ExceptionHandlingMiddleware> logger)

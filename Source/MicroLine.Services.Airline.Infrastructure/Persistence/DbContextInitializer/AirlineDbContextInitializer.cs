@@ -21,6 +21,8 @@ internal class AirlineDbContextInitializer : IAirlineDbContextInitializer
     private readonly IAircraftReadonlyRepository _aircraftReadonlyRepository;
     private readonly IFlightCrewReadonlyRepository _flightCrewReadonlyRepository;
     private readonly ICabinCrewReadonlyRepository _cabinCrewReadonlyRepository;
+    private readonly IFlightReadonlyRepository _flightReadonlyRepository;
+    private readonly IEnumerable<IFlightPricingPolicy> _flightPricingPolicies;
     private readonly IDateTime _dateTime;
     private readonly ILogger _logger;
 
@@ -30,6 +32,8 @@ internal class AirlineDbContextInitializer : IAirlineDbContextInitializer
         IAircraftReadonlyRepository aircraftReadonlyRepository,
         IFlightCrewReadonlyRepository flightCrewReadonlyRepository,
         ICabinCrewReadonlyRepository cabinCrewReadonlyRepository,
+        IFlightReadonlyRepository flightReadonlyRepository,
+        IEnumerable<IFlightPricingPolicy> flightPricingPolicies,
         IDateTime dateTime,
         ILogger<AirlineDbContextInitializer> logger
         )
@@ -39,6 +43,8 @@ internal class AirlineDbContextInitializer : IAirlineDbContextInitializer
         _aircraftReadonlyRepository = aircraftReadonlyRepository;
         _flightCrewReadonlyRepository = flightCrewReadonlyRepository;
         _cabinCrewReadonlyRepository = cabinCrewReadonlyRepository;
+        _flightReadonlyRepository = flightReadonlyRepository;
+        _flightPricingPolicies = flightPricingPolicies;
         _dateTime = dateTime;
         _logger = logger;
     }
@@ -528,8 +534,6 @@ internal class AirlineDbContextInitializer : IAirlineDbContextInitializer
 
         #region Flights
 
-        var flightPricingPolicies = new List<IFlightPricingPolicy> { WeekDayFlightPricingPolicy.Create() };
-
         var flight1Price = FlightPrice.Create(
             Money.Of(200, Money.CurrencyType.UnitedStatesDollar),
             Money.Of(300, Money.CurrencyType.UnitedStatesDollar),
@@ -541,9 +545,9 @@ internal class AirlineDbContextInitializer : IAirlineDbContextInitializer
         var flight1CabinCrewMembers = new List<CabinCrew>
             {purser1, flightAttendant1, flightAttendant2, flightAttendant3, chef1};
 
-        var flight1 = Flight.Scheduler.ScheduleNewFlight(
-            null,
-            flightPricingPolicies,
+        var flight1 = await Flight.ScheduleNewFlightAsync(
+            _flightReadonlyRepository,
+            _flightPricingPolicies,
             FlightNumber.Create("AJ50"),
             mehrabadAirport,
             dublinAirport,
@@ -551,7 +555,8 @@ internal class AirlineDbContextInitializer : IAirlineDbContextInitializer
             _dateTime.UtcNow.AddDays(10),
             flight1Price,
             flight1FlightCrewMembers,
-            flight1CabinCrewMembers
+            flight1CabinCrewMembers,
+            token
         );
 
 
@@ -570,9 +575,9 @@ internal class AirlineDbContextInitializer : IAirlineDbContextInitializer
             chef1
         };
 
-        var flight2 = Flight.Scheduler.ScheduleNewFlight(
-            null,
-            flightPricingPolicies,
+        var flight2 = await Flight.ScheduleNewFlightAsync(
+            _flightReadonlyRepository,
+            _flightPricingPolicies,
             FlightNumber.Create("CA35"),
             istanbulAirport,
             torontoPearsonAirport,
@@ -580,8 +585,9 @@ internal class AirlineDbContextInitializer : IAirlineDbContextInitializer
             _dateTime.UtcNow.AddDays(20),
             flight2Price,
             flight2FlightCrewMembers,
-            flight2CabinCrewMembers
-        );
+            flight2CabinCrewMembers,
+            token
+            );
 
 
         var flights = new List<Flight> { flight1, flight2 };

@@ -17,7 +17,6 @@ public partial class Flight : AggregateRoot
 {
     private readonly List<FlightCrew> _flightCrewMembers;
     private readonly List<CabinCrew> _cabinCrewMembers;
-
     public FlightNumber FlightNumber { get; private set; }
     public Airport OriginAirport { get; private set; }
     public Airport DestinationAirport { get; private set; }
@@ -50,18 +49,6 @@ public partial class Flight : AggregateRoot
     }
 
 
-    private void CheckInvariants(Flight aircraftLastFlight,
-                            IReadOnlyList<Flight> flightCrewMembersLastFlight,
-                            IReadOnlyList<Flight> cabinCrewMembersLastFlight)
-    {
-        CheckScheduledUtcDateTimeOfDeparture();
-
-        CheckFlightCrewMembers(flightCrewMembersLastFlight);
-        CheckCabinCrewMembersAvailability(cabinCrewMembersLastFlight);
-        CheckAircraftAvailability(aircraftLastFlight);
-    }
-
-
     private void CheckScheduledUtcDateTimeOfDeparture()
     {
         var now = DateTime.UtcNow.RemoveSeconds();
@@ -70,7 +57,20 @@ public partial class Flight : AggregateRoot
             throw new InvalidScheduledDateTimeOfDeparture($"The scheduled DateTime (UTC) of departure ({ScheduledUtcDateTimeOfDeparture:f}) cannot be in the past!");
     }
 
-    private void CheckFlightCrewMembers(IReadOnlyList<Flight> flightCrewMembersLastFlight)
+    private async Task CheckAircraftAsync(IFlightReadonlyRepository flightReadonlyRepository, CancellationToken token = default)
+    {
+        var overlappingFlight = await flightReadonlyRepository
+            .GetAsync(flight => flight.Aircraft == Aircraft
+                                && flight.ScheduledUtcDateTimeOfDeparture < ScheduledUtcDateTimeOfArrival
+                                && ScheduledUtcDateTimeOfDeparture < flight.ScheduledUtcDateTimeOfArrival
+                , token);
+
+        if (overlappingFlight is not null)
+            throw new OverlapFlightResourcesException(
+                $"The aircraft ({Aircraft.Id}) is unavailable due to an overlap with the flight ({overlappingFlight.Id})!");
+    }
+
+    private async Task CheckFlightCrewMembersAsync(IFlightReadonlyRepository flightReadonlyRepository, CancellationToken token = default)
     {
         var pilotExist = FlightCrewMembers
             .Any(f => f.FlightCrewType is FlightCrewType.Pilot);
@@ -92,41 +92,57 @@ public partial class Flight : AggregateRoot
         }
 
 
-        //todo: Availability of all FlightCrewMembers should be checked
+
+        var overlappingFlights = await flightReadonlyRepository
+            .GetAllAsync(flight => flight.FlightCrewMembers.Any(fc=> FlightCrewMembers.Contains(fc))
+                                     && flight.ScheduledUtcDateTimeOfDeparture < ScheduledUtcDateTimeOfArrival
+                                     && ScheduledUtcDateTimeOfDeparture < flight.ScheduledUtcDateTimeOfArrival
+                , token);
+
+
+        if (overlappingFlights?.Count > 0)
+        {
+            var messages = string.Empty;
+
+            foreach (var overlappingFlight in overlappingFlights)
+            {
+                messages = FlightCrewMembers
+                    .Intersect(overlappingFlight.FlightCrewMembers)
+                    .Aggregate(messages, (current, flightCrew) =>
+                        current + $"The FlightCrew ({flightCrew.Id}) is unavailable due to an overlap with the flight ({overlappingFlight.Id})!" + Environment.NewLine);
+            }
+
+            throw new OverlapFlightResourcesException(messages);
+        }
+
     }
 
 
-    private void CheckCabinCrewMembersAvailability(IReadOnlyList<Flight> cabinCrewMembersLastFlight)
+    private async Task CheckCabinCrewMembersAsync(IFlightReadonlyRepository flightReadonlyRepository, CancellationToken token = default)
     {
-        //if (cabinCrewMembersLastFlight is null)
-        //    return;
+        var overlappingFlights = await flightReadonlyRepository
+            .GetAllAsync(flight => flight.CabinCrewMembers.Any(cc => CabinCrewMembers.Contains(cc))
+                                   && flight.ScheduledUtcDateTimeOfDeparture < ScheduledUtcDateTimeOfArrival
+                                   && ScheduledUtcDateTimeOfDeparture < flight.ScheduledUtcDateTimeOfArrival
+                , token);
 
-        //todo: Availability of all cabinCrewMembers should be checked
+
+        if (overlappingFlights?.Count > 0)
+        {
+            var messages = string.Empty;
+
+            foreach (var overlappingFlight in overlappingFlights)
+            {
+                messages = CabinCrewMembers
+                    .Intersect(overlappingFlight.CabinCrewMembers)
+                    .Aggregate(messages, (current, cabinCrew) =>
+                        current + $"The CabinCrew ({cabinCrew.Id}) is unavailable due to an overlap with the flight ({overlappingFlight.Id})!" + Environment.NewLine);
+            }
+
+            throw new OverlapFlightResourcesException(messages);
+        }
     }
 
-    private void CheckAircraftAvailability(Flight aircraftLastFlight)
-    {
-        //todo: Availability of Aircraft should be checked
-    }
-
-
-    private void ApplyPricingPolicies(IEnumerable<IFlightPricingPolicy> flightPricingPolicies)
-    {
-        var pricingPolicies = flightPricingPolicies
-            .OrderBy(p => p.Priority)
-            .ToList();
-
-        foreach (var policy in pricingPolicies)
-            Prices = policy.Calculate(this);
-    }
-
-    private void Schedule()
-    {
-        SetEstimatedFlightDuration();
-        SetScheduledUtcDateTimeOfArrival();
-        AddEvent(new FlightScheduledEvent(Id));
-        Status = FlightStatus.Scheduled;
-    }
 
     private void SetEstimatedFlightDuration()
     {
@@ -145,4 +161,43 @@ public partial class Flight : AggregateRoot
             .RemoveSeconds();
     }
 
+    private void ApplyPricingPolicies(IEnumerable<IFlightPricingPolicy> flightPricingPolicies)
+    {
+        var pricingPolicies = flightPricingPolicies
+            .OrderBy(p => p.Priority)
+            .ToList();
+
+        foreach (var policy in pricingPolicies)
+            Prices = policy.Calculate(this);
+    }
+
+    public static async Task<Flight> ScheduleNewFlightAsync(
+        IFlightReadonlyRepository flightReadonlyRepository,
+        IEnumerable<IFlightPricingPolicy> flightPricingPolicies,
+        FlightNumber flightNumber, Airport originAirport, Airport destinationAirport, Aircraft aircraft,
+        DateTime scheduledUtcDateTimeOfDeparture, FlightPrice basePrices,
+        List<FlightCrew> flightCrewMembers, List<CabinCrew> cabinCrewMembers,
+        CancellationToken token = default)
+    {
+        
+        var flight = new Flight(flightNumber, originAirport, destinationAirport, aircraft,
+            scheduledUtcDateTimeOfDeparture, basePrices,
+            flightCrewMembers, cabinCrewMembers);
+
+        flight.CheckScheduledUtcDateTimeOfDeparture();
+
+        flight.SetEstimatedFlightDuration();
+        flight.SetScheduledUtcDateTimeOfArrival();
+
+        await flight.CheckAircraftAsync(flightReadonlyRepository, token);
+        await flight.CheckFlightCrewMembersAsync(flightReadonlyRepository, token);
+        await flight.CheckCabinCrewMembersAsync(flightReadonlyRepository, token);
+
+        flight.ApplyPricingPolicies(flightPricingPolicies);
+
+        flight.AddEvent(new FlightScheduledEvent(flight.Id));
+        flight.Status = FlightStatus.Scheduled;
+
+        return flight;
+    }
 }

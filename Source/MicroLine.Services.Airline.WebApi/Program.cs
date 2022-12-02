@@ -7,6 +7,7 @@ using MicroLine.Services.Airline.WebApi.Airports;
 using MicroLine.Services.Airline.WebApi.CabinCrews;
 using MicroLine.Services.Airline.WebApi.Common.Middleware;
 using MicroLine.Services.Airline.WebApi.FlightCrews;
+using MicroLine.Services.Airline.WebApi.Flights;
 using Serilog;
 
 const string serviceName = "Airline";
@@ -60,7 +61,8 @@ try
         .MapAirportEndpoints()
         .MapAircraftEndpoints()
         .MapFlightCrewEndpoints()
-        .MapCabinCrewEndpoints();
+        .MapCabinCrewEndpoints()
+        .MapFlightEndpoints();
 
     app.Run();
 

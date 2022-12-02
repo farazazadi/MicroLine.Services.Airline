@@ -59,4 +59,26 @@ public class FlightTests : IntegrationTestBase
         });
 
     }
+
+    [Fact]
+    public async Task Flight_ShouldBeReturnedAsExpected_WhenIdIsValid()
+    {
+        // Given
+        var flight = await FakeFlight.ScheduleNewFakeFlightAsync();
+        await SaveAsync(flight);
+
+        var expected = Mapper.Map<FlightDto>(flight);
+
+
+        // When
+        var response = await Client.GetAsync($"api/flights/{flight.Id}");
+
+
+        // Then
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var flightDto = await response.Content.ReadFromJsonAsync<FlightDto>();
+
+        flightDto.Should().BeEquivalentTo(expected);
+    }
 }

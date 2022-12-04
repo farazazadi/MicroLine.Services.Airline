@@ -34,7 +34,7 @@ public static class FakeFlight
         destinationAirport ??= FakeAirport.NewFake();
 
         var aircraftManufacturer = faker.PickRandom<AircraftManufacturer>();
-        aircraft ??= await FakeAircraft.NewFakeAsync(aircraftManufacturer);
+        aircraft ??= FakeAircraft.NewFake(aircraftManufacturer);
 
         scheduledUtcDateTimeOfDeparture ??= DateTime.UtcNow.AddDays(4);
 

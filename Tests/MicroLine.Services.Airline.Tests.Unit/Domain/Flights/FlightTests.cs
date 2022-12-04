@@ -30,7 +30,7 @@ public class FlightTests
         var originAirport = FakeAirport.NewFake();
         var destinationAirport = FakeAirport.NewFake();
 
-        var aircraft = await FakeAircraft.NewFakeAsync(AircraftManufacturer.Boeing);
+        var aircraft = FakeAircraft.NewFake(AircraftManufacturer.Boeing);
 
 
 
@@ -86,7 +86,7 @@ public class FlightTests
         var originAirport = FakeAirport.NewFake();
         var destinationAirport = FakeAirport.NewFake();
 
-        var aircraft = await FakeAircraft.NewFakeAsync(AircraftManufacturer.Boeing);
+        var aircraft = FakeAircraft.NewFake(AircraftManufacturer.Boeing);
 
         var scheduledUtcDateTimeOfDeparture = DateTime.UtcNow.AddHours(-1);
 
@@ -153,7 +153,7 @@ public class FlightTests
         var originAirport = FakeAirport.NewFake();
         var destinationAirport = FakeAirport.NewFake();
 
-        var aircraft = await FakeAircraft.NewFakeAsync(AircraftManufacturer.Boeing);
+        var aircraft = FakeAircraft.NewFake(AircraftManufacturer.Boeing);
 
         var scheduledUtcDateTimeOfDeparture = DateTime.UtcNow.AddHours(5);
 
@@ -217,7 +217,7 @@ public class FlightTests
         var originAirport = FakeAirport.NewFake();
         var destinationAirport = FakeAirport.NewFake();
 
-        var aircraft = await FakeAircraft.NewFakeAsync(AircraftManufacturer.Boeing);
+        var aircraft = FakeAircraft.NewFake(AircraftManufacturer.Boeing);
 
 
         var economyClassPrice = Money.Of(baseEconomyClassPrice, Money.CurrencyType.UnitedStatesDollar);
@@ -261,7 +261,7 @@ public class FlightTests
     public async Task Flight_ShouldThrowOverlapFlightResourcesException_WhenFlightOverlapsWithAnotherFlightOfAircraft()
     {
         // Given
-        var aircraft = await FakeAircraft.NewFakeAsync(AircraftManufacturer.Airbus);
+        var aircraft = FakeAircraft.NewFake(AircraftManufacturer.Airbus);
 
         var overlappedFlight = await FakeFlight.ScheduleNewFakeFlightAsync(
             aircraft: aircraft,

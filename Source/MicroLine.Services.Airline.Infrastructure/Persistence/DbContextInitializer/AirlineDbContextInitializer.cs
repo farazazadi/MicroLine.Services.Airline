@@ -17,7 +17,6 @@ namespace MicroLine.Services.Airline.Infrastructure.Persistence.DbContextInitial
 internal class AirlineDbContextInitializer : IAirlineDbContextInitializer
 {
     private readonly AirlineDbContext _dbContext;
-    private readonly IAircraftReadonlyRepository _aircraftReadonlyRepository;
     private readonly IFlightCrewReadonlyRepository _flightCrewReadonlyRepository;
     private readonly ICabinCrewReadonlyRepository _cabinCrewReadonlyRepository;
     private readonly IFlightReadonlyRepository _flightReadonlyRepository;
@@ -27,7 +26,6 @@ internal class AirlineDbContextInitializer : IAirlineDbContextInitializer
 
     public AirlineDbContextInitializer(
         AirlineDbContext dbContext,
-        IAircraftReadonlyRepository aircraftReadonlyRepository,
         IFlightCrewReadonlyRepository flightCrewReadonlyRepository,
         ICabinCrewReadonlyRepository cabinCrewReadonlyRepository,
         IFlightReadonlyRepository flightReadonlyRepository,
@@ -37,7 +35,6 @@ internal class AirlineDbContextInitializer : IAirlineDbContextInitializer
         )
     {
         _dbContext = dbContext;
-        _aircraftReadonlyRepository = aircraftReadonlyRepository;
         _flightCrewReadonlyRepository = flightCrewReadonlyRepository;
         _cabinCrewReadonlyRepository = cabinCrewReadonlyRepository;
         _flightReadonlyRepository = flightReadonlyRepository;
@@ -177,29 +174,24 @@ internal class AirlineDbContextInitializer : IAirlineDbContextInitializer
 
         #region Aircrafts
 
-        var airbusA320 = await Aircraft.CreateAsync(
+        var airbusA320 = Aircraft.Create(
             AircraftManufacturer.Airbus,
             AircraftModel.Create("A320"),
             Date.Create(2015, 05, 01),
             PassengerSeatingCapacity.Create(180, 45, 0),
             Speed.Create(828, unitOfSpeed: Speed.UnitOfSpeed.KilometresPerHour),
             Speed.Create(871, unitOfSpeed: Speed.UnitOfSpeed.KilometresPerHour),
-            AircraftRegistrationCode.Create("EP-FSA"),
-
-            _aircraftReadonlyRepository,
-            token
+            AircraftRegistrationCode.Create("EP-FSA")
             );
 
-        var boeing777 = await Aircraft.CreateAsync(
+        var boeing777 = Aircraft.Create(
             AircraftManufacturer.Boeing,
             AircraftModel.Create("777-300ER"),
             Date.Create(2010, 03, 30),
             PassengerSeatingCapacity.Create(300, 96, 0),
             Speed.Create(892, unitOfSpeed: Speed.UnitOfSpeed.KilometresPerHour),
             Speed.Create(924, unitOfSpeed: Speed.UnitOfSpeed.KilometresPerHour),
-            AircraftRegistrationCode.Create("EP-FSB"),
-            _aircraftReadonlyRepository,
-            token
+            AircraftRegistrationCode.Create("EP-FSB")
             );
 
         var aircrafts = new List<Aircraft> { airbusA320, boeing777 };

@@ -27,8 +27,8 @@ public class FlightTests
 
         var flightNumber = FlightNumber.Create("UAL870");
 
-        var originAirport = await FakeAirport.NewFakeAsync();
-        var destinationAirport = await FakeAirport.NewFakeAsync();
+        var originAirport = FakeAirport.NewFake();
+        var destinationAirport = FakeAirport.NewFake();
 
         var aircraft = await FakeAircraft.NewFakeAsync(AircraftManufacturer.Boeing);
 
@@ -83,8 +83,8 @@ public class FlightTests
 
         var flightNumber = FlightNumber.Create("UAL870");
 
-        var originAirport = await FakeAirport.NewFakeAsync();
-        var destinationAirport = await FakeAirport.NewFakeAsync();
+        var originAirport = FakeAirport.NewFake();
+        var destinationAirport = FakeAirport.NewFake();
 
         var aircraft = await FakeAircraft.NewFakeAsync(AircraftManufacturer.Boeing);
 
@@ -150,8 +150,8 @@ public class FlightTests
 
         var flightNumber = FlightNumber.Create("UAL870");
 
-        var originAirport = await FakeAirport.NewFakeAsync();
-        var destinationAirport = await FakeAirport.NewFakeAsync();
+        var originAirport = FakeAirport.NewFake();
+        var destinationAirport = FakeAirport.NewFake();
 
         var aircraft = await FakeAircraft.NewFakeAsync(AircraftManufacturer.Boeing);
 
@@ -214,8 +214,8 @@ public class FlightTests
 
         var flightNumber = FlightNumber.Create("UAL870");
 
-        var originAirport = await FakeAirport.NewFakeAsync();
-        var destinationAirport = await FakeAirport.NewFakeAsync();
+        var originAirport = FakeAirport.NewFake();
+        var destinationAirport = FakeAirport.NewFake();
 
         var aircraft = await FakeAircraft.NewFakeAsync(AircraftManufacturer.Boeing);
 

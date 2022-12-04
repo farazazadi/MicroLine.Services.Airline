@@ -3,28 +3,36 @@ using MediatR;
 using MicroLine.Services.Airline.Application.Airports.DataTransferObjects;
 using MicroLine.Services.Airline.Application.Common.Contracts;
 using MicroLine.Services.Airline.Domain.Airports;
+using MicroLine.Services.Airline.Domain.Airports.Exceptions;
 using MicroLine.Services.Airline.Domain.Common.ValueObjects;
+using Microsoft.EntityFrameworkCore;
 
 namespace MicroLine.Services.Airline.Application.Airports.Commands.CreateAirport;
 
 internal class CreateAirportCommandHandler : IRequestHandler<CreateAirportCommand, AirportDto>
 {
     private readonly IAirlineDbContext _airlineDbContext;
-    private readonly IAirportReadonlyRepository _airportReadonlyRepository;
     private readonly IMapper _mapper;
 
     public CreateAirportCommandHandler(
         IAirlineDbContext airlineDbContext,
-        IAirportReadonlyRepository repository,
         IMapper mapper)
     {
         _airlineDbContext = airlineDbContext;
-        _airportReadonlyRepository = repository;
         _mapper = mapper;
     }
 
     public async Task<AirportDto> Handle(CreateAirportCommand command, CancellationToken token)
     {
+        IcaoCode icaoCode = command.IcaoCode;
+
+        var icaoCodeExist = await _airlineDbContext.Airports
+            .AnyAsync(airport => airport.IcaoCode == icaoCode, token);
+
+        if (icaoCodeExist)
+            throw new DuplicateIcaoCodeException(icaoCode);
+
+
         var baseUtcOffset = BaseUtcOffset.Create(
             command.BaseUtcOffsetDto.Hours,
             command.BaseUtcOffsetDto.Minutes);
@@ -38,15 +46,12 @@ internal class CreateAirportCommandHandler : IRequestHandler<CreateAirportComman
             command.AirportLocationDto.Longitude
             );
 
-        var airport = await Airport.CreateAsync(
-            command.IcaoCode,
+        var airport = Airport.Create(
+            icaoCode,
             command.IataCode,
             command.Name,
             baseUtcOffset,
-            airportLocation,
-
-            _airportReadonlyRepository,
-            token
+            airportLocation
         );
 
         await _airlineDbContext.Airports.AddAsync(airport, token);

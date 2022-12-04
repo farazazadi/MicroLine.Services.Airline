@@ -30,8 +30,8 @@ public static class FakeFlight
 
         flightNumber ??= NewFakeFlightNumber(faker);
 
-        originAirport ??= await FakeAirport.NewFakeAsync();
-        destinationAirport ??= await FakeAirport.NewFakeAsync();
+        originAirport ??= FakeAirport.NewFake();
+        destinationAirport ??= FakeAirport.NewFake();
 
         var aircraftManufacturer = faker.PickRandom<AircraftManufacturer>();
         aircraft ??= await FakeAircraft.NewFakeAsync(aircraftManufacturer);

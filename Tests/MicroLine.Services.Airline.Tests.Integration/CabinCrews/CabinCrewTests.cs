@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using MicroLine.Services.Airline.Application.CabinCrews.Commands.CreateCabinCrew;
 using MicroLine.Services.Airline.Application.CabinCrews.DataTransferObjects;
 using MicroLine.Services.Airline.Domain.CabinCrews;
+using MicroLine.Services.Airline.Tests.Common.Extensions;
 using MicroLine.Services.Airline.Tests.Common.Fakes;
 using MicroLine.Services.Airline.Tests.Integration.Common;
 
@@ -18,7 +19,7 @@ public class CabinCrewTests : IntegrationTestBase
     public async Task CabinCrew_ShouldBeCreatedAsExpected_WhenRequestIsValid()
     {
         // Given
-        var cabinCrew = await FakeCabinCrew.NewFakeAsync(CabinCrewType.Purser);
+        var cabinCrew = FakeCabinCrew.NewFake(CabinCrewType.Purser);
 
         var createCabinCrewCommand = Mapper.Map<CreateCabinCrewCommand>(cabinCrew);
 
@@ -46,11 +47,68 @@ public class CabinCrewTests : IntegrationTestBase
     }
 
 
+
+    [Fact]
+    public async Task CabinCrew_ShouldReturnCreateCabinCrewProblem_WhenPassportNumberAlreadyExist()
+    {
+        // Given
+        var existingCabinCrew = FakeCabinCrew.NewFake(CabinCrewType.Purser);
+
+        await SaveAsync(existingCabinCrew);
+
+        var existingPassportNumber = existingCabinCrew.PassportNumber;
+
+        var cabinCrew = FakeCabinCrew.NewFake(CabinCrewType.Purser, passportNumber: existingPassportNumber);
+
+        var createCabinCrewCommand = Mapper.Map<CreateCabinCrewCommand>(cabinCrew);
+
+
+        // When
+        var response = await Client.PostAsJsonAsync("api/cabin-crew", createCabinCrewCommand);
+
+
+        // Then
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+
+        var problemDetails = await response.GetProblemResultAsync();
+
+        problemDetails.Extensions.Values.FirstOrDefault()?.ToString().Should().Be(nameof(CreateCabinCrewException));
+    }
+
+
+    [Fact]
+    public async Task CabinCrew_ShouldReturnCreateCabinCrewProblem_WhenNationalIdAlreadyExist()
+    {
+        // Given
+        var existingCabinCrew = FakeCabinCrew.NewFake(CabinCrewType.Purser);
+
+        await SaveAsync(existingCabinCrew);
+
+        var existingNationalId = existingCabinCrew.NationalId;
+
+        var cabinCrew = FakeCabinCrew.NewFake(CabinCrewType.Purser, nationalId: existingNationalId);
+
+        var createCabinCrewCommand = Mapper.Map<CreateCabinCrewCommand>(cabinCrew);
+
+
+        // When
+        var response = await Client.PostAsJsonAsync("api/cabin-crew", createCabinCrewCommand);
+
+
+        // Then
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+
+        var problemDetails = await response.GetProblemResultAsync();
+
+        problemDetails.Extensions.Values.FirstOrDefault()?.ToString().Should().Be(nameof(CreateCabinCrewException));
+    }
+
+
     [Fact]
     public async Task CabinCrew_ShouldBeReturnedAsExpected_WhenIdIsValid()
     {
         // Given
-        var cabinCrew = await FakeCabinCrew.NewFakeAsync(CabinCrewType.FlightAttendant);
+        var cabinCrew = FakeCabinCrew.NewFake(CabinCrewType.FlightAttendant);
         await SaveAsync(cabinCrew);
 
         var expected = Mapper.Map<CabinCrewDto>(cabinCrew);
@@ -75,7 +133,7 @@ public class CabinCrewTests : IntegrationTestBase
         await AirlineWebApplicationFactory.ResetDatabaseAsync();
 
         // Given
-        var cabinCrewList = await FakeCabinCrew.NewFakeListAsync(
+        var cabinCrewList = FakeCabinCrew.NewFakeList(
             CabinCrewType.Purser,
             CabinCrewType.FlightAttendant,
             CabinCrewType.FlightAttendant,

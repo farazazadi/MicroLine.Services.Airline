@@ -48,7 +48,7 @@ public class FlightTests
             FlightCrewType.FlightEngineer);
 
 
-        var cabinCrewMembers = await FakeCabinCrew.NewFakeListAsync(
+        var cabinCrewMembers = FakeCabinCrew.NewFakeList(
             CabinCrewType.Purser,
             CabinCrewType.FlightAttendant);
 
@@ -102,7 +102,7 @@ public class FlightTests
             FlightCrewType.FlightEngineer);
 
 
-        var cabinCrewMembers = await FakeCabinCrew.NewFakeListAsync(
+        var cabinCrewMembers = FakeCabinCrew.NewFakeList(
             CabinCrewType.Purser,
             CabinCrewType.FlightAttendant);
 
@@ -163,7 +163,7 @@ public class FlightTests
 
         var basePrices = FlightPrice.Create(economyClassPrice, businessClassPrice, firstClassPrice);
 
-        var cabinCrewMembers = await FakeCabinCrew.NewFakeListAsync(
+        var cabinCrewMembers = FakeCabinCrew.NewFakeList(
             CabinCrewType.Purser,
             CabinCrewType.FlightAttendant);
 
@@ -232,7 +232,7 @@ public class FlightTests
             FlightCrewType.FlightEngineer);
 
 
-        var cabinCrewMembers = await FakeCabinCrew.NewFakeListAsync(
+        var cabinCrewMembers = FakeCabinCrew.NewFakeList(
             CabinCrewType.Purser,
             CabinCrewType.FlightAttendant);
 
@@ -343,12 +343,12 @@ public class FlightTests
     {
 
         // Given
-        var cabinCrewMembers = await FakeCabinCrew.NewFakeListAsync(
+        var cabinCrewMembers = FakeCabinCrew.NewFakeList(
             CabinCrewType.FlightAttendant,
             CabinCrewType.FlightAttendant
         );
 
-        var purser = await FakeCabinCrew.NewFakeAsync(CabinCrewType.Purser);
+        var purser = FakeCabinCrew.NewFake(CabinCrewType.Purser);
         cabinCrewMembers.Add(purser);
 
         var overlappedFlight = await FakeFlight.ScheduleNewFakeFlightAsync(
@@ -365,7 +365,7 @@ public class FlightTests
             .Returns(new List<Flight> { overlappedFlight });
 
 
-        var newCabinCrewMembers = await FakeCabinCrew.NewFakeListAsync(
+        var newCabinCrewMembers = FakeCabinCrew.NewFakeList(
             CabinCrewType.FlightAttendant,
             CabinCrewType.FlightAttendant
         );

@@ -45,7 +45,7 @@ public static class FakeFlight
             FlightCrewType.CoPilot,
             FlightCrewType.FlightEngineer);
 
-        cabinCrewMembers ??= await FakeCabinCrew.NewFakeListAsync(
+        cabinCrewMembers ??= FakeCabinCrew.NewFakeList(
             CabinCrewType.Purser,
             CabinCrewType.FlightAttendant,
             CabinCrewType.FlightAttendant,

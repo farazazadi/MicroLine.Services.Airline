@@ -59,4 +59,8 @@ public class Result
 
         return this;
     }
+
+    public string GetFailureReasons(string separator = null) => string.Join(separator ?? Environment.NewLine, FailureReasons);
+
+    public static Result operator +(Result left, Result right) => left.Concat(right);
 }

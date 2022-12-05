@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using MicroLine.Services.Airline.Application.FlightCrews.Commands.CreateFlightCrew;
 using MicroLine.Services.Airline.Application.FlightCrews.DataTransferObjects;
 using MicroLine.Services.Airline.Domain.FlightCrews;
+using MicroLine.Services.Airline.Tests.Common.Extensions;
 using MicroLine.Services.Airline.Tests.Common.Fakes;
 using MicroLine.Services.Airline.Tests.Integration.Common;
 
@@ -19,7 +20,7 @@ public class FlightCrewTests : IntegrationTestBase
     public async Task FlightCrew_ShouldBeCreatedAsExpected_WhenRequestIsValid()
     {
         // Given
-        var flightCrew = await FakeFlightCrew.NewFakeAsync(FlightCrewType.Pilot);
+        var flightCrew = FakeFlightCrew.NewFake(FlightCrewType.Pilot);
 
         var createFlightCrewCommand = Mapper.Map<CreateFlightCrewCommand>(flightCrew);
 
@@ -46,11 +47,69 @@ public class FlightCrewTests : IntegrationTestBase
         });
     }
 
+
+
+    [Fact]
+    public async Task FlightCrew_ShouldReturnCreateFlightCrewProblem_WhenPassportNumberAlreadyExist()
+    {
+        // Given
+        var existingFlightCrew = FakeFlightCrew.NewFake(FlightCrewType.Pilot);
+
+        await SaveAsync(existingFlightCrew);
+
+        var existingPassportNumber = existingFlightCrew.PassportNumber;
+
+        var flightCrew = FakeFlightCrew.NewFake(FlightCrewType.Pilot, passportNumber: existingPassportNumber);
+
+        var createFlightCrewCommand = Mapper.Map<CreateFlightCrewCommand>(flightCrew);
+
+
+        // When
+        var response = await Client.PostAsJsonAsync("api/flight-crew", createFlightCrewCommand);
+
+
+        // Then
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+
+        var problemDetails = await response.GetProblemResultAsync();
+
+        problemDetails.Extensions.Values.FirstOrDefault()?.ToString().Should().Be(nameof(CreateFlightCrewException));
+    }
+
+
+    [Fact]
+    public async Task FlightCrew_ShouldReturnCreateFlightCrewProblem_WhenNationalIdAlreadyExist()
+    {
+        // Given
+        var existingFlightCrew = FakeFlightCrew.NewFake(FlightCrewType.Pilot);
+
+        await SaveAsync(existingFlightCrew);
+
+        var existingNationalId = existingFlightCrew.NationalId;
+
+        var flightCrew = FakeFlightCrew.NewFake(FlightCrewType.Pilot, nationalId: existingNationalId);
+
+        var createFlightCrewCommand = Mapper.Map<CreateFlightCrewCommand>(flightCrew);
+
+
+        // When
+        var response = await Client.PostAsJsonAsync("api/flight-crew", createFlightCrewCommand);
+
+
+        // Then
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+
+        var problemDetails = await response.GetProblemResultAsync();
+
+        problemDetails.Extensions.Values.FirstOrDefault()?.ToString().Should().Be(nameof(CreateFlightCrewException));
+    }
+
+
     [Fact]
     public async Task FlightCrew_ShouldBeReturnedAsExpected_WhenIdIsValid()
     {
         // Given
-        var flightCrew = await FakeFlightCrew.NewFakeAsync(FlightCrewType.FlightEngineer);
+        var flightCrew = FakeFlightCrew.NewFake(FlightCrewType.FlightEngineer);
         await SaveAsync(flightCrew);
 
         var expected = Mapper.Map<FlightCrewDto>(flightCrew);
@@ -86,7 +145,7 @@ public class FlightCrewTests : IntegrationTestBase
         await AirlineWebApplicationFactory.ResetDatabaseAsync();
 
         // Given
-        var flightCrewList = await FakeFlightCrew.NewFakeListAsync(
+        var flightCrewList = FakeFlightCrew.NewFakeList(
             FlightCrewType.Pilot,
             FlightCrewType.Pilot,
             FlightCrewType.CoPilot,

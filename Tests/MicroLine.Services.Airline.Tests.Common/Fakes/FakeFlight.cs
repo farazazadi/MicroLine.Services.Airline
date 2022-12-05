@@ -40,7 +40,7 @@ public static class FakeFlight
 
         basePrices ??= NewFakeFlightPrice(faker);
 
-        flightCrewMembers ??= await FakeFlightCrew.NewFakeListAsync(
+        flightCrewMembers ??= FakeFlightCrew.NewFakeList(
             FlightCrewType.Pilot,
             FlightCrewType.CoPilot,
             FlightCrewType.FlightEngineer);

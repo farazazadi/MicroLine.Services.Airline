@@ -1,6 +1,5 @@
 using MicroLine.Services.Airline.Application.Common.Contracts;
 using MicroLine.Services.Airline.Domain.CabinCrews;
-using MicroLine.Services.Airline.Domain.FlightCrews;
 using MicroLine.Services.Airline.Domain.Flights;
 using MicroLine.Services.Airline.Infrastructure.Persistence;
 using MicroLine.Services.Airline.Infrastructure.Persistence.DbContextInitializer;
@@ -24,7 +23,6 @@ public static class DependencyInjection
         AddDbContext(services, configuration);
 
         services
-            .AddScoped<IFlightCrewReadonlyRepository, FlightCrewReadonlyRepository>()
             .AddScoped<ICabinCrewReadonlyRepository, CabinCrewReadonlyRepository>()
             .AddScoped<IFlightReadonlyRepository, FlightReadonlyRepository>();
 

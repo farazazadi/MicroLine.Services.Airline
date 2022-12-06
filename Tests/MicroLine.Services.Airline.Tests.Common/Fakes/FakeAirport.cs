@@ -1,53 +1,50 @@
 ﻿using Bogus;
 using MicroLine.Services.Airline.Domain.Airports;
-using Moq;
+using MicroLine.Services.Airline.Domain.Common.ValueObjects;
 
 namespace MicroLine.Services.Airline.Tests.Common.Fakes;
 
 public static class FakeAirport
 {
-    public static async Task<Airport> NewFakeAsync()
+    public static Airport NewFake(
+        IcaoCode icaoCode = null,
+        IataCode iataCode = null,
+        AirportName airportName = null,
+        BaseUtcOffset baseUtcOffset = null,
+        AirportLocation airportLocation = null
+    )
     {
-        var repository = Mock.Of<IAirportReadonlyRepository>();
-
         var faker = new Faker();
 
-        var icaoCode = NewFakeIcaoCode(faker);
-        var iataCode = NewFakeIataCode(faker);
+        icaoCode ??= NewFakeIcaoCode(faker);
+        iataCode ??= NewFakeIataCode(faker);
 
-        var airportLocation = NewFakeAirportLocation(faker);
-        var airportName = NewFakeAirportName(faker, airportLocation.City);
+        baseUtcOffset ??= ValueObjects.FakeBaseUtcOffset.NewFake();
+        airportLocation ??= NewFakeAirportLocation(faker);
+        airportName ??= NewFakeAirportName(faker, airportLocation.City);
 
-        var baseUtcOffset = ValueObjects.FakeBaseUtcOffset.NewFake();
 
-        return await Airport.CreateAsync(
-            icaoCode, iataCode, airportName, baseUtcOffset, airportLocation, repository);
+        return Airport.Create(
+            icaoCode, iataCode, airportName, baseUtcOffset, airportLocation);
     }
 
-    public static async Task<Airport> NewFakeAsync(double latitude, double longitude)
+    public static Airport NewFake(double latitude, double longitude)
     {
-        var repository = Mock.Of<IAirportReadonlyRepository>();
-
         var faker = new Faker();
-
-        var icaoCode = NewFakeIcaoCode(faker);
-        var iataCode = NewFakeIataCode(faker);
 
         var airportLocation = NewFakeAirportLocation(faker, latitude, longitude);
         var airportName = NewFakeAirportName(faker, airportLocation.City);
 
-        var baseUtcOffset = ValueObjects.FakeBaseUtcOffset.NewFake();
-
-        return await Airport.CreateAsync(icaoCode, iataCode, airportName, baseUtcOffset, airportLocation, repository);
+        return NewFake(airportName: airportName, airportLocation: airportLocation);
     }
 
-    public static async Task<List<Airport>> NewFakeListAsync(int count)
+    public static List<Airport> NewFakeList(int count)
     {
         var airports = new List<Airport>();
 
         for (var i = 0; i < count; i++)
         {
-            var airport = await NewFakeAsync();
+            var airport = NewFake();
             airports.Add(airport);
         }
 

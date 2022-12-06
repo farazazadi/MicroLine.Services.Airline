@@ -1,5 +1,4 @@
-﻿using MicroLine.Services.Airline.Domain.Aircrafts.Exceptions;
-using MicroLine.Services.Airline.Domain.Common;
+﻿using MicroLine.Services.Airline.Domain.Common;
 using MicroLine.Services.Airline.Domain.Common.ValueObjects;
 
 namespace MicroLine.Services.Airline.Domain.Aircrafts;
@@ -29,14 +28,10 @@ public class Aircraft : AggregateRoot
         RegistrationCode = registrationCode;
     }
 
-    public static async Task<Aircraft> CreateAsync(AircraftManufacturer manufacturer, AircraftModel model, Date manufactureDate,
+    public static Aircraft Create(AircraftManufacturer manufacturer, AircraftModel model, Date manufactureDate,
         PassengerSeatingCapacity passengerSeatingCapacity, Speed cruisingSpeed, Speed maximumOperatingSpeed,
-        AircraftRegistrationCode registrationCode, IAircraftReadonlyRepository repository, CancellationToken token = default)
+        AircraftRegistrationCode registrationCode)
     {
-        var aircraftWithSameRegistrationCodeExist = await repository.ExistAsync(registrationCode, token);
-
-        if (aircraftWithSameRegistrationCodeExist)
-            throw new DuplicateAircraftRegistrationCodeException(registrationCode);
 
         return new Aircraft(manufacturer, model, manufactureDate,
             passengerSeatingCapacity, cruisingSpeed, maximumOperatingSpeed,

@@ -1,27 +1,31 @@
 ﻿using MapsterMapper;
 using MediatR;
 using MicroLine.Services.Airline.Application.CabinCrews.DataTransferObjects;
-using MicroLine.Services.Airline.Domain.CabinCrews;
+using MicroLine.Services.Airline.Application.Common.Contracts;
+using Microsoft.EntityFrameworkCore;
 
 namespace MicroLine.Services.Airline.Application.CabinCrews.Queries.GetAllCabinCrew;
 
 internal class GetAllCabinCrewQueryHandler : IRequestHandler<GetAllCabinCrewQuery, IReadOnlyList<CabinCrewDto>>
 {
-    private readonly ICabinCrewReadonlyRepository _cabinCrewReadonlyRepository;
+    private readonly IAirlineDbContext _airlineDbContext;
     private readonly IMapper _mapper;
 
     public GetAllCabinCrewQueryHandler(
-        ICabinCrewReadonlyRepository cabinCrewReadonlyRepository,
+        IAirlineDbContext airlineDbContext,
         IMapper mapper
         )
     {
-        _cabinCrewReadonlyRepository = cabinCrewReadonlyRepository;
+        _airlineDbContext = airlineDbContext;
         _mapper = mapper;
     }
 
     public async Task<IReadOnlyList<CabinCrewDto>> Handle(GetAllCabinCrewQuery query, CancellationToken token)
     {
-        var cabinCrewList = await _cabinCrewReadonlyRepository.GetAllAsync(token);
+        var cabinCrewList = await _airlineDbContext.CabinCrews
+            .AsNoTracking()
+            .OrderByDescending(cabinCrew => cabinCrew.CreatedAtUtc)
+            .ToListAsync(token);
 
         var cabinCrewDtoList = _mapper.Map<IReadOnlyList<CabinCrewDto>>(cabinCrewList);
 

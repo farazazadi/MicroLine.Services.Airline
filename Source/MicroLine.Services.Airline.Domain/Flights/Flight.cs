@@ -13,7 +13,7 @@ using MicroLine.Services.Airline.Domain.Flights.Exceptions;
 
 namespace MicroLine.Services.Airline.Domain.Flights;
 
-public partial class Flight : AggregateRoot
+public class Flight : AggregateRoot
 {
     private readonly List<FlightCrew> _flightCrewMembers;
     private readonly List<CabinCrew> _cabinCrewMembers;
@@ -57,20 +57,7 @@ public partial class Flight : AggregateRoot
             throw new InvalidScheduledDateTimeOfDeparture($"The scheduled DateTime (UTC) of departure ({ScheduledUtcDateTimeOfDeparture:f}) cannot be in the past!");
     }
 
-    private async Task CheckAircraftAsync(IFlightReadonlyRepository flightReadonlyRepository, CancellationToken token = default)
-    {
-        var overlappingFlight = await flightReadonlyRepository
-            .GetAsync(flight => flight.Aircraft == Aircraft
-                                && flight.ScheduledUtcDateTimeOfDeparture < ScheduledUtcDateTimeOfArrival
-                                && ScheduledUtcDateTimeOfDeparture < flight.ScheduledUtcDateTimeOfArrival
-                , token);
-
-        if (overlappingFlight is not null)
-            throw new OverlapFlightResourcesException(
-                $"The aircraft ({Aircraft.Id}) is unavailable due to an overlap with the flight ({overlappingFlight.Id})!");
-    }
-
-    private async Task CheckFlightCrewMembersAsync(IFlightReadonlyRepository flightReadonlyRepository, CancellationToken token = default)
+    private void CheckFlightCrewMembersAsync()
     {
         var pilotExist = FlightCrewMembers
             .Any(f => f.FlightCrewType is FlightCrewType.Pilot);
@@ -90,59 +77,8 @@ public partial class Flight : AggregateRoot
                 throw new IncompleteFlightCrewMembersException(
                     "The presence of at least one Pilot and one Co-Pilot or two Pilots in the flight crew is mandatory!");
         }
-
-
-
-        var overlappingFlights = await flightReadonlyRepository
-            .GetAllAsync(flight => flight.FlightCrewMembers.Any(fc=> FlightCrewMembers.Contains(fc))
-                                     && flight.ScheduledUtcDateTimeOfDeparture < ScheduledUtcDateTimeOfArrival
-                                     && ScheduledUtcDateTimeOfDeparture < flight.ScheduledUtcDateTimeOfArrival
-                , token);
-
-
-        if (overlappingFlights?.Count > 0)
-        {
-            var messages = string.Empty;
-
-            foreach (var overlappingFlight in overlappingFlights)
-            {
-                messages = FlightCrewMembers
-                    .Intersect(overlappingFlight.FlightCrewMembers)
-                    .Aggregate(messages, (current, flightCrew) =>
-                        current + $"The FlightCrew ({flightCrew.Id}) is unavailable due to an overlap with the flight ({overlappingFlight.Id})!" + Environment.NewLine);
-            }
-
-            throw new OverlapFlightResourcesException(messages);
-        }
-
+        
     }
-
-
-    private async Task CheckCabinCrewMembersAsync(IFlightReadonlyRepository flightReadonlyRepository, CancellationToken token = default)
-    {
-        var overlappingFlights = await flightReadonlyRepository
-            .GetAllAsync(flight => flight.CabinCrewMembers.Any(cc => CabinCrewMembers.Contains(cc))
-                                   && flight.ScheduledUtcDateTimeOfDeparture < ScheduledUtcDateTimeOfArrival
-                                   && ScheduledUtcDateTimeOfDeparture < flight.ScheduledUtcDateTimeOfArrival
-                , token);
-
-
-        if (overlappingFlights?.Count > 0)
-        {
-            var messages = string.Empty;
-
-            foreach (var overlappingFlight in overlappingFlights)
-            {
-                messages = CabinCrewMembers
-                    .Intersect(overlappingFlight.CabinCrewMembers)
-                    .Aggregate(messages, (current, cabinCrew) =>
-                        current + $"The CabinCrew ({cabinCrew.Id}) is unavailable due to an overlap with the flight ({overlappingFlight.Id})!" + Environment.NewLine);
-            }
-
-            throw new OverlapFlightResourcesException(messages);
-        }
-    }
-
 
     private void SetEstimatedFlightDuration()
     {
@@ -171,13 +107,12 @@ public partial class Flight : AggregateRoot
             Prices = policy.Calculate(this);
     }
 
-    public static async Task<Flight> ScheduleNewFlightAsync(
-        IFlightReadonlyRepository flightReadonlyRepository,
+    public static Flight ScheduleNewFlight(
         IEnumerable<IFlightPricingPolicy> flightPricingPolicies,
         FlightNumber flightNumber, Airport originAirport, Airport destinationAirport, Aircraft aircraft,
         DateTime scheduledUtcDateTimeOfDeparture, FlightPrice basePrices,
-        List<FlightCrew> flightCrewMembers, List<CabinCrew> cabinCrewMembers,
-        CancellationToken token = default)
+        List<FlightCrew> flightCrewMembers, List<CabinCrew> cabinCrewMembers
+        )
     {
         
         var flight = new Flight(flightNumber, originAirport, destinationAirport, aircraft,
@@ -189,9 +124,7 @@ public partial class Flight : AggregateRoot
         flight.SetEstimatedFlightDuration();
         flight.SetScheduledUtcDateTimeOfArrival();
 
-        await flight.CheckAircraftAsync(flightReadonlyRepository, token);
-        await flight.CheckFlightCrewMembersAsync(flightReadonlyRepository, token);
-        await flight.CheckCabinCrewMembersAsync(flightReadonlyRepository, token);
+        flight.CheckFlightCrewMembersAsync();
 
         flight.ApplyPricingPolicies(flightPricingPolicies);
 

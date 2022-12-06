@@ -1,5 +1,4 @@
-﻿using System.Linq.Expressions;
-using MicroLine.Services.Airline.Domain.Aircrafts;
+﻿using MicroLine.Services.Airline.Domain.Aircrafts;
 using MicroLine.Services.Airline.Domain.CabinCrews;
 using MicroLine.Services.Airline.Domain.Common.ValueObjects;
 using MicroLine.Services.Airline.Domain.FlightCrews;
@@ -16,21 +15,18 @@ public class FlightTests
 {
 
     [Fact]
-    public async Task Flight_ShouldHaveFlightScheduledEventAndScheduledStatus_WhenScheduled()
+    public void Flight_ShouldHaveFlightScheduledEventAndScheduledStatus_WhenScheduled()
     {
         // Given
-        var flightRepository = new Mock<IFlightReadonlyRepository>().Object;
-
-
         var flightPricingPolicies = Enumerable.Empty<IFlightPricingPolicy>();
 
 
         var flightNumber = FlightNumber.Create("UAL870");
 
-        var originAirport = await FakeAirport.NewFakeAsync();
-        var destinationAirport = await FakeAirport.NewFakeAsync();
+        var originAirport = FakeAirport.NewFake();
+        var destinationAirport = FakeAirport.NewFake();
 
-        var aircraft = await FakeAircraft.NewFakeAsync(AircraftManufacturer.Boeing);
+        var aircraft = FakeAircraft.NewFake(AircraftManufacturer.Boeing);
 
 
 
@@ -42,19 +38,20 @@ public class FlightTests
 
         var basePrices = FlightPrice.Create(economyClassPrice, businessClassPrice, firstClassPrice);
 
-        var flightCrewMembers = await FakeFlightCrew.NewFakeListAsync(
+        var flightCrewMembers = FakeFlightCrew.NewFakeList(
             FlightCrewType.Pilot,
             FlightCrewType.CoPilot,
             FlightCrewType.FlightEngineer);
 
 
-        var cabinCrewMembers = await FakeCabinCrew.NewFakeListAsync(
+        var cabinCrewMembers = FakeCabinCrew.NewFakeList(
             CabinCrewType.Purser,
             CabinCrewType.FlightAttendant);
 
 
         // When
-        var flight = await Flight.ScheduleNewFlightAsync(flightRepository, flightPricingPolicies,
+        var flight = Flight.ScheduleNewFlight(
+                flightPricingPolicies,
                 flightNumber,
                 originAirport,
                 destinationAirport,
@@ -73,20 +70,18 @@ public class FlightTests
     }
 
     [Fact]
-    public async Task Flight_ShouldThrowInvalidScheduledDateTimeOfDeparture_WhenScheduledUtcDateTimeOfDepartureIsInPastTime()
+    public void Flight_ShouldThrowInvalidScheduledDateTimeOfDeparture_WhenScheduledUtcDateTimeOfDepartureIsInPastTime()
     {
         // Given
-        var flightRepository = new Mock<IFlightReadonlyRepository>().Object;
-
         var flightPricingPolicies = Enumerable.Empty<IFlightPricingPolicy>();
 
 
         var flightNumber = FlightNumber.Create("UAL870");
 
-        var originAirport = await FakeAirport.NewFakeAsync();
-        var destinationAirport = await FakeAirport.NewFakeAsync();
+        var originAirport = FakeAirport.NewFake();
+        var destinationAirport = FakeAirport.NewFake();
 
-        var aircraft = await FakeAircraft.NewFakeAsync(AircraftManufacturer.Boeing);
+        var aircraft = FakeAircraft.NewFake(AircraftManufacturer.Boeing);
 
         var scheduledUtcDateTimeOfDeparture = DateTime.UtcNow.AddHours(-1);
 
@@ -96,19 +91,20 @@ public class FlightTests
 
         var basePrices = FlightPrice.Create(economyClassPrice, businessClassPrice, firstClassPrice);
 
-        var flightCrewMembers = await FakeFlightCrew.NewFakeListAsync(
+        var flightCrewMembers = FakeFlightCrew.NewFakeList(
             FlightCrewType.Pilot,
             FlightCrewType.CoPilot,
             FlightCrewType.FlightEngineer);
 
 
-        var cabinCrewMembers = await FakeCabinCrew.NewFakeListAsync(
+        var cabinCrewMembers = FakeCabinCrew.NewFakeList(
             CabinCrewType.Purser,
             CabinCrewType.FlightAttendant);
 
 
         // When
-        var func = () => Flight.ScheduleNewFlightAsync(flightRepository, flightPricingPolicies,
+        var func = () => Flight.ScheduleNewFlight(
+            flightPricingPolicies,
             flightNumber,
             originAirport,
             destinationAirport,
@@ -121,7 +117,7 @@ public class FlightTests
 
 
         // Then
-        (await func.Should().ThrowExactlyAsync<InvalidScheduledDateTimeOfDeparture>())
+        func.Should().ThrowExactly<InvalidScheduledDateTimeOfDeparture>()
             .And.Code.Should().Be(nameof(InvalidScheduledDateTimeOfDeparture));
     }
 
@@ -129,31 +125,29 @@ public class FlightTests
 
     public static TheoryData<List<FlightCrew>> IncompleteFlightCrewMembers = new()
     {
-        Task.Run(()=> FakeFlightCrew.NewFakeListAsync(FlightCrewType.Pilot, FlightCrewType.FlightEngineer)).GetAwaiter().GetResult(),
+        FakeFlightCrew.NewFakeList(FlightCrewType.Pilot, FlightCrewType.FlightEngineer),
 
-        Task.Run(()=> FakeFlightCrew.NewFakeListAsync(FlightCrewType.CoPilot, FlightCrewType.FlightEngineer)).GetAwaiter().GetResult(),
+        FakeFlightCrew.NewFakeList(FlightCrewType.CoPilot, FlightCrewType.FlightEngineer),
 
-        Task.Run(()=> FakeFlightCrew.NewFakeListAsync(FlightCrewType.Navigator, FlightCrewType.FlightEngineer)).GetAwaiter().GetResult(),
+        FakeFlightCrew.NewFakeList(FlightCrewType.Navigator, FlightCrewType.FlightEngineer),
 
-        Task.Run(()=> FakeFlightCrew.NewFakeListAsync(FlightCrewType.Navigator)).GetAwaiter().GetResult()
+        FakeFlightCrew.NewFakeList(FlightCrewType.Navigator)
     };
 
     [Theory, MemberData(nameof(IncompleteFlightCrewMembers))]
-    public async Task Flight_ShouldIncompleteFlightCrewMembersException_WhenFlightCrewDoesNotContainAtLeast1PilotAnd1CoPilotOr2Pilot(
+    public void Flight_ShouldIncompleteFlightCrewMembersException_WhenFlightCrewDoesNotContainAtLeast1PilotAnd1CoPilotOr2Pilot(
         List<FlightCrew> flightCrewMembers)
     {
         // Given
-        var flightRepository = new Mock<IFlightReadonlyRepository>().Object;
-
         var flightPricingPolicies = Enumerable.Empty<IFlightPricingPolicy>();
 
 
         var flightNumber = FlightNumber.Create("UAL870");
 
-        var originAirport = await FakeAirport.NewFakeAsync();
-        var destinationAirport = await FakeAirport.NewFakeAsync();
+        var originAirport = FakeAirport.NewFake();
+        var destinationAirport = FakeAirport.NewFake();
 
-        var aircraft = await FakeAircraft.NewFakeAsync(AircraftManufacturer.Boeing);
+        var aircraft = FakeAircraft.NewFake(AircraftManufacturer.Boeing);
 
         var scheduledUtcDateTimeOfDeparture = DateTime.UtcNow.AddHours(5);
 
@@ -163,13 +157,14 @@ public class FlightTests
 
         var basePrices = FlightPrice.Create(economyClassPrice, businessClassPrice, firstClassPrice);
 
-        var cabinCrewMembers = await FakeCabinCrew.NewFakeListAsync(
+        var cabinCrewMembers = FakeCabinCrew.NewFakeList(
             CabinCrewType.Purser,
             CabinCrewType.FlightAttendant);
 
 
         // When
-        var func = () => Flight.ScheduleNewFlightAsync(flightRepository, flightPricingPolicies,
+        var func = () => Flight.ScheduleNewFlight(
+            flightPricingPolicies,
             flightNumber,
             originAirport,
             destinationAirport,
@@ -182,7 +177,7 @@ public class FlightTests
 
 
         // Then
-        (await func.Should().ThrowExactlyAsync<IncompleteFlightCrewMembersException>())
+        func.Should().ThrowExactly<IncompleteFlightCrewMembersException>()
             .And.Code.Should().Be(nameof(IncompleteFlightCrewMembersException));
     }
 
@@ -200,24 +195,22 @@ public class FlightTests
     };
 
     [Theory, MemberData(nameof(WeekDaysPricingData))]
-    public async Task Flight_ShouldHaveExpectedPrices_WhenWeekDayFlightPricingPolicyApplied(
+    public void Flight_ShouldHaveExpectedPrices_WhenWeekDayFlightPricingPolicyApplied(
         DateTime scheduledUtcDateTimeOfDeparture,
         decimal baseEconomyClassPrice, decimal baseBusinessClassPrice, decimal baseFirstClassPrice,
         decimal expectedEconomyClassPrice, decimal expectedBusinessClassPrice, decimal expectedFirstClassPrice
         )
     {
         // Given
-        var flightRepository = new Mock<IFlightReadonlyRepository>().Object;
-
         var flightPricingPolicies = new List<IFlightPricingPolicy> { WeekDayFlightPricingPolicy.Create() };
 
 
         var flightNumber = FlightNumber.Create("UAL870");
 
-        var originAirport = await FakeAirport.NewFakeAsync();
-        var destinationAirport = await FakeAirport.NewFakeAsync();
+        var originAirport = FakeAirport.NewFake();
+        var destinationAirport = FakeAirport.NewFake();
 
-        var aircraft = await FakeAircraft.NewFakeAsync(AircraftManufacturer.Boeing);
+        var aircraft = FakeAircraft.NewFake(AircraftManufacturer.Boeing);
 
 
         var economyClassPrice = Money.Of(baseEconomyClassPrice, Money.CurrencyType.UnitedStatesDollar);
@@ -226,19 +219,20 @@ public class FlightTests
 
         var basePrices = FlightPrice.Create(economyClassPrice, businessClassPrice, firstClassPrice);
 
-        var flightCrewMembers = await FakeFlightCrew.NewFakeListAsync(
+        var flightCrewMembers = FakeFlightCrew.NewFakeList(
             FlightCrewType.Pilot,
             FlightCrewType.CoPilot,
             FlightCrewType.FlightEngineer);
 
 
-        var cabinCrewMembers = await FakeCabinCrew.NewFakeListAsync(
+        var cabinCrewMembers = FakeCabinCrew.NewFakeList(
             CabinCrewType.Purser,
             CabinCrewType.FlightAttendant);
 
 
         // When
-        var flight = await Flight.ScheduleNewFlightAsync(flightRepository, flightPricingPolicies,
+        var flight = Flight.ScheduleNewFlight(
+            flightPricingPolicies,
             flightNumber,
             originAirport,
             destinationAirport,
@@ -253,135 +247,6 @@ public class FlightTests
         flight.Prices.EconomyClass.Amount.Should().Be(expectedEconomyClassPrice);
         flight.Prices.BusinessClass.Amount.Should().Be(expectedBusinessClassPrice);
         flight.Prices.FirstClass.Amount.Should().Be(expectedFirstClassPrice);
-
     }
 
-
-    [Fact]
-    public async Task Flight_ShouldThrowOverlapFlightResourcesException_WhenFlightOverlapsWithAnotherFlightOfAircraft()
-    {
-        // Given
-        var aircraft = await FakeAircraft.NewFakeAsync(AircraftManufacturer.Airbus);
-
-        var overlappedFlight = await FakeFlight.ScheduleNewFakeFlightAsync(
-            aircraft: aircraft,
-            scheduledUtcDateTimeOfDeparture: DateTime.UtcNow.AddDays(1)
-            );
-
-
-
-        var repository = new Mock<IFlightReadonlyRepository>();
-
-        repository.Setup(repo =>
-                repo.GetAsync(It.IsAny<Expression<Func<Flight, bool>>>(), CancellationToken.None).Result)
-            .Returns(overlappedFlight);
-
-
-        // When
-        var func = () => FakeFlight.ScheduleNewFakeFlightAsync(
-            flightReadonlyRepository: repository.Object,
-            aircraft: aircraft,
-            scheduledUtcDateTimeOfDeparture: overlappedFlight.ScheduledUtcDateTimeOfArrival.AddHours(-1)
-        );
-
-
-        // Then
-        (await func.Should().ThrowExactlyAsync<OverlapFlightResourcesException>())
-            .And.Code.Should().Be(nameof(OverlapFlightResourcesException));
-    }
-
-
-    [Fact]
-    public async Task Flight_ShouldThrowOverlapFlightResourcesException_WhenFlightCrewMemberOverlapsWithAnotherFlight()
-    {
-
-        // Given
-        var flightCrewMembers = await FakeFlightCrew.NewFakeListAsync(
-            FlightCrewType.CoPilot,
-            FlightCrewType.FlightEngineer
-        );
-
-        var pilot = await FakeFlightCrew.NewFakeAsync(FlightCrewType.Pilot);
-        flightCrewMembers.Add(pilot);
-
-        var overlappedFlight = await FakeFlight.ScheduleNewFakeFlightAsync(
-            flightCrewMembers: flightCrewMembers,
-            scheduledUtcDateTimeOfDeparture: DateTime.UtcNow.AddDays(1)
-        );
-
-
-        var repository = new Mock<IFlightReadonlyRepository>();
-
-        repository.Setup(repo =>
-                repo.GetAllAsync(It.IsAny<Expression<Func<Flight, bool>>>(), CancellationToken.None).Result)
-            .Returns(new List<Flight> {overlappedFlight});
-
-
-        var newFlightCrewMembers = await FakeFlightCrew.NewFakeListAsync(
-            FlightCrewType.CoPilot,
-            FlightCrewType.FlightEngineer
-        );
-
-        newFlightCrewMembers.Add(pilot);
-
-        // When
-        var func = () => FakeFlight.ScheduleNewFakeFlightAsync(
-            flightReadonlyRepository: repository.Object,
-            flightCrewMembers: newFlightCrewMembers,
-            scheduledUtcDateTimeOfDeparture: overlappedFlight.ScheduledUtcDateTimeOfArrival.AddHours(-1)
-        );
-
-
-        // Then
-        (await func.Should().ThrowExactlyAsync<OverlapFlightResourcesException>())
-            .And.Code.Should().Be(nameof(OverlapFlightResourcesException));
-    }
-
-
-    [Fact]
-    public async Task Flight_ShouldThrowOverlapFlightResourcesException_WhenCabinCrewMemberOverlapsWithAnotherFlight()
-    {
-
-        // Given
-        var cabinCrewMembers = await FakeCabinCrew.NewFakeListAsync(
-            CabinCrewType.FlightAttendant,
-            CabinCrewType.FlightAttendant
-        );
-
-        var purser = await FakeCabinCrew.NewFakeAsync(CabinCrewType.Purser);
-        cabinCrewMembers.Add(purser);
-
-        var overlappedFlight = await FakeFlight.ScheduleNewFakeFlightAsync(
-            cabinCrewMembers: cabinCrewMembers,
-            scheduledUtcDateTimeOfDeparture: DateTime.UtcNow.AddDays(1)
-        );
-
-
-        var repository = new Mock<IFlightReadonlyRepository>();
-
-        repository.SetupSequence(repo =>
-                repo.GetAllAsync(It.IsAny<Expression<Func<Flight, bool>>>(), CancellationToken.None).Result)
-            .Returns(new List<Flight>())
-            .Returns(new List<Flight> { overlappedFlight });
-
-
-        var newCabinCrewMembers = await FakeCabinCrew.NewFakeListAsync(
-            CabinCrewType.FlightAttendant,
-            CabinCrewType.FlightAttendant
-        );
-
-        newCabinCrewMembers.Add(purser);
-
-        // When
-        var func = () => FakeFlight.ScheduleNewFakeFlightAsync(
-            flightReadonlyRepository: repository.Object,
-            cabinCrewMembers: newCabinCrewMembers,
-            scheduledUtcDateTimeOfDeparture: overlappedFlight.ScheduledUtcDateTimeOfArrival.AddHours(-1)
-        );
-
-
-        // Then
-        (await func.Should().ThrowExactlyAsync<OverlapFlightResourcesException>())
-            .And.Code.Should().Be(nameof(OverlapFlightResourcesException));
-    }
 }

@@ -1,10 +1,8 @@
 using MicroLine.Services.Airline.Application.Common.Contracts;
-using MicroLine.Services.Airline.Domain.Flights;
 using MicroLine.Services.Airline.Infrastructure.Persistence;
 using MicroLine.Services.Airline.Infrastructure.Persistence.DbContextInitializer;
 using MicroLine.Services.Airline.Infrastructure.Persistence.Interceptors;
 using MicroLine.Services.Airline.Infrastructure.Persistence.Options;
-using MicroLine.Services.Airline.Infrastructure.Persistence.Repositories;
 using MicroLine.Services.Airline.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -20,9 +18,6 @@ public static class DependencyInjection
     {
 
         AddDbContext(services, configuration);
-
-        services
-            .AddScoped<IFlightReadonlyRepository, FlightReadonlyRepository>();
 
         services
             .AddScoped<IEventDispatcher, EventDispatcherService>()

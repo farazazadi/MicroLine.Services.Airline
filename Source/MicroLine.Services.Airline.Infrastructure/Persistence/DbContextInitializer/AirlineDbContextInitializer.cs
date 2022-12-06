@@ -17,21 +17,18 @@ namespace MicroLine.Services.Airline.Infrastructure.Persistence.DbContextInitial
 internal class AirlineDbContextInitializer : IAirlineDbContextInitializer
 {
     private readonly AirlineDbContext _dbContext;
-    private readonly IFlightReadonlyRepository _flightReadonlyRepository;
     private readonly IEnumerable<IFlightPricingPolicy> _flightPricingPolicies;
     private readonly IDateTime _dateTime;
     private readonly ILogger _logger;
 
     public AirlineDbContextInitializer(
         AirlineDbContext dbContext,
-        IFlightReadonlyRepository flightReadonlyRepository,
         IEnumerable<IFlightPricingPolicy> flightPricingPolicies,
         IDateTime dateTime,
         ILogger<AirlineDbContextInitializer> logger
         )
     {
         _dbContext = dbContext;
-        _flightReadonlyRepository = flightReadonlyRepository;
         _flightPricingPolicies = flightPricingPolicies;
         _dateTime = dateTime;
         _logger = logger;
@@ -478,8 +475,7 @@ internal class AirlineDbContextInitializer : IAirlineDbContextInitializer
         var flight1CabinCrewMembers = new List<CabinCrew>
             {purser1, flightAttendant1, flightAttendant2, flightAttendant3, chef1};
 
-        var flight1 = await Flight.ScheduleNewFlightAsync(
-            _flightReadonlyRepository,
+        var flight1 = Flight.ScheduleNewFlight(
             _flightPricingPolicies,
             FlightNumber.Create("AJ50"),
             mehrabadAirport,
@@ -488,8 +484,7 @@ internal class AirlineDbContextInitializer : IAirlineDbContextInitializer
             _dateTime.UtcNow.AddDays(10),
             flight1Price,
             flight1FlightCrewMembers,
-            flight1CabinCrewMembers,
-            token
+            flight1CabinCrewMembers
         );
 
 
@@ -508,8 +503,7 @@ internal class AirlineDbContextInitializer : IAirlineDbContextInitializer
             chef1
         };
 
-        var flight2 = await Flight.ScheduleNewFlightAsync(
-            _flightReadonlyRepository,
+        var flight2 = Flight.ScheduleNewFlight(
             _flightPricingPolicies,
             FlightNumber.Create("CA35"),
             istanbulAirport,
@@ -518,8 +512,7 @@ internal class AirlineDbContextInitializer : IAirlineDbContextInitializer
             _dateTime.UtcNow.AddDays(20),
             flight2Price,
             flight2FlightCrewMembers,
-            flight2CabinCrewMembers,
-            token
+            flight2CabinCrewMembers
             );
 
 

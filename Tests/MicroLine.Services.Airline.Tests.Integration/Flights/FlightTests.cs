@@ -4,6 +4,7 @@ using MicroLine.Services.Airline.Application.Flights.Commands.ScheduleFlight;
 using MicroLine.Services.Airline.Application.Flights.DataTransferObjects;
 using MicroLine.Services.Airline.Domain.CabinCrews;
 using MicroLine.Services.Airline.Domain.Common;
+using MicroLine.Services.Airline.Domain.Common.ValueObjects;
 using MicroLine.Services.Airline.Domain.FlightCrews;
 using MicroLine.Services.Airline.Tests.Common.Extensions;
 using MicroLine.Services.Airline.Tests.Common.Fakes;
@@ -83,6 +84,23 @@ public class FlightTests : IntegrationTestBase
         var flightDto = await response.Content.ReadFromJsonAsync<FlightDto>();
 
         flightDto.Should().BeEquivalentTo(expected);
+    }
+
+
+    [Fact]
+    public async Task Flight_ShouldReturnNotFoundStatusCode_WhenIdIsNotValid()
+    {
+        // Given
+        var id = Id.Create();
+
+
+        // When
+        var response = await Client.GetAsync($"api/flights/{id}");
+
+
+        // Then
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+
     }
 
 

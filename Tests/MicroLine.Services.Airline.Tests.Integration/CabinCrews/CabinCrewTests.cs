@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using MicroLine.Services.Airline.Application.CabinCrews.Commands.CreateCabinCrew;
 using MicroLine.Services.Airline.Application.CabinCrews.DataTransferObjects;
 using MicroLine.Services.Airline.Domain.CabinCrews;
+using MicroLine.Services.Airline.Domain.Common.ValueObjects;
 using MicroLine.Services.Airline.Tests.Common.Extensions;
 using MicroLine.Services.Airline.Tests.Common.Fakes;
 using MicroLine.Services.Airline.Tests.Integration.Common;
@@ -124,6 +125,23 @@ public class CabinCrewTests : IntegrationTestBase
         var cabinCrewDto = await response.Content.ReadFromJsonAsync<CabinCrewDto>();
 
         cabinCrewDto.Should().BeEquivalentTo(expected);
+    }
+
+
+    [Fact]
+    public async Task CabinCrew_ShouldReturnNotFoundStatusCode_WhenIdIsNotValid()
+    {
+        // Given
+        var id = Id.Create();
+
+
+        // When
+        var response = await Client.GetAsync($"api/cabin-crew/{id}");
+
+
+        // Then
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+
     }
 
 

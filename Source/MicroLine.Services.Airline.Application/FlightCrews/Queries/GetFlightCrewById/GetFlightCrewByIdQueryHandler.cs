@@ -1,6 +1,7 @@
 ﻿using MapsterMapper;
 using MediatR;
 using MicroLine.Services.Airline.Application.Common.Contracts;
+using MicroLine.Services.Airline.Application.Common.Exceptions;
 using MicroLine.Services.Airline.Application.FlightCrews.DataTransferObjects;
 using MicroLine.Services.Airline.Domain.Common.ValueObjects;
 using MicroLine.Services.Airline.Domain.FlightCrews;
@@ -26,8 +27,6 @@ internal class GetFlightCrewByIdQueryHandler : IRequestHandler<GetFlightCrewById
         var flightCrew = await _airlineDbContext.FlightCrews
             .FindAsync(new object[] { (Id)query.Id }, token);
 
-        var flightCrewDto = _mapper.Map<FlightCrewDto>(flightCrew);
-
-        return flightCrewDto;
+        return _mapper.Map<FlightCrewDto>(flightCrew ?? throw new NotFoundException("FlightCrew", query.Id));
     }
 }

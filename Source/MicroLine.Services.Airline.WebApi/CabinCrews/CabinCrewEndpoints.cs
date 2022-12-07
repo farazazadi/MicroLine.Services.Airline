@@ -31,7 +31,7 @@ internal static class CabinCrewEndpoints
     {
         var cabinCrewDto = await sender.Send(new GetCabinCrewByIdQuery(id), token);
 
-        return cabinCrewDto is not null ? Results.Ok(cabinCrewDto) : Results.NotFound();
+        return Results.Ok(cabinCrewDto);
     }
 
     private static async Task<IResult> GetAllCabinCrewAsync(ISender sender, CancellationToken token)

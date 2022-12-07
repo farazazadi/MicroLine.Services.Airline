@@ -1,6 +1,7 @@
 ﻿using MapsterMapper;
 using MediatR;
 using MicroLine.Services.Airline.Application.Common.Contracts;
+using MicroLine.Services.Airline.Application.Common.Exceptions;
 using MicroLine.Services.Airline.Application.Flights.DataTransferObjects;
 using Microsoft.EntityFrameworkCore;
 
@@ -31,8 +32,6 @@ internal class GetFlightByIdQueryHandler : IRequestHandler<GetFlightByIdQuery, F
                 .FirstOrDefaultAsync(flight => flight.Id == query.Id, token);
 
 
-        var flightDto = _mapper.Map<FlightDto>(flight);
-
-        return flightDto;
+        return _mapper.Map<FlightDto>(flight ?? throw new NotFoundException("Flight", query.Id));
     }
 }

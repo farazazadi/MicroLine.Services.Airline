@@ -2,6 +2,7 @@
 using MediatR;
 using MicroLine.Services.Airline.Application.Aircrafts.DataTransferObjects;
 using MicroLine.Services.Airline.Application.Common.Contracts;
+using MicroLine.Services.Airline.Application.Common.Exceptions;
 using MicroLine.Services.Airline.Domain.Common.ValueObjects;
 
 namespace MicroLine.Services.Airline.Application.Aircrafts.Queries.GetAircraftById;
@@ -25,8 +26,6 @@ internal class GetAircraftByIdQueryHandler : IRequestHandler<GetAircraftByIdQuer
     {
         var aircraft = await _airlineDbContext.Aircrafts.FindAsync(new object[] { (Id)query.Id }, token);
 
-        var aircraftDto = _mapper.Map<AircraftDto>(aircraft);
-
-        return aircraftDto;
+        return _mapper.Map<AircraftDto>(aircraft ?? throw new NotFoundException("Aircraft", query.Id));
     }
 }

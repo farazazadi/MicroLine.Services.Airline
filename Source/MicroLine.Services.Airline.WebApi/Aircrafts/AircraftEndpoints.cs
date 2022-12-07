@@ -31,7 +31,7 @@ internal static class AircraftEndpoints
     {
         var aircraftDto = await sender.Send(new GetAircraftByIdQuery(id), token);
 
-        return aircraftDto is not null ? Results.Ok(aircraftDto) : Results.NotFound();
+        return Results.Ok(aircraftDto);
     }
 
     private static async Task<IResult> GetAllAircraftsAsync(ISender sender, CancellationToken token)

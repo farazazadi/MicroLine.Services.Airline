@@ -31,7 +31,7 @@ internal static class FlightCrewEndpoints
     {
         var flightCrewDto = await sender.Send(new GetFlightCrewByIdQuery(id), token);
 
-        return flightCrewDto is not null ? Results.Ok(flightCrewDto) : Results.NotFound();
+        return Results.Ok(flightCrewDto);
     }
 
     private static async Task<IResult> GetAllFlightCrewAsync(ISender sender, CancellationToken token)

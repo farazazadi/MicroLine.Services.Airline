@@ -44,11 +44,13 @@ internal class ExceptionHandlingMiddleware
 
     private static async Task HandleApplicationExceptionAsync(HttpContext context, ApplicationExceptionBase exception)
     {
+        var statusCode = exception is NotFoundException ?
+            StatusCodes.Status404NotFound : StatusCodes.Status400BadRequest;
 
         await ReturnProblemResponseAsync(
             exception.Code,
             exception.Message,
-            StatusCodes.Status400BadRequest,
+            statusCode,
             context);
     }
 

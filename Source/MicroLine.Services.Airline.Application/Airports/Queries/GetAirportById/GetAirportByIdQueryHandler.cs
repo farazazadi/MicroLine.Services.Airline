@@ -2,6 +2,7 @@
 using MediatR;
 using MicroLine.Services.Airline.Application.Airports.DataTransferObjects;
 using MicroLine.Services.Airline.Application.Common.Contracts;
+using MicroLine.Services.Airline.Application.Common.Exceptions;
 using MicroLine.Services.Airline.Domain.Common.ValueObjects;
 
 namespace MicroLine.Services.Airline.Application.Airports.Queries.GetAirportById;
@@ -25,6 +26,6 @@ public class GetAirportByIdQueryHandler : IRequestHandler<GetAirportByIdQuery, A
         var airport = await _airlineDbContext.Airports
             .FindAsync(new object[] { (Id)query.Id }, token);
 
-        return airport is null ? null : _mapper.Map<AirportDto>(airport);
+        return _mapper.Map<AirportDto>(airport ?? throw new NotFoundException("Airport", query.Id));
     }
 }

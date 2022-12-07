@@ -29,7 +29,7 @@ internal static class FlightEndpoints
     {
         var flightDto = await sender.Send(new GetFlightByIdQuery(id), token);
 
-        return flightDto is not null ? Results.Ok(flightDto) : Results.NotFound();
+        return Results.Ok(flightDto);
     }
 
     private static async Task<IResult> GetAllFlightsAsync(ISender sender, CancellationToken token)

@@ -31,7 +31,7 @@ internal static class AirportEndpoints
     {
         var airportDto = await mediator.Send(new GetAirportByIdQuery(id), token);
 
-        return airportDto is not null ? Results.Ok(airportDto) : Results.NotFound();
+        return Results.Ok(airportDto);
     }
 
     private static async Task<IResult> GetAllAirportsAsync(

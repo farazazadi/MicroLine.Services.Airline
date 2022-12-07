@@ -7,7 +7,7 @@ namespace MicroLine.Services.Airline.WebApi.Aircrafts;
 
 internal static class AircraftEndpoints
 {
-    private const string BaseUrl = "api/aircrafts";
+    private const string BaseUrl = "api/aircraft";
 
     public static WebApplication MapAircraftEndpoints(this WebApplication app)
     {

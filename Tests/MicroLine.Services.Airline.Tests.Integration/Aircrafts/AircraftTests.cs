@@ -30,13 +30,13 @@ public class AircraftTests : IntegrationTestBase
 
 
         // When
-        var response = await Client.PostAsJsonAsync("api/aircrafts", createAircraftCommand);
+        var response = await Client.PostAsJsonAsync("api/aircraft", createAircraftCommand);
 
 
         // Then
         var aircraftDto = await response.Content.ReadFromJsonAsync<AircraftDto>();
 
-        response.Headers.Location.ToString().Should().Be($"api/aircrafts/{aircraftDto.Id}");
+        response.Headers.Location.ToString().Should().Be($"api/aircraft/{aircraftDto.Id}");
 
         response.StatusCode.Should().Be(HttpStatusCode.Created);
 
@@ -66,7 +66,7 @@ public class AircraftTests : IntegrationTestBase
 
 
         // When
-        var response = await Client.PostAsJsonAsync("api/aircrafts", createAircraftCommand);
+        var response = await Client.PostAsJsonAsync("api/aircraft", createAircraftCommand);
 
 
         // Then
@@ -90,7 +90,7 @@ public class AircraftTests : IntegrationTestBase
         var expected = Mapper.Map<AircraftDto>(aircraft);
 
         // When
-        var response = await Client.GetAsync($"api/aircrafts/{expected.Id}");
+        var response = await Client.GetAsync($"api/aircraft/{expected.Id}");
 
 
         // Then
@@ -111,7 +111,7 @@ public class AircraftTests : IntegrationTestBase
 
 
         // When
-        var response = await Client.GetAsync($"api/aircrafts/{id}");
+        var response = await Client.GetAsync($"api/aircraft/{id}");
 
 
         // Then
@@ -141,7 +141,7 @@ public class AircraftTests : IntegrationTestBase
 
 
         // When
-        var response = await Client.GetAsync("api/aircrafts");
+        var response = await Client.GetAsync("api/aircraft");
 
 
         // Then

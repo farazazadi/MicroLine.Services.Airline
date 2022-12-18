@@ -128,7 +128,7 @@ public class Flight : AggregateRoot
 
         flight.ApplyPricingPolicies(flightPricingPolicies);
 
-        flight.AddEvent(new FlightScheduledEvent(flight.Id));
+        flight.AddEvent(new FlightScheduledEvent(flight));
         flight.Status = FlightStatus.Scheduled;
 
         return flight;

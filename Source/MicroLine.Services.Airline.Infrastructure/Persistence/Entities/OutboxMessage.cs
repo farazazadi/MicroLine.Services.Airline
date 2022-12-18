@@ -3,20 +3,17 @@ using MicroLine.Services.Airline.Domain.Common.ValueObjects;
 
 namespace MicroLine.Services.Airline.Infrastructure.Persistence.Entities;
 
-public class OutboxMessage : Entity
+internal class OutboxMessage : Entity
 {
     public enum Status : byte
     {
         Scheduled = 0,
-        Succeeded = 1,
-        Failed = 2
+        Succeeded = 1
     }
 
     public string Subject { get; init; }
 
     public string Content { get; init; }
-
-    public int Retries { get; private set; }
 
     public Status SendStatus { get; private set; }
 
@@ -25,12 +22,11 @@ public class OutboxMessage : Entity
     private OutboxMessage()
     {}
 
-    private OutboxMessage(Id id, string subject, string content, int retries, Status sendStatus, DateTime createdAtUtc)
+    private OutboxMessage(Id id, string subject, string content, Status sendStatus, DateTime createdAtUtc)
     {
         Id = id;
         Subject = subject;
         Content = content;
-        Retries = retries;
         SendStatus = sendStatus;
         CreatedAtUtc = createdAtUtc;
     }
@@ -47,6 +43,11 @@ public class OutboxMessage : Entity
             throw new ArgumentException($"The {nameof(Content)} of message can not be null or empty!");
 
 
-        return new OutboxMessage(id, subject, content, 0, Status.Scheduled, DateTime.UtcNow);
+        return new OutboxMessage(id, subject, content, Status.Scheduled, DateTime.UtcNow);
+    }
+
+    public void Send()
+    {
+        SendStatus = Status.Succeeded;
     }
 }

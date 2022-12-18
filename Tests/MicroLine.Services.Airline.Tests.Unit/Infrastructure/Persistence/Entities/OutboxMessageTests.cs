@@ -33,7 +33,6 @@ public class OutboxMessageTests
 
         // Then
         message.SendStatus.Should().Be(OutboxMessage.Status.Scheduled);
-        message.Retries.Should().Be(0);
         message.Subject.Should().Be(subject);
         message.Content.Should().Be(content);
         message.CreatedAtUtc.RemoveSecondsAndSmallerTimeUnites()
@@ -90,5 +89,23 @@ public class OutboxMessageTests
 
         // Then
         func.Should().ThrowExactly<ArgumentException>();
+    }
+
+
+    [Fact]
+    public void OutboxMessage_ShouldHaveCorrectStatus_WhenSendMethodCalled()
+    {
+        // Given
+        var id = Id.Create();
+        var subject = "TestEvent";
+        var content = "Test Content";
+
+
+        // When
+        var message = OutboxMessage.Create(id, subject, content);
+        message.Send();
+
+        // Then
+        message.SendStatus.Should().Be(OutboxMessage.Status.Succeeded);
     }
 }

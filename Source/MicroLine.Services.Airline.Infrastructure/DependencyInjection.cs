@@ -1,9 +1,13 @@
+using System.Reflection;
+using Mapster;
 using MicroLine.Services.Airline.Application.Common.Contracts;
 using MicroLine.Services.Airline.Infrastructure.Persistence;
 using MicroLine.Services.Airline.Infrastructure.Persistence.DbContextInitializer;
 using MicroLine.Services.Airline.Infrastructure.Persistence.Interceptors;
 using MicroLine.Services.Airline.Infrastructure.Persistence.Options;
 using MicroLine.Services.Airline.Infrastructure.Services;
+using MicroLine.Services.Airline.Infrastructure.Services.Outbox;
+using MicroLine.Services.Airline.Infrastructure.Services.RabbitMq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
@@ -16,12 +20,19 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-
         AddDbContext(services, configuration);
 
         services
             .AddScoped<IEventDispatcher, EventDispatcherService>()
             .AddTransient<IDateTime, DateTimeService>();
+
+        services.Configure<RabbitMqOptions>(configuration.GetSection(RabbitMqOptions.SectionName));
+        services.AddSingleton<RabbitMqPublisher>();
+
+        services.Configure<OutboxProcessorOptions>(configuration.GetSection(OutboxProcessorOptions.SectionName));
+        services.AddHostedService<OutboxProcessor>();
+
+        TypeAdapterConfig.GlobalSettings.Scan(Assembly.GetExecutingAssembly());
 
         return services;
     }
@@ -53,6 +64,7 @@ public static class DependencyInjection
             .AddScoped<DbContext>(provider => provider.GetRequiredService<AirlineDbContext>())
             .AddScoped<IAirlineDbContextInitializer, AirlineDbContextInitializer>()
             .AddScoped<ISaveChangesInterceptor, AuditingInterceptor>()
-            .AddScoped<ISaveChangesInterceptor, EventDispatchingInterceptor>();
+            .AddScoped<ISaveChangesInterceptor, EventDispatchingInterceptor>()
+            .AddScoped<ISaveChangesInterceptor, OutboxInterceptor>();
     }
 }

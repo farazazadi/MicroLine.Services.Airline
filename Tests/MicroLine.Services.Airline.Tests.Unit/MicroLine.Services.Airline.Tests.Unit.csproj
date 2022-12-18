@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Source\MicroLine.Services.Airline.Application\MicroLine.Services.Airline.Application.csproj" />
+    <ProjectReference Include="..\..\Source\MicroLine.Services.Airline.Infrastructure\MicroLine.Services.Airline.Infrastructure.csproj" />
     <ProjectReference Include="..\MicroLine.Services.Airline.Tests.Common\MicroLine.Services.Airline.Tests.Common.csproj" />
   </ItemGroup>
 

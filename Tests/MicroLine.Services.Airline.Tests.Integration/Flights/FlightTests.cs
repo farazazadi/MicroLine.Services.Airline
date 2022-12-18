@@ -6,6 +6,7 @@ using MicroLine.Services.Airline.Domain.CabinCrews;
 using MicroLine.Services.Airline.Domain.Common;
 using MicroLine.Services.Airline.Domain.Common.ValueObjects;
 using MicroLine.Services.Airline.Domain.FlightCrews;
+using MicroLine.Services.Airline.Infrastructure.Integration.Flights;
 using MicroLine.Services.Airline.Tests.Common.Extensions;
 using MicroLine.Services.Airline.Tests.Common.Fakes;
 using MicroLine.Services.Airline.Tests.Integration.Common;
@@ -61,6 +62,10 @@ public class FlightTests : IntegrationTestBase
 
             return options;
         });
+
+        var publishedEvent = await GetEventFromRabbitMq<FlightScheduledIntegrationEvent>();
+
+        publishedEvent.Flight.Id.Should().Be(flightDto.Id);
 
     }
 

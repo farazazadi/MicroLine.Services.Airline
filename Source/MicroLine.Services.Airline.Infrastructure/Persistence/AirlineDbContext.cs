@@ -10,6 +10,7 @@ using MicroLine.Services.Airline.Domain.FlightCrews;
 using MicroLine.Services.Airline.Domain.Flights;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using MicroLine.Services.Airline.Infrastructure.Persistence.Configurations.ValueConverters;
+using MicroLine.Services.Airline.Infrastructure.Persistence.Entities;
 
 namespace MicroLine.Services.Airline.Infrastructure.Persistence;
 
@@ -20,6 +21,9 @@ internal sealed class AirlineDbContext : DbContext, IAirlineDbContext
     public DbSet<CabinCrew> CabinCrews { get; init; }
     public DbSet<FlightCrew> FlightCrews { get; init; }
     public DbSet<Flight> Flights { get; init; }
+
+    internal DbSet<OutboxMessage> OutboxMessages { get; set; }
+
 
     private readonly IEnumerable<ISaveChangesInterceptor> _saveChangesInterceptors;
 

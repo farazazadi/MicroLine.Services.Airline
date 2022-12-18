@@ -1,21 +1,28 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
     <ProjectReference Include="..\MicroLine.Services.Airline.Application\MicroLine.Services.Airline.Application.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Persistence\Interceptors\" />
     <Folder Include="Persistence\Migrations\" />
   </ItemGroup>
 
   <ItemGroup>
+	  <InternalsVisibleTo Include="MicroLine.Services.Airline.Tests.Unit" />
+	  <InternalsVisibleTo Include="MicroLine.Services.Airline.Tests.Integration" />
+  </ItemGroup>
+
+	<ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="7.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Polly" Version="7.2.3" />
+    <PackageReference Include="Polly.Contrib.WaitAndRetry" Version="1.1.1" />
+    <PackageReference Include="RabbitMQ.Client" Version="6.4.0" />
     <PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
     <PackageReference Include="Serilog.Enrichers.Environment" Version="2.2.0" />
     <PackageReference Include="Serilog.Enrichers.Process" Version="2.0.2" />

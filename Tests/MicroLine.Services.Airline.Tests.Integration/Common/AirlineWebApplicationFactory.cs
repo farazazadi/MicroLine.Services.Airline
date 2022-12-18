@@ -21,6 +21,8 @@ public sealed class AirlineWebApplicationFactory : WebApplicationFactory<Program
 
         builder.ConfigureServices(services =>
         {
+            services.AddSingleton<RabbitMqClient>();
+
             var serviceProvider = services.BuildServiceProvider();
 
             _databaseOptions = serviceProvider.GetRequiredService<IOptions<DatabaseOptions>>().Value;

@@ -82,6 +82,9 @@ internal class ScheduleFlightCommandHandler : IRequestHandler<ScheduleFlightComm
             throw new ScheduleFlightException(validationResult.GetFailureReasons());
 
 
+        await _airlineDbContext.Flights.AddAsync(flight, token);
+        await _airlineDbContext.SaveChangesAsync(token);
+
         var flightDto = _mapper.Map<FlightDto>(flight);
 
         return flightDto;

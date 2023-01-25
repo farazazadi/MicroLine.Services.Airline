@@ -85,7 +85,7 @@ internal sealed class OutboxProcessor : BackgroundService
                 {
                     await using var transaction = await airlineDbContext.Database.BeginTransactionAsync(token);
 
-                    _rabbitMqPublisher.Publish(message.Content, message.Subject);
+                    _rabbitMqPublisher.Publish(message.Id.ToString(), message.Subject, message.Content);
 
                     message.Send();
 

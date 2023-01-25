@@ -1,4 +1,5 @@
 ﻿using MicroLine.Services.Airline.Infrastructure.Extensions;
+using MicroLine.Services.Airline.Infrastructure.Integration;
 using Microsoft.Extensions.Options;
 using Polly;
 using Polly.Contrib.WaitAndRetry;
@@ -79,30 +80,34 @@ internal class RabbitMqPublisher : IDisposable
     }
 
 
-    public void Publish<T>(T message) where T : class
+    public void Publish<TIntegrationEvent>(TIntegrationEvent integrationEvent) where TIntegrationEvent : IntegrationEvent
     {
-        var messageJsonString = message.ToJsonString();
+        var id = integrationEvent.EventId.ToString();
+        var subject = typeof(TIntegrationEvent).Name;
+        var content = integrationEvent.ToJsonString();
 
-        Publish(messageJsonString, typeof(T).Name);
+        Publish(id, subject, content);
     }
 
-    public void Publish(string message, string messageId)
+    public void Publish(string id, string subject, string content)
     {
-        var messageBytes = message.ToByteArray();
+        var contentBytes = content.ToByteArray();
 
-        Publish(messageBytes, messageId);
+        Publish(id, subject, contentBytes);
     }
 
-    private void Publish(byte[] message, string messageId)
+    private void Publish(string id, string subject, byte[] content)
     {
         _retryPolicy.Execute(() =>
         {
             Prepare();
 
-            var properties = _channel.CreateBasicProperties();
-            properties.MessageId = messageId;
+            var properties = _channel!.CreateBasicProperties();
 
-            _channel.BasicPublish(_exchangeName, _routingKey, body: message, basicProperties: properties);
+            properties.MessageId = id;
+            properties.Type = subject;
+
+            _channel.BasicPublish(_exchangeName, _routingKey, body: content, basicProperties: properties);
         });
     }
 

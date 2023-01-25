@@ -51,7 +51,7 @@ public class FlightTests : IntegrationTestBase
 
         response.StatusCode.Should().Be(HttpStatusCode.Created);
 
-        response.Headers.Location.ToString().Should().Be($"api/flights/{flightDto.Id}");
+        response.Headers.Location?.ToString().Should().Be($"api/flights/{flightDto?.Id}");
 
 
         flightDto.Should().BeEquivalentTo(expected, options =>
@@ -63,10 +63,11 @@ public class FlightTests : IntegrationTestBase
             return options;
         });
 
-        var publishedEvent = await GetEventFromRabbitMq<FlightScheduledIntegrationEvent>();
+        
+        var publishedEvent =
+            await GetEventFromRabbitMqAsync<FlightScheduledIntegrationEvent>(@event => @event.FlightId == flightDto?.Id);
 
-        publishedEvent.FlightId.Should().Be(flightDto.Id);
-
+        publishedEvent.Should().NotBeNull();
     }
 
     [Fact]

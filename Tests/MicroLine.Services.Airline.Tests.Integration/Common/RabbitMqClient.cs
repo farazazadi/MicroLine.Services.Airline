@@ -7,7 +7,7 @@ using RabbitMQ.Client.Events;
 
 namespace MicroLine.Services.Airline.Tests.Integration.Common;
 
-internal class RabbitMqClient
+internal class RabbitMqClient : IDisposable
 {
     private readonly RabbitMqOptions _rabbitMqOptions;
 
@@ -71,9 +71,12 @@ internal class RabbitMqClient
     }
 
 
-    public async Task<TEvent> Get<TEvent>()
+    public Task<TEvent> GetAsync<TEvent>(Func<TEvent, bool> predicate,
+        CancellationToken token = default)
     {
         var taskCompletionSource = new TaskCompletionSource<TEvent>();
+
+        token.Register(() => taskCompletionSource.SetCanceled(token));
 
         var queue = _rabbitMqOptions.QueueToBind;
 
@@ -83,21 +86,43 @@ internal class RabbitMqClient
 
         var basicConsumer = new AsyncEventingBasicConsumer(_channel);
 
+        var expectedEventName = typeof(TEvent).Name.Trim();
 
-        basicConsumer.Received += (sender, args) =>
+        basicConsumer.Received += (_, args) =>
         {
+            if (args.BasicProperties.Type is null || args.BasicProperties.Type != expectedEventName)
+            {
+                _channel.BasicNack(args.DeliveryTag, multiple: false, requeue: false);
+                return Task.CompletedTask;
+            }
+
             var jsonMessage = Encoding.UTF8.GetString(args.Body.ToArray());
 
             var integrationEvent = JsonSerializer.Deserialize<TEvent>(jsonMessage);
 
-            taskCompletionSource.SetResult(integrationEvent);
+            if (predicate(integrationEvent)) 
+                taskCompletionSource.SetResult(integrationEvent);
 
             return Task.CompletedTask;
         };
 
         _channel.BasicConsume(queue, autoAck: true, consumer: basicConsumer);
 
-        return await taskCompletionSource.Task;
+        return taskCompletionSource.Task;
     }
 
+    public void Dispose()
+    {
+        if (_channel is { IsOpen: true })
+        {
+            _channel.Close();
+            _channel.Dispose();
+        }
+
+        if (_connection is { IsOpen: true })
+        {
+            _connection.Close();
+            _connection?.Dispose();
+        }
+    }
 }

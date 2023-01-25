@@ -42,8 +42,9 @@ public abstract class IntegrationTestBase
     }
 
 
-    protected async Task<TEvent> GetEventFromRabbitMq<TEvent>() where TEvent : IntegrationEvent
+    protected Task<TEvent> GetEventFromRabbitMqAsync<TEvent>(Func<TEvent, bool> predicate, CancellationToken token = default)
+        where TEvent : IntegrationEvent
     {
-        return await _rabbitMqClient.Get<TEvent>();
+        return _rabbitMqClient.GetAsync<TEvent>(predicate, token);
     }
 }

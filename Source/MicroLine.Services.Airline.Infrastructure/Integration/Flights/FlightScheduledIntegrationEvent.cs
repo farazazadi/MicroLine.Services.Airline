@@ -1,12 +1,51 @@
-﻿namespace MicroLine.Services.Airline.Infrastructure.Integration.Flights;
+﻿using MicroLine.Services.Airline.Application.Common.DataTransferObjects;
+using MicroLine.Services.Airline.Application.Flights.DataTransferObjects;
+
+namespace MicroLine.Services.Airline.Infrastructure.Integration.Flights;
 
 internal class FlightScheduledIntegrationEvent : IntegrationEvent
 {
     public override string EventName => nameof(FlightScheduledIntegrationEvent);
-    public FlightIntegrationDto Flight { get; }
 
-    public FlightScheduledIntegrationEvent(FlightIntegrationDto flight)
-    {
-        Flight = flight;
-    }
+    public required Guid FlightId { get; init; }
+    public required string FlightNumber { get; init; }
+    public required AirportModel OriginAirport { get; init; }
+    public required AirportModel DestinationAirport { get; init; }
+    public required AircraftModel Aircraft { get; init; }
+    public required DateTime ScheduledUtcDateTimeOfDeparture { get; init; }
+    public required DateTime ScheduledUtcDateTimeOfArrival { get; init; }
+    public required TimeSpan EstimatedFlightDuration { get; init; }
+    public required FlightPriceDto Prices { get; init; }
+    public required List<AircrewModel> FlightCrewMembers { get; init; }
+    public required List<AircrewModel> CabinCrewMembers { get; init; }
+    public required string Status { get; init; }
+
+
+    public record AirportModel(
+        string Id,
+        string IcaoCode,
+        string IataCode,
+        string Name,
+        BaseUtcOffsetDto BaseUtcOffset,
+        string Country,
+        string Region,
+        string City
+    );
+
+    public record AircraftModel(
+        string Id,
+        string Manufacturer,
+        string Model,
+        int EconomyClassCapacity,
+        int BusinessClassCapacity,
+        int FirstClassCapacity
+    );
+
+    public record AircrewModel(
+        string Id,
+        string FullName,
+        string Email,
+        string ContactNumber
+    );
+
 }

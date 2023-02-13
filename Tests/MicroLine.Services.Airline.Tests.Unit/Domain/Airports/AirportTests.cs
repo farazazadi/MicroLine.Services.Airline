@@ -1,4 +1,5 @@
 ﻿using MicroLine.Services.Airline.Domain.Airports;
+using MicroLine.Services.Airline.Domain.Airports.Events;
 using MicroLine.Services.Airline.Domain.Common.Enums;
 using MicroLine.Services.Airline.Domain.Common.ValueObjects;
 using MicroLine.Services.Airline.Tests.Common.Fakes;
@@ -9,7 +10,7 @@ namespace MicroLine.Services.Airline.Tests.Unit.Domain.Airports;
 public class AirportTests
 {
     [Fact]
-    public void Airport_ShouldNotHavAnyEvents_WhenCreated()
+    public void Airport_ShouldHaveAirportCreatedEvent_WhenCreated()
     {
         // Given
         var icaoCode = IcaoCode.Create("CYYJ");
@@ -21,10 +22,10 @@ public class AirportTests
 
         // When
         var airport = Airport.Create(
-                        icaoCode, iataCode, name, baseUtcOffset, airportLocation);
+            icaoCode, iataCode, name, baseUtcOffset, airportLocation);
 
         // Then
-        airport.DomainEvents.Count.Should().Be(0);
+        airport.DomainEvents.OfType<AirportCreatedEvent>().Count().Should().Be(1);
     }
 
 

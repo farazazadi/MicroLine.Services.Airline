@@ -16,32 +16,37 @@ internal class OutboxInterceptor : SaveChangesInterceptor
         _mapper = mapper;
     }
 
-    public override async ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData, InterceptionResult<int> result, CancellationToken token = default)
+    public override ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData, InterceptionResult<int> result, CancellationToken token = default)
     {
-        await AddOutboxMessageEntitiesAsync(eventData.Context, token);
+        AddOutboxMessageEntities(eventData.Context, token);
 
-        return await base.SavingChangesAsync(eventData, result, token);
+        return base.SavingChangesAsync(eventData, result, token);
     }
 
-    private async Task AddOutboxMessageEntitiesAsync(DbContext dbContext, CancellationToken token)
+    private void AddOutboxMessageEntities(DbContext dbContext, CancellationToken token)
     {
-        if (dbContext == null) return;
+        dbContext?
+            .ChangeTracker
+            .Entries<AggregateRoot>()
+            .Where(entry => entry.Entity.DomainEvents.Count > 0)
+            .ToList()
+            .ForEach(entry =>
+            {
+                var aggregateRoot = entry.Entity;
 
+                foreach (var domainEvent in aggregateRoot.DomainEvents)
+                {
+                    var integrationEvent = domainEvent.MapToIntegrationEvent(_mapper);
 
-        var domainEvents = dbContext.ChangeTracker.Entries<AggregateRoot>()
-            .SelectMany(e => e.Entity.DomainEvents)
-            .ToList();
+                    if (integrationEvent is null) continue;
 
-        foreach (var domainEvent in domainEvents)
-        {
-            var integrationEvent = domainEvent.MapToIntegrationEvent(_mapper);
+                    var outboxMessage = _mapper.Map<OutboxMessage>(integrationEvent);
 
-            if(integrationEvent is null) continue;
+                    dbContext.Add(outboxMessage);
+                }
 
-            var outboxMessage = _mapper.Map<OutboxMessage>(integrationEvent);
-
-            await dbContext.AddAsync(outboxMessage, token);
-        }
+                aggregateRoot.ClearEvents();
+            });
     }
 
 }

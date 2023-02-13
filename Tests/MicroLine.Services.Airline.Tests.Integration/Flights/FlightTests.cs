@@ -65,7 +65,7 @@ public class FlightTests : IntegrationTestBase
 
         
         var publishedEvent =
-            await GetEventFromRabbitMqAsync<FlightScheduledIntegrationEvent>(@event => @event.FlightId == flightDto?.Id);
+             GetEventFromRabbitMq<FlightScheduledIntegrationEvent>(@event => @event.FlightId == flightDto?.Id);
 
         publishedEvent.Should().NotBeNull();
     }

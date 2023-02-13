@@ -11,20 +11,19 @@ internal class RabbitMqClient : IDisposable
 {
     private readonly RabbitMqOptions _rabbitMqOptions;
 
-    private IConnection _connection;
-    private IModel _channel;
-    private string _exchangeName;
+    private readonly IConnection _connection;
+    private readonly IModel _channel;
+    private readonly string _queueName;
     private readonly string _routingKey = string.Empty;
 
+    private static readonly SynchronizedList<(string Subject, string Content)> ReceivedMessages = new();
+    private static readonly SynchronizedList<(Type type, dynamic message)> DeserializedMessages = new();
 
     public RabbitMqClient(IOptions<RabbitMqOptions> rabbitMqOptions)
     {
         _rabbitMqOptions = rabbitMqOptions.Value;
-    }
 
 
-    private void CreateAndEstablishConnection()
-    {
         var connectionFactory = new ConnectionFactory
         {
             HostName = _rabbitMqOptions.HostName,
@@ -38,77 +37,87 @@ internal class RabbitMqClient : IDisposable
 
 
         _connection = connectionFactory.CreateConnection(_rabbitMqOptions.ClientProvidedName);
-    }
 
-    private void CreateChannel()
-    {
         _channel = _connection.CreateModel();
-    }
 
-    private void DeclareExchange()
-    {
-        _exchangeName = _rabbitMqOptions.ExchangeName;
+        var exchangeName = _rabbitMqOptions.ExchangeName;
+        _channel.ExchangeDeclare(exchangeName, ExchangeType.Fanout, true);
 
-        _channel.ExchangeDeclare(_exchangeName, ExchangeType.Fanout, true);
-    }
 
-    private void DeclareQueueAndBindToExchange()
-    {
-        var queue = _rabbitMqOptions.QueueToBind;
+        _queueName = _rabbitMqOptions.QueueToBind;
+        _channel.QueueDeclare(_queueName, durable: true, exclusive: false, autoDelete: false);
+        _channel.QueueBind(_queueName, exchangeName, _routingKey);
 
-        _channel.QueueDeclare(queue, durable: true, exclusive: false, autoDelete: false);
-        _channel.QueueBind(queue, _exchangeName, _routingKey);
-    }
-
-    private void Prepare()
-    {
-        if (_channel is not null) return;
-
-        CreateAndEstablishConnection();
-        CreateChannel();
-        DeclareExchange();
-        DeclareQueueAndBindToExchange();
+        Subscribe();
     }
 
 
-    public Task<TEvent> GetAsync<TEvent>(Func<TEvent, bool> predicate,
-        CancellationToken token = default)
+
+    public void Subscribe()
     {
-        var taskCompletionSource = new TaskCompletionSource<TEvent>();
-
-        token.Register(() => taskCompletionSource.SetCanceled(token));
-
-        var queue = _rabbitMqOptions.QueueToBind;
-
-        Prepare();
-
         _channel.BasicQos(0, 1, false);
-
         var basicConsumer = new AsyncEventingBasicConsumer(_channel);
-
-        var expectedEventName = typeof(TEvent).Name.Trim();
 
         basicConsumer.Received += (_, args) =>
         {
-            if (args.BasicProperties.Type is null || args.BasicProperties.Type != expectedEventName)
-            {
-                _channel.BasicNack(args.DeliveryTag, multiple: false, requeue: false);
+            var messageType = args.BasicProperties.Type;
+
+            if (messageType is null)
                 return Task.CompletedTask;
-            }
 
-            var jsonMessage = Encoding.UTF8.GetString(args.Body.ToArray());
 
-            var integrationEvent = JsonSerializer.Deserialize<TEvent>(jsonMessage);
+            var messageContent = Encoding.UTF8.GetString(args.Body.ToArray());
 
-            if (predicate(integrationEvent)) 
-                taskCompletionSource.SetResult(integrationEvent);
+            ReceivedMessages.Add((messageType, messageContent));
 
             return Task.CompletedTask;
         };
 
+        var queue = _rabbitMqOptions.QueueToBind;
+
         _channel.BasicConsume(queue, autoAck: true, consumer: basicConsumer);
 
-        return taskCompletionSource.Task;
+    }
+
+
+    public TMessage GetMessage<TMessage>(Func<TMessage, bool> predicate,
+        CancellationToken token = default)
+    {
+        while (!token.IsCancellationRequested)
+        {
+            var eventType = typeof(TMessage);
+
+            var deserializedMessage = DeserializedMessages
+                .SingleOrDefault(m => m.type == eventType && predicate(m.message));
+
+            if (deserializedMessage.message is not null)
+            {
+                DeserializedMessages.Remove(deserializedMessage);
+
+                return deserializedMessage.message;
+            }
+
+
+            var typeName = eventType.Name.Trim();
+
+            var receivedMessagesWithExpectedType = ReceivedMessages
+                .Where(m => m.Subject == typeName)
+                .ToList();
+
+            foreach (var receivedMessage in receivedMessagesWithExpectedType)
+            {
+                ReceivedMessages.Remove(receivedMessage);
+
+                var message = JsonSerializer.Deserialize<TMessage>(receivedMessage.Content);
+
+                if (predicate(message))
+                    return message;
+
+                DeserializedMessages.Add((eventType, message));
+            }
+        }
+
+        return default;
     }
 
     public void Dispose()

@@ -1,4 +1,5 @@
-﻿using MicroLine.Services.Airline.Domain.Common;
+﻿using MicroLine.Services.Airline.Domain.Airports.Events;
+using MicroLine.Services.Airline.Domain.Common;
 using MicroLine.Services.Airline.Domain.Common.Enums;
 using MicroLine.Services.Airline.Domain.Common.ValueObjects;
 
@@ -26,7 +27,11 @@ public class Airport : AggregateRoot
     public static Airport Create(IcaoCode icaoCode, IataCode iataCode, AirportName name,
         BaseUtcOffset baseUtcOffset, AirportLocation airportLocation)
     {
-        return new Airport(icaoCode, iataCode, name, baseUtcOffset, airportLocation);
+        var airport = new Airport(icaoCode, iataCode, name, baseUtcOffset, airportLocation);
+
+        airport.AddEvent(new AirportCreatedEvent(airport));
+
+        return airport;
     }
 
 

@@ -4,6 +4,7 @@ using MicroLine.Services.Airline.Application.Airports.Commands.CreateAirport;
 using MicroLine.Services.Airline.Application.Airports.DataTransferObjects;
 using MicroLine.Services.Airline.Domain.Airports.Exceptions;
 using MicroLine.Services.Airline.Domain.Common.ValueObjects;
+using MicroLine.Services.Airline.Infrastructure.Integration.Airports;
 using MicroLine.Services.Airline.Tests.Common.Fakes;
 using MicroLine.Services.Airline.Tests.Integration.Common;
 using MicroLine.Services.Airline.Tests.Common.Extensions;
@@ -47,6 +48,10 @@ public class AirportTests : IntegrationTestBase
 
             return options;
         });
+
+        var publishedEvent = GetEventFromRabbitMq<AirportCreatedIntegrationEvent>(@event => @event.Id == airportDto.Id);
+
+        publishedEvent.Should().NotBeNull();
     }
 
 

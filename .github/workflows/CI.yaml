@@ -1,0 +1,46 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      rabbitMq:
+        image: rabbitmq
+        ports:
+          - 5672:5672
+      mssql:
+        image: mcr.microsoft.com/mssql/server:2019-latest
+        env:
+          SA_PASSWORD: Password123456
+          ACCEPT_EULA: 'Y'
+        ports:
+          - 1433:1433
+
+    steps:
+
+      - name: Check-Out Code ✔
+        uses: actions/checkout@v3
+      
+      - name: Setup .Net 7 ✔
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '7.0.x'
+
+      - name: Restore dependencies ✔
+        run: dotnet restore
+      
+      - name: Building binaries ✔
+        run: dotnet build -c Release --no-restore
+
+      - name: Run automated tests 🧪
+        run: dotnet test -c Release --no-build
+        env:
+          ConnectionStrings__DefaultConnection: "Data Source=localhost,1433; Initial Catalog=AirlineTestDb; User ID=sa; Password=Password123456; MultipleActiveResultSets=true; TrustServerCertificate=true;"

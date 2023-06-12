@@ -16,14 +16,10 @@ internal class FlightScheduledIntegrationEvent : IntegrationEvent
     public required DateTime ScheduledUtcDateTimeOfArrival { get; init; }
     public required TimeSpan EstimatedFlightDuration { get; init; }
     public required FlightPriceDto Prices { get; init; }
-    public required List<AircrewModel> FlightCrewMembers { get; init; }
-    public required List<AircrewModel> CabinCrewMembers { get; init; }
     public required string Status { get; init; }
 
 
     public record AirportModel(
-        string Id,
-        string IcaoCode,
         string IataCode,
         string Name,
         BaseUtcOffsetDto BaseUtcOffset,
@@ -33,19 +29,10 @@ internal class FlightScheduledIntegrationEvent : IntegrationEvent
     );
 
     public record AircraftModel(
-        string Id,
-        string Manufacturer,
         string Model,
         int EconomyClassCapacity,
         int BusinessClassCapacity,
         int FirstClassCapacity
-    );
-
-    public record AircrewModel(
-        string Id,
-        string FullName,
-        string Email,
-        string ContactNumber
     );
 
 }

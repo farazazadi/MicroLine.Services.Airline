@@ -19,6 +19,7 @@ internal class FlightIntegrationEventsMappingConfiguration : IRegister
 
         config.NewConfig<Aircraft, FlightScheduledIntegrationEvent.AircraftModel>()
             .MapToConstructor(false)
+            .Map(model => model.Model, aircraft => $"{aircraft.Manufacturer} {aircraft.Model}")
             .Map(model => model.EconomyClassCapacity, aircraft => aircraft.PassengerSeatingCapacity.EconomyClassCapacity)
             .Map(model => model.BusinessClassCapacity, aircraft => aircraft.PassengerSeatingCapacity.BusinessClassCapacity)
             .Map(model => model.FirstClassCapacity, aircraft => aircraft.PassengerSeatingCapacity.FirstClassCapacity)
@@ -35,8 +36,6 @@ internal class FlightIntegrationEventsMappingConfiguration : IRegister
             .Map(iEvent => iEvent.ScheduledUtcDateTimeOfArrival, dEvent => dEvent.Flight.ScheduledUtcDateTimeOfArrival)
             .Map(iEvent => iEvent.EstimatedFlightDuration, dEvent => dEvent.Flight.EstimatedFlightDuration)
             .Map(iEvent => iEvent.Prices, dEvent => dEvent.Flight.Prices)
-            .Map(iEvent => iEvent.FlightCrewMembers, dEvent => dEvent.Flight.FlightCrewMembers)
-            .Map(iEvent => iEvent.CabinCrewMembers, dEvent => dEvent.Flight.CabinCrewMembers)
             .Map(iEvent => iEvent.Status, dEvent => dEvent.Flight.Status)
             ;
 

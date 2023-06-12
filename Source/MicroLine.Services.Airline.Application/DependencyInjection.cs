@@ -11,9 +11,11 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
-        services.AddMediatR(Assembly.GetExecutingAssembly());
+        var executingAssembly = Assembly.GetExecutingAssembly();
 
-        AddMappers(services);
+        services.AddMediatR(config => config.RegisterServicesFromAssembly(executingAssembly));
+
+        AddMappers(services, executingAssembly);
 
         services.AddSingleton<IFlightPricingPolicy, WeekDayFlightPricingPolicy>(
             _ => WeekDayFlightPricingPolicy.Create());
@@ -21,16 +23,16 @@ public static class DependencyInjection
         return services;
     }
 
-    private static IServiceCollection AddMappers(IServiceCollection services)
+    private static IServiceCollection AddMappers(IServiceCollection services, Assembly executingAssembly)
     {
         var config = TypeAdapterConfig.GlobalSettings;
 
         config.Default.Settings.MapToConstructor = true;
 
-        config.Scan(Assembly.GetExecutingAssembly());
+        config.Scan(executingAssembly);
 
         services.AddSingleton(config);
-        services.AddScoped<IMapper, ServiceMapper>();
+        services.AddSingleton<IMapper, Mapper>();
 
         return services;
     }

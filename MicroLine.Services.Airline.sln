@@ -29,6 +29,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MicroLine.Services.Airline.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1D08F62F-19AB-4DC3-8D26-EB0860DDA5F1}"
 	ProjectSection(SolutionItems) = preProject
+		.github\workflows\CI.yaml = .github\workflows\CI.yaml
 		Directory.Build.props = Directory.Build.props
 	EndProjectSection
 EndProject

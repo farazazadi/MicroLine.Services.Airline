@@ -1,20 +1,14 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>disable</Nullable>
-  </PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="Mapster" Version="7.3.0" />
+		<PackageReference Include="MediatR" Version="12.0.1" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.5" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Mapster" Version="7.3.0" />
-    <PackageReference Include="MediatR" Version="12.0.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.5" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\MicroLine.Services.Airline.Domain\MicroLine.Services.Airline.Domain.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\MicroLine.Services.Airline.Domain\MicroLine.Services.Airline.Domain.csproj" />
+	</ItemGroup>
 
 </Project>

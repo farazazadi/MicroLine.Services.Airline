@@ -1,13 +1,11 @@
 ﻿using MicroLine.Services.Airline.Tests.Common.Fakes;
 using MicroLine.Services.Airline.Tests.Integration.Common;
-using System.Net.Http.Json;
-using System.Net;
 using MicroLine.Services.Airline.Application.Aircrafts.Commands.CreateAircraft;
 using MicroLine.Services.Airline.Application.Aircrafts.DataTransferObjects;
 using MicroLine.Services.Airline.Domain.Aircrafts;
 using MicroLine.Services.Airline.Domain.Common.ValueObjects;
-using MicroLine.Services.Airline.Tests.Common.Extensions;
 using MicroLine.Services.Airline.Domain.Aircrafts.Exceptions;
+using MicroLine.Services.Airline.Application.Common.Exceptions;
 
 namespace MicroLine.Services.Airline.Tests.Integration.Aircrafts;
 
@@ -36,7 +34,7 @@ public class AircraftTests : IntegrationTestBase
         // Then
         var aircraftDto = await response.Content.ReadFromJsonAsync<AircraftDto>();
 
-        response.Headers.Location.ToString().Should().Be($"api/aircraft/{aircraftDto.Id}");
+        response.Headers.Location!.ToString().Should().Be($"api/aircraft/{aircraftDto.Id}");
 
         response.StatusCode.Should().Be(HttpStatusCode.Created);
 
@@ -70,14 +68,18 @@ public class AircraftTests : IntegrationTestBase
 
 
         // Then
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        response
+            .Should()
+            .HaveProblemDetails()
+            .WithStatusCode(StatusCodes.Status400BadRequest)
+            .WithTitle(Constants.Rfc9110.Titles.BadRequest)
+            .WithDetail($"An aircraft with same RegistrationCode ({aircraft.RegistrationCode}) already exist!")
+            .WithInstance("/api/aircraft")
+            .WithExtensionsThatContain(Constants.ExceptionCode, nameof(DuplicateAircraftRegistrationCodeException))
+            .WithType(Constants.Rfc9110.StatusCodes.BadRequest400);
 
-        var problem = await response.GetProblemResultAsync();
-
-        problem.Extensions[ProblemDetailsExtensions.ExceptionCode]?.ToString()
-            .Should().Be(nameof(DuplicateAircraftRegistrationCodeException));
     }
-    
+
 
 
     [Fact]
@@ -94,7 +96,7 @@ public class AircraftTests : IntegrationTestBase
 
 
         // Then
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.Should().HaveStatusCode(HttpStatusCode.OK);
 
         var aircraftDto = await response.Content.ReadFromJsonAsync<AircraftDto>();
 
@@ -104,7 +106,7 @@ public class AircraftTests : IntegrationTestBase
 
 
     [Fact]
-    public async Task Aircraft_ShouldReturnNotFoundStatusCode_WhenIdIsNotValid()
+    public async Task Aircraft_ShouldReturnNotFoundProblem_WhenIdIsNotValid()
     {
         // Given
         var id = Id.Create();
@@ -115,8 +117,15 @@ public class AircraftTests : IntegrationTestBase
 
 
         // Then
-        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
-
+        response
+            .Should()
+            .HaveProblemDetails()
+            .WithStatusCode(StatusCodes.Status404NotFound)
+            .WithTitle(Constants.Rfc9110.Titles.NotFound)
+            .WithDetail($"Aircraft with id ({id}) was not found!")
+            .WithInstance($"/api/aircraft/{id}")
+            .WithExtensionsThatContain(Constants.ExceptionCode, nameof(NotFoundException))
+            .WithType(Constants.Rfc9110.StatusCodes.NotFound404);
     }
 
 
@@ -145,7 +154,7 @@ public class AircraftTests : IntegrationTestBase
 
 
         // Then
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        response.Should().HaveStatusCode(HttpStatusCode.OK);
 
         var aircraftDtoList = await response.Content.ReadFromJsonAsync<IList<AircraftDto>>();
 

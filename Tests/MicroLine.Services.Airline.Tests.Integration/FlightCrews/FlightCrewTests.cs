@@ -1,9 +1,7 @@
-﻿using System.Net;
-using System.Net.Http.Json;
+﻿using MicroLine.Services.Airline.Application.Common.Exceptions;
 using MicroLine.Services.Airline.Application.FlightCrews.Commands.CreateFlightCrew;
 using MicroLine.Services.Airline.Application.FlightCrews.DataTransferObjects;
 using MicroLine.Services.Airline.Domain.FlightCrews;
-using MicroLine.Services.Airline.Tests.Common.Extensions;
 using MicroLine.Services.Airline.Tests.Common.Fakes;
 using MicroLine.Services.Airline.Tests.Integration.Common;
 
@@ -34,7 +32,7 @@ public class FlightCrewTests : IntegrationTestBase
 
         var flightCrewDto = await response.Content.ReadFromJsonAsync<FlightCrewDto>();
 
-        response.Headers.Location.ToString().Should().Be($"api/flight-crew/{flightCrewDto.Id}");
+        response.Headers.Location!.ToString().Should().Be($"api/flight-crew/{flightCrewDto.Id}");
 
         response.StatusCode.Should().Be(HttpStatusCode.Created);
 
@@ -69,11 +67,15 @@ public class FlightCrewTests : IntegrationTestBase
 
 
         // Then
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-
-        var problemDetails = await response.GetProblemResultAsync();
-
-        problemDetails.Extensions.Values.FirstOrDefault()?.ToString().Should().Be(nameof(CreateFlightCrewException));
+        response
+            .Should()
+            .HaveProblemDetails()
+            .WithStatusCode(StatusCodes.Status400BadRequest)
+            .WithTitle(Constants.Rfc9110.Titles.BadRequest)
+            .WithDetail($"A flight crew member with same PassportNumber ({existingPassportNumber}) already exist!")
+            .WithInstance("/api/flight-crew")
+            .WithExtensionsThatContain(Constants.ExceptionCode, nameof(CreateFlightCrewException))
+            .WithType(Constants.Rfc9110.StatusCodes.BadRequest400);
     }
 
 
@@ -97,11 +99,15 @@ public class FlightCrewTests : IntegrationTestBase
 
 
         // Then
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-
-        var problemDetails = await response.GetProblemResultAsync();
-
-        problemDetails.Extensions.Values.FirstOrDefault()?.ToString().Should().Be(nameof(CreateFlightCrewException));
+        response
+            .Should()
+            .HaveProblemDetails()
+            .WithStatusCode(StatusCodes.Status400BadRequest)
+            .WithTitle(Constants.Rfc9110.Titles.BadRequest)
+            .WithDetail($"A flight crew member with same NationalId ({existingNationalId}) already exist!")
+            .WithInstance("/api/flight-crew")
+            .WithExtensionsThatContain(Constants.ExceptionCode, nameof(CreateFlightCrewException))
+            .WithType(Constants.Rfc9110.StatusCodes.BadRequest400);
     }
 
 
@@ -135,7 +141,15 @@ public class FlightCrewTests : IntegrationTestBase
         var response = await Client.GetAsync($"api/flight-crew/{id}");
 
         // Then
-        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        response
+            .Should()
+            .HaveProblemDetails()
+            .WithStatusCode(StatusCodes.Status404NotFound)
+            .WithTitle(Constants.Rfc9110.Titles.NotFound)
+            .WithDetail($"FlightCrew with id ({id}) was not found!")
+            .WithInstance($"/api/flight-crew/{id}")
+            .WithExtensionsThatContain(Constants.ExceptionCode, nameof(NotFoundException))
+            .WithType(Constants.Rfc9110.StatusCodes.NotFound404);
     }
 
 

@@ -1,5 +1,4 @@
-﻿using System.Net;
-using System.Net.Http.Json;
+﻿using MicroLine.Services.Airline.Application.Common.Exceptions;
 using MicroLine.Services.Airline.Application.Flights.Commands.ScheduleFlight;
 using MicroLine.Services.Airline.Application.Flights.DataTransferObjects;
 using MicroLine.Services.Airline.Domain.CabinCrews;
@@ -51,7 +50,7 @@ public class FlightTests : IntegrationTestBase
 
         response.StatusCode.Should().Be(HttpStatusCode.Created);
 
-        response.Headers.Location?.ToString().Should().Be($"api/flights/{flightDto?.Id}");
+        response.Headers.Location!.ToString().Should().Be($"api/flights/{flightDto?.Id}");
 
 
         flightDto.Should().BeEquivalentTo(expected, options =>
@@ -105,8 +104,15 @@ public class FlightTests : IntegrationTestBase
 
 
         // Then
-        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
-
+        response
+            .Should()
+            .HaveProblemDetails()
+            .WithStatusCode(StatusCodes.Status404NotFound)
+            .WithTitle(Constants.Rfc9110.Titles.NotFound)
+            .WithDetail($"Flight with id ({id}) was not found!")
+            .WithInstance($"/api/flights/{id}")
+            .WithExtensionsThatContain(Constants.ExceptionCode, nameof(NotFoundException))
+            .WithType(Constants.Rfc9110.StatusCodes.NotFound404);
     }
 
 
@@ -160,12 +166,15 @@ public class FlightTests : IntegrationTestBase
 
 
         // Then
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-
-        var problemDetails = await response.GetProblemResultAsync();
-
-        problemDetails.Extensions[ProblemDetailsExtensions.ExceptionCode]?.ToString()
-            .Should().Be(nameof(ScheduleFlightException));
+        response
+            .Should()
+            .HaveProblemDetails()
+            .WithStatusCode(StatusCodes.Status400BadRequest)
+            .WithTitle(Constants.Rfc9110.Titles.BadRequest)
+            .WithDetail($"Origin airport with Id ({flight.OriginAirport.Id}) can not be found!")
+            .WithInstance("/api/flights")
+            .WithExtensionsThatContain(Constants.ExceptionCode, nameof(ScheduleFlightException))
+            .WithType(Constants.Rfc9110.StatusCodes.BadRequest400);
     }
 
 
@@ -193,12 +202,15 @@ public class FlightTests : IntegrationTestBase
 
 
         // Then
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-
-        var problemDetails = await response.GetProblemResultAsync();
-
-        problemDetails.Extensions[ProblemDetailsExtensions.ExceptionCode]?.ToString()
-            .Should().Be(nameof(ScheduleFlightException));
+        response
+            .Should()
+            .HaveProblemDetails()
+            .WithStatusCode(StatusCodes.Status400BadRequest)
+            .WithTitle(Constants.Rfc9110.Titles.BadRequest)
+            .WithDetail($"Destination airport with Id ({flight.DestinationAirport.Id}) can not be found!")
+            .WithInstance("/api/flights")
+            .WithExtensionsThatContain(Constants.ExceptionCode, nameof(ScheduleFlightException))
+            .WithType(Constants.Rfc9110.StatusCodes.BadRequest400);
     }
 
 
@@ -226,12 +238,15 @@ public class FlightTests : IntegrationTestBase
 
 
         // Then
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-
-        var problemDetails = await response.GetProblemResultAsync();
-
-        problemDetails.Extensions[ProblemDetailsExtensions.ExceptionCode]?.ToString()
-            .Should().Be(nameof(ScheduleFlightException));
+        response
+            .Should()
+            .HaveProblemDetails()
+            .WithStatusCode(StatusCodes.Status400BadRequest)
+            .WithTitle(Constants.Rfc9110.Titles.BadRequest)
+            .WithDetail($"Aircraft with Id ({flight.Aircraft.Id}) can not be found!")
+            .WithInstance("/api/flights")
+            .WithExtensionsThatContain(Constants.ExceptionCode, nameof(ScheduleFlightException))
+            .WithType(Constants.Rfc9110.StatusCodes.BadRequest400);
     }
 
 
@@ -260,12 +275,19 @@ public class FlightTests : IntegrationTestBase
 
 
         // Then
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        string expectedDetail =
+            flight.FlightCrewMembers
+            .GenerateFormattedString("Flight Crew with Id ({0}) can not be found!", flightCrew => flightCrew.Id);
 
-        var problemDetails = await response.GetProblemResultAsync();
-
-        problemDetails.Extensions[ProblemDetailsExtensions.ExceptionCode]?.ToString()
-            .Should().Be(nameof(ScheduleFlightException));
+        response
+            .Should()
+            .HaveProblemDetails()
+            .WithStatusCode(StatusCodes.Status400BadRequest)
+            .WithTitle(Constants.Rfc9110.Titles.BadRequest)
+            .WithDetail(expectedDetail)
+            .WithInstance("/api/flights")
+            .WithExtensionsThatContain(Constants.ExceptionCode, nameof(ScheduleFlightException))
+            .WithType(Constants.Rfc9110.StatusCodes.BadRequest400);
     }
 
 
@@ -294,12 +316,19 @@ public class FlightTests : IntegrationTestBase
 
 
         // Then
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        string expectedDetail =
+            flight.CabinCrewMembers
+                .GenerateFormattedString("Cabin Crew with Id ({0}) can not be found!", cabinCrew => cabinCrew.Id);
 
-        var problemDetails = await response.GetProblemResultAsync();
-
-        problemDetails.Extensions[ProblemDetailsExtensions.ExceptionCode]?.ToString()
-            .Should().Be(nameof(ScheduleFlightException));
+        response
+            .Should()
+            .HaveProblemDetails()
+            .WithStatusCode(StatusCodes.Status400BadRequest)
+            .WithTitle(Constants.Rfc9110.Titles.BadRequest)
+            .WithDetail(expectedDetail)
+            .WithInstance("/api/flights")
+            .WithExtensionsThatContain(Constants.ExceptionCode, nameof(ScheduleFlightException))
+            .WithType(Constants.Rfc9110.StatusCodes.BadRequest400);
     }
     
 
@@ -342,12 +371,15 @@ public class FlightTests : IntegrationTestBase
 
 
         // Then
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-
-        var problemDetails = await response.GetProblemResultAsync();
-
-        problemDetails.Extensions[ProblemDetailsExtensions.ExceptionCode]?.ToString()
-            .Should().Be(nameof(ScheduleFlightException));
+        response
+            .Should()
+            .HaveProblemDetails()
+            .WithStatusCode(StatusCodes.Status400BadRequest)
+            .WithTitle(Constants.Rfc9110.Titles.BadRequest)
+            .WithDetail($"The aircraft ({aircraft.Id}) is unavailable due to an overlap with the flight ({overlappedFlight.Id})!")
+            .WithInstance("/api/flights")
+            .WithExtensionsThatContain(Constants.ExceptionCode, nameof(ScheduleFlightException))
+            .WithType(Constants.Rfc9110.StatusCodes.BadRequest400);
     }
 
 
@@ -400,12 +432,15 @@ public class FlightTests : IntegrationTestBase
 
 
         // Then
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-
-        var problemDetails = await response.GetProblemResultAsync();
-
-        problemDetails.Extensions[ProblemDetailsExtensions.ExceptionCode]?.ToString()
-            .Should().Be(nameof(ScheduleFlightException));
+        response
+            .Should()
+            .HaveProblemDetails()
+            .WithStatusCode(StatusCodes.Status400BadRequest)
+            .WithTitle(Constants.Rfc9110.Titles.BadRequest)
+            .WithDetail($"The Flight Crew ({pilot.Id}) is unavailable due to an overlap with the flight ({overlappedFlight.Id})!")
+            .WithInstance("/api/flights")
+            .WithExtensionsThatContain(Constants.ExceptionCode, nameof(ScheduleFlightException))
+            .WithType(Constants.Rfc9110.StatusCodes.BadRequest400);
     }
 
 
@@ -457,12 +492,21 @@ public class FlightTests : IntegrationTestBase
 
 
         // Then
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        //response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
-        var problemDetails = await response.GetProblemResultAsync();
+        //var problemDetails = await response.GetProblemResultAsync();
 
-        problemDetails.Extensions[ProblemDetailsExtensions.ExceptionCode]?.ToString()
-            .Should().Be(nameof(ScheduleFlightException));
+        //problemDetails.Extensions[ProblemDetailsExtensions.ExceptionCode]?.ToString()
+        //    .Should().Be(nameof(ScheduleFlightException));
+        response
+            .Should()
+            .HaveProblemDetails()
+            .WithStatusCode(StatusCodes.Status400BadRequest)
+            .WithTitle(Constants.Rfc9110.Titles.BadRequest)
+            .WithDetail($"The Cabin Crew ({purser.Id}) is unavailable due to an overlap with the flight ({overlappedFlight.Id})!")
+            .WithInstance("/api/flights")
+            .WithExtensionsThatContain(Constants.ExceptionCode, nameof(ScheduleFlightException))
+            .WithType(Constants.Rfc9110.StatusCodes.BadRequest400);
     }
 
 }

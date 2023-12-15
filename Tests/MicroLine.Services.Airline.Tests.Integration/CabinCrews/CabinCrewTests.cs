@@ -1,10 +1,8 @@
-﻿using System.Net;
-using System.Net.Http.Json;
-using MicroLine.Services.Airline.Application.CabinCrews.Commands.CreateCabinCrew;
+﻿using MicroLine.Services.Airline.Application.CabinCrews.Commands.CreateCabinCrew;
 using MicroLine.Services.Airline.Application.CabinCrews.DataTransferObjects;
+using MicroLine.Services.Airline.Application.Common.Exceptions;
 using MicroLine.Services.Airline.Domain.CabinCrews;
 using MicroLine.Services.Airline.Domain.Common.ValueObjects;
-using MicroLine.Services.Airline.Tests.Common.Extensions;
 using MicroLine.Services.Airline.Tests.Common.Fakes;
 using MicroLine.Services.Airline.Tests.Integration.Common;
 
@@ -34,7 +32,7 @@ public class CabinCrewTests : IntegrationTestBase
         // Then
         var cabinCrewDto = await response.Content.ReadFromJsonAsync<CabinCrewDto>();
 
-        response.Headers.Location.ToString().Should().Be($"api/cabin-crew/{cabinCrewDto.Id}");
+        response.Headers.Location!.ToString().Should().Be($"api/cabin-crew/{cabinCrewDto.Id}");
 
         response.StatusCode.Should().Be(HttpStatusCode.Created);
 
@@ -69,11 +67,15 @@ public class CabinCrewTests : IntegrationTestBase
 
 
         // Then
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-
-        var problemDetails = await response.GetProblemResultAsync();
-
-        problemDetails.Extensions.Values.FirstOrDefault()?.ToString().Should().Be(nameof(CreateCabinCrewException));
+        response
+            .Should()
+            .HaveProblemDetails()
+            .WithStatusCode(StatusCodes.Status400BadRequest)
+            .WithTitle(Constants.Rfc9110.Titles.BadRequest)
+            .WithDetail($"A Cabin crew member with same PassportNumber ({existingPassportNumber}) already exist!")
+            .WithInstance("/api/cabin-crew")
+            .WithExtensionsThatContain(Constants.ExceptionCode, nameof(CreateCabinCrewException))
+            .WithType(Constants.Rfc9110.StatusCodes.BadRequest400);
     }
 
 
@@ -97,11 +99,15 @@ public class CabinCrewTests : IntegrationTestBase
 
 
         // Then
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-
-        var problemDetails = await response.GetProblemResultAsync();
-
-        problemDetails.Extensions.Values.FirstOrDefault()?.ToString().Should().Be(nameof(CreateCabinCrewException));
+        response
+            .Should()
+            .HaveProblemDetails()
+            .WithStatusCode(StatusCodes.Status400BadRequest)
+            .WithTitle(Constants.Rfc9110.Titles.BadRequest)
+            .WithDetail($"A Cabin crew member with same NationalId ({existingNationalId}) already exist!")
+            .WithInstance("/api/cabin-crew")
+            .WithExtensionsThatContain(Constants.ExceptionCode, nameof(CreateCabinCrewException))
+            .WithType(Constants.Rfc9110.StatusCodes.BadRequest400);
     }
 
 
@@ -140,8 +146,15 @@ public class CabinCrewTests : IntegrationTestBase
 
 
         // Then
-        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
-
+        response
+            .Should()
+            .HaveProblemDetails()
+            .WithStatusCode(StatusCodes.Status404NotFound)
+            .WithTitle(Constants.Rfc9110.Titles.NotFound)
+            .WithDetail($"CabinCrew with id ({id}) was not found!")
+            .WithInstance($"/api/cabin-crew/{id}")
+            .WithExtensionsThatContain(Constants.ExceptionCode, nameof(NotFoundException))
+            .WithType(Constants.Rfc9110.StatusCodes.NotFound404);
     }
 
 

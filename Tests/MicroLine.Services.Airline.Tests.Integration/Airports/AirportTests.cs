@@ -1,13 +1,11 @@
-﻿using System.Net;
-using System.Net.Http.Json;
-using MicroLine.Services.Airline.Application.Airports.Commands.CreateAirport;
+﻿using MicroLine.Services.Airline.Application.Airports.Commands.CreateAirport;
 using MicroLine.Services.Airline.Application.Airports.DataTransferObjects;
+using MicroLine.Services.Airline.Application.Common.Exceptions;
 using MicroLine.Services.Airline.Domain.Airports.Exceptions;
 using MicroLine.Services.Airline.Domain.Common.ValueObjects;
 using MicroLine.Services.Airline.Infrastructure.Integration.Airports;
 using MicroLine.Services.Airline.Tests.Common.Fakes;
 using MicroLine.Services.Airline.Tests.Integration.Common;
-using MicroLine.Services.Airline.Tests.Common.Extensions;
 
 namespace MicroLine.Services.Airline.Tests.Integration.Airports;
 
@@ -36,7 +34,7 @@ public class AirportTests : IntegrationTestBase
         // Then
         var airportDto = await response.Content.ReadFromJsonAsync<AirportDto>();
 
-        response.Headers.Location.ToString().Should().Be($"api/airports/{airportDto.Id}");
+        response.Headers.Location!.ToString().Should().Be($"api/airports/{airportDto.Id}");
 
         response.StatusCode.Should().Be(HttpStatusCode.Created);
 
@@ -74,12 +72,15 @@ public class AirportTests : IntegrationTestBase
 
 
         // Then
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-
-        var problem = await response.GetProblemResultAsync();
-
-        problem.Extensions[ProblemDetailsExtensions.ExceptionCode]?.ToString()
-            .Should().Be(nameof(DuplicateIcaoCodeException));
+        response
+            .Should()
+            .HaveProblemDetails()
+            .WithStatusCode(StatusCodes.Status400BadRequest)
+            .WithTitle(Constants.Rfc9110.Titles.BadRequest)
+            .WithDetail($"An airport with same IcaoCode ({icaoCode}) already exist!")
+            .WithInstance("/api/airports")
+            .WithExtensionsThatContain(Constants.ExceptionCode, nameof(DuplicateIcaoCodeException))
+            .WithType(Constants.Rfc9110.StatusCodes.BadRequest400);
     }
 
 
@@ -108,7 +109,7 @@ public class AirportTests : IntegrationTestBase
 
 
     [Fact]
-    public async Task Airport_ShouldReturnNotFoundStatusCode_WhenIdIsNotValid()
+    public async Task Airport_ShouldReturnNotFoundProblem_WhenIdIsNotValid()
     {
         // Given
         var id = Id.Create();
@@ -119,8 +120,15 @@ public class AirportTests : IntegrationTestBase
 
 
         // Then
-        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
-
+        response
+            .Should()
+            .HaveProblemDetails()
+            .WithStatusCode(StatusCodes.Status404NotFound)
+            .WithTitle(Constants.Rfc9110.Titles.NotFound)
+            .WithDetail($"Airport with id ({id}) was not found!")
+            .WithInstance($"/api/airports/{id}")
+            .WithExtensionsThatContain(Constants.ExceptionCode, nameof(NotFoundException))
+            .WithType(Constants.Rfc9110.StatusCodes.NotFound404);
     }
 
 
